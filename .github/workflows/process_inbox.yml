@@ -1,0 +1,47 @@
+name: Process Inbox
+
+# Runs the LLM-assisted filing pipeline on every push to main. The script
+# self-guards: if the Inbox holds no Markdown notes it exits immediately with
+# no API call, so empty pushes incur no cost.
+on:
+  push:
+    branches:
+      - main
+
+# The bot needs to push the filed notes and updated index back to the repo.
+permissions:
+  contents: write
+
+# Never run two filing passes against the same branch concurrently — a second
+# run could push on top of the first and lose the index update.
+concurrency:
+  group: process-inbox-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  process-inbox:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install anthropic gitpython
+
+      - name: Configure git identity
+        run: |
+          git config user.name "llm-vault-bot"
+          git config user.email "llm-vault-bot@users.noreply.github.com"
+
+      - name: Process Inbox
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python .vault/scripts/process_inbox.py

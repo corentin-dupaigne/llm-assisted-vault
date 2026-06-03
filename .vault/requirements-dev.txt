@@ -1,0 +1,7 @@
+# Runtime deps used by .vault/scripts/process_inbox.py
+anthropic
+gitpython
+
+# Test-only deps
+pytest
+python-dotenv

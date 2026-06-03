@@ -1,0 +1,21 @@
+# Secrets — never commit the real API key
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Inspectable E2E output vaults (see CLAUDE.md → Tests)
+.e2e-output/
+
+# OS / editor
+.DS_Store
+
+# Obsidian
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json

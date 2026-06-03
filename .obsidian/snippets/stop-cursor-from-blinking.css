@@ -1,0 +1,20 @@
+/* 1. Stop the animation on all cursor layers */
+.cm-cursorLayer, 
+.cm-cursor, 
+.cm-fat-cursor {
+    animation: none !important;
+    -webkit-animation: none !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* 2. Force the cursor to stay visible even when 'inactive' */
+.cm-cursorLayer {
+    opacity: 1 !important;
+}
+
+/* 3. Specifically for Vim mode users (if applicable) */
+.cm-fat-cursor-mark {
+    animation: none !important;
+    visibility: visible !important;
+}
