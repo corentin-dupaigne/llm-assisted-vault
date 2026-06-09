@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - main
+      - my-notes
 
 # The bot needs to push the filed notes and updated index back to the repo.
 permissions:
