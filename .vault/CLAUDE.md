@@ -145,6 +145,15 @@ of the note:
 - [[Existing Note Title]]
 ```
 
+## Markdown formatting
+
+Before a filed note is written, its Markdown **body** (the captured content plus
+the generated `## Links` section) is normalized with `mdformat`. The `wikilink`
+extension keeps `[[Obsidian links]]` intact — without it mdformat escapes the
+brackets. The YAML frontmatter is built canonically and reattached verbatim, so
+formatting never rewrites `project: null` or reorders keys. Unfileable notes are
+left untouched in `Inbox/` and are not formatted.
+
 ## Naming conventions
 
 - `domain` and `tags` are always **lowercase and hyphen-separated**

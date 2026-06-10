@@ -1,6 +1,8 @@
 # Runtime deps used by .vault/scripts/process_inbox.py
 anthropic
 gitpython
+mdformat
+mdformat-wikilink
 
 # Test-only deps
 pytest

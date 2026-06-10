@@ -35,7 +35,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install anthropic gitpython
+        run: pip install anthropic gitpython mdformat mdformat-wikilink
 
       - name: Configure git identity
         run: |
