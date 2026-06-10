@@ -77,7 +77,13 @@ CLASSIFY_TOOL = {
             "wikilinks": {
                 "type": "array",
                 "items": {"type": "string"},
-                "description": "Relevant existing note titles as '[[Title]]'.",
+                "description": "Links to relevant existing notes, built from each "
+                               "note's FILENAME (its 'path' basename without the "
+                               "'.md'), with the note's title as the display "
+                               "alias: '[[file-stem|Note Title]]'. E.g. for a note "
+                               "at 'Resources/contains-duplicate.md' titled "
+                               "'Contains Duplicate', emit "
+                               "'[[contains-duplicate|Contains Duplicate]]'.",
             },
         },
         "required": ["status", "reason"],
@@ -154,6 +160,38 @@ def build_frontmatter(domain: str, tags: list[str], processing_date: str,
         f"project: {project_str}\n"
         "---\n"
     )
+
+
+def resolve_wikilinks(raw_links: list[str], index: dict) -> list[str]:
+    """Validate the model's filename-based wikilinks against the index.
+
+    Obsidian resolves a wikilink by the target file's *basename*, not by its
+    frontmatter title — so the model is asked to build each link from the note's
+    filename (the `path` basename), producing `[[file-stem|Title]]`. This is a
+    safety net over that contract: each link's target is matched against the
+    indexed note basenames, and the alias is re-derived from the index `title`
+    so the display text is always canonical. A link whose basename matches no
+    indexed note (a hallucinated target) is dropped rather than written broken —
+    that is what would otherwise spawn a stray note at the vault root.
+    """
+    by_stem: dict[str, str] = {}
+    for note in index.get("notes", []):
+        title, path = note.get("title"), note.get("path")
+        if title and path:
+            by_stem[Path(path).stem] = title
+
+    resolved: list[str] = []
+    seen: set[str] = set()
+    for raw in raw_links:
+        # Accept whatever the model emitted ([[stem]], [[stem|Alias]], a path,
+        # or a name with .md) and reduce it to the bare basename to match on.
+        target = raw.strip().strip("[]").split("|", 1)[0].strip()
+        stem = Path(target).stem
+        title = by_stem.get(stem)
+        if title and stem not in seen:
+            resolved.append(f"[[{stem}|{title}]]")
+            seen.add(stem)
+    return resolved
 
 
 def build_links_section(wikilinks: list[str]) -> str:
@@ -276,7 +314,8 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
 
     tags = decision.get("tags") or []
     project = decision.get("project")
-    wikilinks = decision.get("wikilinks") or []
+    # Resolve the model's title-based links to Obsidian-resolvable basename links.
+    wikilinks = resolve_wikilinks(decision.get("wikilinks") or [], index)
 
     original = md_file.read_text(encoding="utf-8")
     title = extract_title(original, md_file.stem)

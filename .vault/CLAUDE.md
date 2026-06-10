@@ -142,8 +142,23 @@ of the note:
 ```markdown
 ## Links
 
-- [[Existing Note Title]]
+- [[existing-note-filename|Existing Note Title]]
 ```
+
+Obsidian resolves a wikilink by the target file's **basename**, not its title.
+Filed notes have slugified filenames (`contains-duplicate.md`) while their titles
+are human-readable (`Contains Duplicate`), so a `[[Contains Duplicate]]` link
+resolves to nothing and clicking it spawns a stray note at the vault root. The
+model is therefore instructed (system prompt + `file_note` schema) to build each
+link from the note's **filename** — the `path` basename — with the title as the
+display alias: `[[file-stem|Title]]`. Because the filename is copied verbatim
+from the index `path` (not slugified from the title), the link is reliable.
+
+`resolve_wikilinks` is a code-side safety net over that contract: it matches each
+link's basename against the indexed notes, re-derives the alias from the index
+`title` (so display text is always canonical), de-duplicates, and **drops** any
+link whose basename matches no indexed note — so a hallucinated link can never
+be written broken.
 
 ## Markdown formatting
 
