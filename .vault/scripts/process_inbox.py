@@ -147,19 +147,110 @@ def extract_title(content: str, fallback_stem: str) -> str:
     return fallback_stem.replace("-", " ").replace("_", " ").strip().title()
 
 
-def build_frontmatter(domain: str, tags: list[str], processing_date: str,
-                      para: str, project: str | None) -> str:
-    tags_str = ", ".join(tags)
-    project_str = project if project else "null"
-    return (
-        "---\n"
-        f"domain: {domain}\n"
-        f"tags: [{tags_str}]\n"
-        f"date: {processing_date}\n"
-        f"para: {para}\n"
-        f"project: {project_str}\n"
-        "---\n"
-    )
+# The metadata every filed note must carry. Order is the canonical layout used
+# when a field has to be added; existing fields keep their own position.
+MANDATORY_FIELDS = ("domain", "tags", "date", "para", "project")
+
+# A leading YAML frontmatter block, and a `key:` line within one.
+_FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n?", re.DOTALL)
+_FM_KEY_RE = re.compile(r"^([A-Za-z_][\w-]*)\s*:\s*(.*)$")
+_FM_LIST_ITEM_RE = re.compile(r"^\s*-\s+(.*)$")
+
+
+def split_frontmatter(text: str) -> tuple[str | None, str]:
+    """Split a leading YAML frontmatter block from the body.
+
+    Returns ``(inner, body)`` where ``inner`` is the block's content *without*
+    the ``---`` delimiters (``None`` when the note has no frontmatter) and
+    ``body`` is everything after it.
+    """
+    match = _FRONTMATTER_RE.match(text)
+    if not match:
+        return None, text
+    return match.group(1), text[match.end():]
+
+
+def parse_frontmatter(inner: str) -> tuple[list[str], dict]:
+    """Parse a frontmatter block into ``(ordered_keys, values)``.
+
+    Supports the scalar, flow-list (`[a, b]`) and block-list (`- a`) forms that
+    appear in hand-written and templated notes. Used only to read existing
+    values; the original lines are preserved verbatim when re-emitting.
+    """
+    keys: list[str] = []
+    values: dict = {}
+    lines = inner.splitlines()
+    i = 0
+    while i < len(lines):
+        match = _FM_KEY_RE.match(lines[i])
+        if not match:
+            i += 1
+            continue
+        key, raw = match.group(1), match.group(2).strip()
+        keys.append(key)
+        if raw == "":
+            items, j = [], i + 1
+            while j < len(lines) and _FM_LIST_ITEM_RE.match(lines[j]):
+                items.append(_FM_LIST_ITEM_RE.match(lines[j]).group(1).strip())
+                j += 1
+            if items:
+                values[key] = items
+                i = j
+                continue
+            values[key] = None
+        elif raw.startswith("[") and raw.endswith("]"):
+            body = raw[1:-1].strip()
+            values[key] = [t.strip() for t in body.split(",") if t.strip()] if body else []
+        elif raw in ("null", "~"):
+            values[key] = None
+        else:
+            values[key] = raw
+        i += 1
+    return keys, values
+
+
+def render_field(key: str, value) -> str:
+    """Render one mandatory field as a frontmatter line."""
+    if key == "tags":
+        return f"tags: [{', '.join(value or [])}]"
+    if key == "project":
+        return f"project: {value if value else 'null'}"
+    return f"{key}: {value}"
+
+
+def merge_frontmatter(original: str, *, domain: str, tags: list[str], date: str,
+                      para: str, project: str | None) -> tuple[str, str, dict]:
+    """Merge the mandatory metadata into a note's existing frontmatter.
+
+    Captured notes may already carry frontmatter (e.g. Obsidian/Dataview
+    templates). Existing fields — mandatory or not — are kept **verbatim** and
+    never overridden; only the mandatory fields that are *missing* are appended,
+    so the result is always a single frontmatter block. Returns
+    ``(frontmatter, body, effective)`` where ``effective`` holds the
+    authoritative mandatory values (existing wins) for the index.
+    """
+    inner, body = split_frontmatter(original)
+    computed = {"domain": domain, "tags": tags, "date": date,
+                "para": para, "project": project}
+
+    if inner:
+        existing_keys, existing_values = parse_frontmatter(inner)
+        lines = [inner]
+    else:
+        existing_keys, existing_values = [], {}
+        lines = []
+
+    for key in MANDATORY_FIELDS:
+        if key not in existing_keys:
+            lines.append(render_field(key, computed[key]))
+
+    frontmatter = "---\n" + "\n".join(lines) + "\n---\n"
+
+    effective = {
+        key: existing_values[key] if key in existing_keys else computed[key]
+        for key in MANDATORY_FIELDS
+    }
+    return frontmatter, body, effective
 
 
 def resolve_wikilinks(raw_links: list[str], index: dict) -> list[str]:
@@ -318,16 +409,24 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
     wikilinks = resolve_wikilinks(decision.get("wikilinks") or [], index)
 
     original = md_file.read_text(encoding="utf-8")
-    title = extract_title(original, md_file.stem)
+
+    # Merge the mandatory metadata into any frontmatter the note already carries
+    # (templated notes bring their own); existing fields are kept verbatim, only
+    # missing mandatory ones are added — so we never stack two `---` blocks.
+    frontmatter, note_body, effective = merge_frontmatter(
+        original, domain=domain, tags=tags, date=processing_date,
+        para=para, project=project,
+    )
+    title = extract_title(note_body, md_file.stem)
 
     # Format the Markdown body (captured content + generated Links section) but
-    # keep the canonical frontmatter out of the formatter, then reattach it.
-    markdown_body = original
+    # keep the merged frontmatter out of the formatter, then reattach it.
+    markdown_body = note_body
     if wikilinks:
         markdown_body += build_links_section(wikilinks)
     markdown_body = format_markdown(markdown_body)
 
-    body = build_frontmatter(domain, tags, processing_date, para, project) + markdown_body
+    body = frontmatter + markdown_body
 
     dest = unique_destination(dest)
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -337,22 +436,26 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
     rel_dest = dest.relative_to(REPO_ROOT).as_posix()
 
     # --- Index update --------------------------------------------------------
+    # Mirror the note's effective metadata (existing frontmatter wins over the
+    # model's values for any field the note already defined) into the index.
+    eff_domain = effective["domain"] or domain
+    eff_tags = effective["tags"] or []
     index.setdefault("notes", []).append({
         "title": title,
         "path": rel_dest,
-        "domain": domain,
-        "tags": tags,
-        "para": para,
-        "project": project,
-        "date": processing_date,
+        "domain": eff_domain,
+        "tags": eff_tags,
+        "para": effective["para"],
+        "project": effective["project"],
+        "date": effective["date"],
     })
 
     domains = index.setdefault("domains", [])
-    if domain not in domains:
-        domains.append(domain)
+    if eff_domain and eff_domain not in domains:
+        domains.append(eff_domain)
 
     index_tags = index.setdefault("tags", [])
-    for tag in tags:
+    for tag in eff_tags:
         if tag not in index_tags:
             index_tags.append(tag)
 
