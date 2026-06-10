@@ -22,6 +22,7 @@ from datetime import date
 from pathlib import Path
 
 import git
+import mdformat
 from anthropic import Anthropic
 
 # --- Paths and constants -----------------------------------------------------
@@ -160,6 +161,17 @@ def build_links_section(wikilinks: list[str]) -> str:
     return f"\n## Links\n\n{lines}\n"
 
 
+def format_markdown(text: str) -> str:
+    """Normalize the Markdown body's formatting before it is filed.
+
+    The `wikilink` extension keeps `[[Obsidian links]]` intact (mdformat would
+    otherwise escape the brackets). The YAML frontmatter is deliberately *not*
+    passed through here — it is built canonically and reattached verbatim, so
+    the formatter never rewrites `project: null` or reorders keys.
+    """
+    return mdformat.text(text, extensions={"wikilink"})
+
+
 # --- Path safety -------------------------------------------------------------
 
 def resolve_safe_target(target_path: str) -> Path | None:
@@ -269,10 +281,14 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
     original = md_file.read_text(encoding="utf-8")
     title = extract_title(original, md_file.stem)
 
-    body = build_frontmatter(domain, tags, processing_date, para, project)
-    body += original if original.endswith("\n") or not original else original + "\n"
+    # Format the Markdown body (captured content + generated Links section) but
+    # keep the canonical frontmatter out of the formatter, then reattach it.
+    markdown_body = original
     if wikilinks:
-        body += build_links_section(wikilinks)
+        markdown_body += build_links_section(wikilinks)
+    markdown_body = format_markdown(markdown_body)
+
+    body = build_frontmatter(domain, tags, processing_date, para, project) + markdown_body
 
     dest = unique_destination(dest)
     dest.parent.mkdir(parents=True, exist_ok=True)
