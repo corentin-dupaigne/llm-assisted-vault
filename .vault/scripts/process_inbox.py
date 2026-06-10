@@ -31,6 +31,7 @@ from anthropic import Anthropic
 VAULT_DIR = Path(__file__).resolve().parent.parent
 REPO_ROOT = VAULT_DIR.parent
 INBOX_DIR = REPO_ROOT / "Inbox"
+PROJECTS_DIR = REPO_ROOT / "Projects"
 INDEX_PATH = VAULT_DIR / "vault.index.json"
 SYSTEM_PROMPT_PATH = VAULT_DIR / "prompts" / "system.md"
 
@@ -98,6 +99,34 @@ def save_index(index: dict) -> None:
     with INDEX_PATH.open("w", encoding="utf-8") as fh:
         json.dump(index, fh, indent=2, ensure_ascii=False)
         fh.write("\n")
+
+
+# --- Project detection -------------------------------------------------------
+
+def detect_projects() -> list[str]:
+    """Active project names = the immediate subfolders of ``Projects/``.
+
+    One subfolder per active project is the on-disk convention (see CLAUDE.md),
+    so the folder listing is the source of truth. Returned sorted for a stable,
+    diff-friendly index.
+    """
+    if not PROJECTS_DIR.is_dir():
+        return []
+    return sorted(p.name for p in PROJECTS_DIR.iterdir() if p.is_dir())
+
+
+def sync_projects(index: dict) -> bool:
+    """Refresh ``index['projects']`` from the ``Projects/`` folder listing.
+
+    Returns ``True`` if the index changed, so the caller can decide whether to
+    persist it. The folder listing is authoritative: projects whose folder no
+    longer exists are dropped, newly created folders are added.
+    """
+    detected = detect_projects()
+    if index.get("projects") != detected:
+        index["projects"] = detected
+        return True
+    return False
 
 
 # --- Note helpers ------------------------------------------------------------
@@ -368,6 +397,14 @@ def main(commit: bool = True) -> int:
     processing_date = date.today().isoformat()
     system_prompt = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
     client = Anthropic()  # reads ANTHROPIC_API_KEY from the environment
+
+    # Sync the active-project list from the Projects/ folder before filing, so
+    # the LLM classifies against the projects that actually exist on disk. Each
+    # note in process_notes reloads the index from disk, so persist the change.
+    index = load_index()
+    if sync_projects(index):
+        save_index(index)
+        print(f"Detected projects: {index['projects'] or '(none)'}")
 
     print(f"Processing {len(inbox_notes)} note(s) from Inbox...")
     outcomes = process_notes(client, system_prompt, inbox_notes, processing_date)

@@ -82,8 +82,11 @@ Applied strictly in order; stop at the first match:
 3. **Reference** material or general knowledge → `Resources/`
 4. **Inactive or completed** → `Archive/`
 
-Projects are added to the index **manually by the user**. The LLM only files
-into a project that already exists in the index.
+Active projects are **auto-detected** at the start of each run by listing the
+immediate subfolders of `Projects/`; the result replaces the `projects` array in
+the index (the folder listing is authoritative). The user creates a project
+simply by making a folder under `Projects/`. The LLM only files into a project
+that already exists in the index.
 
 ## `vault.index.json` schema
 
@@ -98,7 +101,8 @@ The index is the LLM's **only** source of truth about the vault's contents.
 }
 ```
 
-- `projects` — active projects, maintained **manually** by the user.
+- `projects` — active projects, **auto-detected** from the subfolders of
+  `Projects/` at the start of every run (the folder listing is authoritative).
 - `domains` — canonical list of all domains in use.
 - `tags` — canonical list of all tags in use.
 - `notes` — one entry per filed note:
