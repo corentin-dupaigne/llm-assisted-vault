@@ -136,6 +136,22 @@ project: <project name or null>
 ---
 ```
 
+### Merging with existing frontmatter
+
+A captured note may already carry its own frontmatter (e.g. an Obsidian/Dataview
+template with fields like `difficulty` or `struggled`). These five fields are
+therefore **merged**, not prepended, by `merge_frontmatter`:
+
+- An existing field — **mandatory or not** — is kept **verbatim** and never
+  overridden. If the note already defines `tags: []`, that value stays, even
+  though the model proposed tags.
+- Every **missing** mandatory field is added.
+- The result is always a **single** `---` block (the old behaviour stacked a
+  second block on top of the existing one).
+
+The index entry mirrors each note's *effective* metadata: for any mandatory
+field the note already defined, the existing value wins over the model's.
+
 If wikilinks were identified, a `## Links` section is appended at the very end
 of the note:
 
