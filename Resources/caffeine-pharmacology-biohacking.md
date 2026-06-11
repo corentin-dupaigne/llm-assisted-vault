@@ -1,7 +1,14 @@
+---
+domain: biohacking
+tags: [pharmacology, nootropics, sleep, genetics, nutrition]
+date: 2026-06-11
+para: Resources
+project: null
+---
 ![[Pasted image 20260201232033.png]]
 Caffeine is the most widely consumed psychoactive substance globally. In pharmacological biohacking, it is used as a primary stimulant to enhance vigilance, reaction time, and metabolic rate.
 
----
+______________________________________________________________________
 
 ## 1. Primary Mechanisms of Action
 
@@ -12,7 +19,7 @@ Caffeine's effects are primarily mediated through its interaction with adenosine
 - **Catecholamine Release:** Caffeine triggers the release of epinephrine (adrenaline) and norepinephrine, which increases heart rate, blood pressure, and blood flow to the muscles.
 - **Phosphodiesterase Inhibition:** At higher concentrations, caffeine inhibits the enzyme phosphodiesterase, leading to increased levels of cyclic AMP (cAMP), which can enhance fat oxidation and cellular energy signaling.
 
----
+______________________________________________________________________
 
 ## 2. Documented Benefits
 
@@ -23,22 +30,22 @@ Caffeine is one of the few "nootropics" with a vast body of gold-standard clinic
 - **Memory Consolidation:** Emerging research (2024-2026) suggests that caffeine intake _after_ learning a task can improve long-term memory retention (pattern separation).
 - **Physical Performance:** Acts as a potent ergogenic aid by reducing the perception of effort (RPE) and increasing power output.
 
----
+______________________________________________________________________
 
 ## 3. Pharmacokinetics and Genetics
 
 The way an individual responds to caffeine is heavily dictated by their genetic profile.
 
 - **The Half-Life:** In healthy adults, the half-life of caffeine is approximately **4 to 6 hours**. This means if you consume 200mg at 13:00, 100mg remains in your blood at 19:00, and 50mg at 01:00.
-- **The CYP1A2 Gene:** This liver enzyme is responsible for 95% of caffeine metabolism.
-    
-    - **Fast Metabolizers (AA Genotype):** Clear caffeine quickly and usually experience the most performance benefits with the fewest side effects.
-    - **Slow Metabolizers (AC/CC Genotype):** Clear caffeine slowly; they are more prone to prolonged jitters, anxiety, and sleep disruption.
-        
-- **ADORA2A Gene:** Variations in this gene determine how sensitive your brain's receptors are to caffeine. Some individuals experience high anxiety even with low doses.
-    
 
----
+- **The CYP1A2 Gene:** This liver enzyme is responsible for 95% of caffeine metabolism.
+
+  - **Fast Metabolizers (AA Genotype):** Clear caffeine quickly and usually experience the most performance benefits with the fewest side effects.
+  - **Slow Metabolizers (AC/CC Genotype):** Clear caffeine slowly; they are more prone to prolonged jitters, anxiety, and sleep disruption.
+
+- **ADORA2A Gene:** Variations in this gene determine how sensitive your brain's receptors are to caffeine. Some individuals experience high anxiety even with low doses.
+
+______________________________________________________________________
 
 ## 4. Administration and Dosage
 
@@ -51,7 +58,7 @@ Current 2026 clinical guidelines (FDA and EFSA) maintain established safety thre
 |**Lethal Dose**|Approximately 10,000mg (unattainable via standard beverages).|
 |**Tolerance/Cycling**|Habitual use leads to "upregulation" of adenosine receptors. A 48-hour reset is recommended weekly.|
 
----
+______________________________________________________________________
 
 ## 5. Potential Side Effects and Risks
 
