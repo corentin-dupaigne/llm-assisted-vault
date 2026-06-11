@@ -54,11 +54,5 @@ fmt.Println(maps.Equal(a, b))  // true
 
 ## Links
 
-- [[Go Loops And Range Iteration]]
-- [[Contains Duplicate]]
-- [[Valid Anagram]]
-
-## Links
-
 - [[golang-loops|Golang Loops And Range]]
 - [[contains-duplicate|Contains Duplicate]]
