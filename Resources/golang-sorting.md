@@ -1,3 +1,10 @@
+---
+domain: golang
+tags: []
+date: 2026-06-11
+para: Resources
+project: null
+---
 ## Primitive slices
 
 ```go
@@ -8,7 +15,7 @@ slices.Sort([]string{"b", "c", "a"})    // [a b c]
 slices.Sort([]float64{3.14, 1.41})      // [1.41 3.14]
 ```
 
----
+______________________________________________________________________
 
 ## Reverse
 
@@ -17,7 +24,7 @@ slices.Sort(s)
 slices.Reverse(s)
 ```
 
----
+______________________________________________________________________
 
 ## Custom sort (structs)
 
@@ -32,3 +39,8 @@ sort.Slice(people, func(i, j int) bool {
     return people[i].Age < people[j].Age
 })
 ```
+
+## Links
+
+- [[golang-slices|Golang Slices]]
+- [[golang-arrays|Golang Array]]

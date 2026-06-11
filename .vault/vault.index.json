@@ -164,6 +164,46 @@
       "para": "Projects",
       "project": "neetcode-150",
       "date": "2026-06-11"
+    },
+    {
+      "title": "Group Anagrams",
+      "path": "Projects/neetcode-150/group-anagrams.md",
+      "domain": "leetcode",
+      "tags": [
+        "array-hashing",
+        "hashmap",
+        "golang"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-11"
+    },
+    {
+      "title": "Golang Array",
+      "path": "Resources/golang-arrays.md",
+      "domain": "golang",
+      "tags": [],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-11"
+    },
+    {
+      "title": "Golang Slices",
+      "path": "Resources/golang-slices.md",
+      "domain": "golang",
+      "tags": [],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-11"
+    },
+    {
+      "title": "Golang Sorting",
+      "path": "Resources/golang-sorting.md",
+      "domain": "golang",
+      "tags": [],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-11"
     }
   ]
 }

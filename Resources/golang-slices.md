@@ -1,8 +1,15 @@
+---
+domain: golang
+tags: []
+date: 2026-06-11
+para: Resources
+project: null
+---
 A slice is a dynamic view into an underlying array. It has three components: a **pointer** to the array, a **length**, and a **capacity**.
 
 In practice, slices are what you use 95% of the time instead of arrays.
 
----
+______________________________________________________________________
 
 ## Declaration & init
 
@@ -25,7 +32,7 @@ a := [5]int{1, 2, 3, 4, 5}
 s := a[1:4]  // [2 3 4]
 ```
 
----
+______________________________________________________________________
 
 ## Length and capacity
 
@@ -39,7 +46,7 @@ fmt.Println(cap(s))  // 10 — total space in underlying array
 // len <= cap always
 ```
 
----
+______________________________________________________________________
 
 ## Access & update
 
@@ -56,7 +63,7 @@ s[1] = 99  // [10 99 30]
 fmt.Println(s[len(s)-1])  // 30
 ```
 
----
+______________________________________________________________________
 
 ## append
 
@@ -76,7 +83,7 @@ s = append(s, other...)  // [1 2 3 4 5 6 7 8 9]
 
 When `append` exceeds capacity, Go allocates a new larger array and copies the data. The growth factor is roughly 2x for small slices.
 
----
+______________________________________________________________________
 
 ## Slicing (sub-slices)
 
@@ -92,7 +99,7 @@ s[:]     // [0 1 2 3 4] — full slice
 s[1:3:4]  // len=2, cap=3 (limits how far append can reach into original)
 ```
 
----
+______________________________________________________________________
 
 ## copy
 
@@ -111,7 +118,7 @@ fmt.Println(dst)  // [99 2 3]
 
 `copy` copies `min(len(dst), len(src))` elements — the shorter slice wins.
 
----
+______________________________________________________________________
 
 ## delete an element
 
@@ -129,7 +136,8 @@ s[i] = s[len(s)-1]
 s = s[:len(s)-1]  // [1 2 5 4]
 ```
 
----
+______________________________________________________________________
+
 ### Contains
 
 ```go
@@ -148,7 +156,8 @@ import "slices"
 slices.Contains(s, target)
 ```
 
----
+______________________________________________________________________
+
 ## Slices are reference types
 
 ```go
@@ -166,3 +175,8 @@ copy(c, a)
 c := slices.Clone(a)
 ```
 
+## Links
+
+- [[golang-arrays|Golang Array]]
+- [[golang-maps|Golang Maps Cheatsheet]]
+- [[golang-loops|Golang Loops And Range]]
