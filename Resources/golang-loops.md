@@ -1,3 +1,10 @@
+---
+domain: golang
+tags: []
+date: 2026-06-11
+para: Resources
+project: null
+---
 ## Basic
 
 ```go
@@ -43,3 +50,8 @@ for k, v := range m {
 for i, r := range "héllo" {
     fmt.Printf("%d: %c\n", i, r)
 }
+
+## Links
+
+- [[contains-duplicate|Contains Duplicate]]
+```
