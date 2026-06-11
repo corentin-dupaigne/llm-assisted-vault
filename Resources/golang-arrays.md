@@ -1,8 +1,15 @@
+---
+domain: golang
+tags: []
+date: 2026-06-11
+para: Resources
+project: null
+---
 Arrays in Go have a **fixed size** defined at compile time. The size is part of the type — `[3]int` and `[5]int` are two different types.
 
 In practice, arrays are rarely used directly — slices are preferred. But understanding arrays is necessary to understand slices.
 
----
+______________________________________________________________________
 
 ## Declaration & init
 
@@ -23,7 +30,7 @@ a := [5]int{1, 2}  // [1 2 0 0 0]
 a := [5]int{0: 10, 4: 99}  // [10 0 0 0 99]
 ```
 
----
+______________________________________________________________________
 
 ## Access & update
 
@@ -40,7 +47,7 @@ a[1] = 99  // [10 99 30]
 fmt.Println(len(a))  // 3
 ```
 
----
+______________________________________________________________________
 
 ## Iteration
 
@@ -63,7 +70,7 @@ for _, v := range a {
 }
 ```
 
----
+______________________________________________________________________
 
 ## Arrays are value types
 
@@ -90,7 +97,7 @@ func double(a *[3]int) {
 double(&a)
 ```
 
----
+______________________________________________________________________
 
 ## Comparison
 
@@ -106,7 +113,7 @@ fmt.Println(a == c)  // false
 // fmt.Println(a == [5]int{1, 2, 3})
 ```
 
----
+______________________________________________________________________
 
 ## Multi-dimensional arrays
 
@@ -131,7 +138,8 @@ for _, row := range matrix {
 }
 ```
 
----
+______________________________________________________________________
+
 ## From array to slice
 
 A slice is just a window into an array. You can create a slice from an array:
@@ -145,3 +153,8 @@ s[0] = 99       // modifies a too!
 fmt.Println(a)  // [1 99 3 4 5]
 fmt.Println(s)  // [99 3 4]
 ```
+
+## Links
+
+- [[golang-loops|Golang Loops And Range]]
+- [[golang-maps|Golang Maps Cheatsheet]]

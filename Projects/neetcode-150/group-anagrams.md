@@ -3,10 +3,14 @@ difficulty: medium
 neetcode_section: Array & Hashing
 struggled: false
 project: neetcode-150
+domain: leetcode
+tags: [array-hashing, hashmap, golang]
+date: 2026-06-11
+para: Projects
 ---
 ## Initial Intuition
 
-Mon idée naïve de la solution au problème est que je peux utiliser une hashmap de la forme key:int, value:[]int la clef serait un mot de la liste sorted et la value serait un tableau contenant tous les anagrammes de ce mot qui sont dans la liste de mots passés en input. 
+Mon idée naïve de la solution au problème est que je peux utiliser une hashmap de la forme key:int, value:[]int la clef serait un mot de la liste sorted et la value serait un tableau contenant tous les anagrammes de ce mot qui sont dans la liste de mots passés en input.
 
 Pour se faire je vais donc simplement iterer sur chaque mot et pour chaque mot je vais, dans la hashmap, ajouter le mot dans le array à la clef correspondante à sa version sorted.
 
@@ -83,7 +87,9 @@ func groupAnagrams(strs []string) [][]string {
 - ll faut garder en tete qu'il est possible d'utiliser des array comme clef de hashmap en go. Egalement prendre profit du fait que le nombre de lettre dans l'alphabet est deterministe.
 - Quand je dois regrouper des ensembles de string selon un critere commun tel que des anagrames je peux prendre profit du fait qu'il y a 26 lettres dans l'alphabet pour ainsi utiliser un array d'iteration comme clef pour une hashmap contenant les groupes.
 
+## Links
 
-
-
-
+- [[valid-anagram|Valid Anagram]]
+- [[contains-duplicate|Contains Duplicate]]
+- [[two-sum|Two Sum]]
+- [[golang-maps|Golang Maps Cheatsheet]]
