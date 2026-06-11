@@ -9,7 +9,7 @@ project: null
 
 Each instruction in a `Dockerfile`, such as `RUN`, `COPY`, or `ADD`, adds a permanent storage layer to the image stack. These layers are strictly immutable, meaning they can never be modified once they are created. It is important to remember that if a specific layer is changed, Docker must rebuild every layer that follows it in the `Dockerfile` because the foundation above that change has been invalidated. Because of this immutability, it is not truly possible to delete content from a previous layer; a "deletion" only hides the file in the current view while the data remains in the underlying layers. The storage driver, usually `overlay2`, manages this complexity by stacking these layers and presenting them as a single, unified file system to the user.
 
----
+______________________________________________________________________
 
 ### The Writable Container Layer
 
@@ -17,19 +17,19 @@ When a container is launched from an image, Docker adds a thin, Writable Layer o
 
 ![[Pasted image 20260123230359.png]]
 
----
+______________________________________________________________________
 
 ### Copy-on-Write (CoW)
 
 The Copy-on-Write strategy is the mechanism that allows a container to appear as if it is modifying an image. When a process inside the container attempts to modify a file that exists in a read-only layer, the storage driver first searches the stack from the top down to locate the file. Once found, Docker copies the entire file up to the Writable Layer before any changes are applied. From that point forward, the version in the Writable Layer "shadows" the original, meaning that the container only sees the new version while the original remains untouched in the layer below. This process also handles deletions by creating "whiteout" markers in the top layer that signal the file system to ignore the file in the lower layers.
 
----
+______________________________________________________________________
 
 ### Layer Caching and Reusability
 
 The layered architecture is specifically designed to optimize build speed and minimize disk usage through caching and sharing. During the build process, Docker checks its local cache to see if a layer with the exact same instruction and parent already exists, allowing it to skip redundant tasks. Furthermore, because the base layers are read-only, they can be safely shared across different images on the same host machine. For example, if multiple applications are built on the same version of Alpine Linux, the physical files for that operating system are stored only once on the disk, significantly reducing storage overhead.
 
----
+______________________________________________________________________
 
 ### Summary of File Operations
 

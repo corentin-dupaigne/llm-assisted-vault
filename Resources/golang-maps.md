@@ -1,5 +1,12 @@
-domain: golang
 ---
+domain: golang
+tags: [hashmap]
+date: 2026-06-11
+para: Resources
+project: null
+---
+## domain: golang
+
 ## Basic operations
 
 ```go
@@ -50,3 +57,8 @@ fmt.Println(maps.Equal(a, b))  // true
 - [[Go Loops And Range Iteration]]
 - [[Contains Duplicate]]
 - [[Valid Anagram]]
+
+## Links
+
+- [[golang-loops|Golang Loops And Range]]
+- [[contains-duplicate|Contains Duplicate]]

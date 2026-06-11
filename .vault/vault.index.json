@@ -1,6 +1,169 @@
 {
-  "projects": [],
-  "domains": [],
-  "tags": [],
-  "notes": []
+  "projects": [
+    "neetcode-150"
+  ],
+  "domains": [
+    "biohacking",
+    "leetcode",
+    "docker",
+    "golang",
+    "textile-science"
+  ],
+  "tags": [
+    "pharmacology",
+    "nootropics",
+    "sleep",
+    "genetics",
+    "nutrition",
+    "array-hashing",
+    "hashmap",
+    "golang",
+    "containerization",
+    "devops",
+    "storage",
+    "apparel",
+    "biohacking",
+    "performance"
+  ],
+  "notes": [
+    {
+      "title": "Caffeine Pharmacology And Biohacking",
+      "path": "Resources/caffeine-pharmacology-biohacking.md",
+      "domain": "biohacking",
+      "tags": [
+        "pharmacology",
+        "nootropics",
+        "sleep",
+        "genetics",
+        "nutrition"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-11"
+    },
+    {
+      "title": "Contains Duplicate",
+      "path": "Projects/neetcode-150/contains-duplicate.md",
+      "domain": "leetcode",
+      "tags": [
+        "array-hashing",
+        "hashmap",
+        "golang"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-10"
+    },
+    {
+      "title": "Docker Image Layers And Copy On Write",
+      "path": "Resources/docker-image-layers-cow.md",
+      "domain": "docker",
+      "tags": [
+        "containerization",
+        "devops",
+        "storage"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-05"
+    },
+    {
+      "title": "Golang Loops And Range",
+      "path": "Resources/golang-loops.md",
+      "domain": "golang",
+      "tags": [],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-11"
+    },
+    {
+      "title": "Golang Maps Cheatsheet",
+      "path": "Resources/golang-maps.md",
+      "domain": "golang",
+      "tags": [
+        "hashmap"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-11"
+    },
+    {
+      "title": "L Theanine Pharmacology And Biohacking",
+      "path": "Resources/l-theanine-pharmacology-biohacking.md",
+      "domain": "biohacking",
+      "tags": [
+        "pharmacology",
+        "nootropics",
+        "sleep",
+        "nutrition"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-11"
+    },
+    {
+      "title": "Merino Wool Sock Material Science And Recommendations",
+      "path": "Resources/merino-wool-socks-guide.md",
+      "domain": "textile-science",
+      "tags": [
+        "apparel",
+        "biohacking"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-11"
+    },
+    {
+      "title": "Rhodiola Rosea Pharmacology And Biohacking",
+      "path": "Resources/rhodiola-rosea-pharmacology-biohacking.md",
+      "domain": "biohacking",
+      "tags": [
+        "pharmacology",
+        "nootropics",
+        "nutrition"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-11"
+    },
+    {
+      "title": "Two Sum",
+      "path": "Projects/neetcode-150/two-sum.md",
+      "domain": "leetcode",
+      "tags": [
+        "array-hashing",
+        "hashmap",
+        "golang"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-10"
+    },
+    {
+      "title": "Underwear Material Science And Reproductive Health",
+      "path": "Resources/underwear-material-science-reproductive-health.md",
+      "domain": "textile-science",
+      "tags": [
+        "apparel",
+        "biohacking",
+        "performance"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-05"
+    },
+    {
+      "title": "Valid Anagram",
+      "path": "Projects/neetcode-150/valid-anagram.md",
+      "domain": "leetcode",
+      "tags": [
+        "array-hashing",
+        "hashmap",
+        "golang"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-11"
+    }
+  ]
 }
