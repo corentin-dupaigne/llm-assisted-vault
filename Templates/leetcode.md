@@ -1,9 +1,8 @@
 ---
 difficulty: easy | medium | hard
-tags: []
 neetcode_section: ""
 struggled: false
-project:
+project: neetcode-150
 ---
 ## Initial Intuition
 

@@ -68,8 +68,4 @@ To achieve a balance of professional utility and reproductive optimization, the 
 
 ## Links
 
-- [[Recommended Socks]]
-
-## Links
-
 - [[merino-wool-socks-guide|Merino Wool Sock Material Science And Recommendations]]

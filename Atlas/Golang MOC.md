@@ -1,16 +1,11 @@
-<%*
-const title = await tp.system.prompt("MOC title?")
-const theme = await tp.system.prompt("Theme (lowercase, hyphen-separated)?")
-await tp.file.rename(title + " MOC")
-_%>
 ---
 type: moc
-theme: <% theme %>
-created: <% tp.date.now("YYYY-MM-DD") %>
+theme: golang
+created: 2026-06-11
 ---
-# <% title %> — Map of Content
+# Golang — Map of Content
 
-> [!info] Navigation map for the **<% title %>** theme.
+> [!info] Navigation map for the **Golang** theme.
 > The lists below populate automatically from each note's metadata.
 > There is nothing to maintain by hand. Requires the **Dataview** plugin.
 
