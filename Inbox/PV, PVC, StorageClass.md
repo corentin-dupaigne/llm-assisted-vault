@@ -1,3 +1,7 @@
+---
+project: cka
+para: Resources
+---
 ## Persistent Volume
 
 A cluster resource representing an actual piece of storage that exists, pointing to where the data physically lives.
