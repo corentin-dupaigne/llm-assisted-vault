@@ -329,6 +329,58 @@ def resolve_safe_target(target_path: str) -> Path | None:
     return candidate
 
 
+def build_target_path(para: str, project: str | None, filename: str) -> str | None:
+    """Compose a repo-relative target path from placement fields + filename.
+
+    ``Projects`` notes live one subfolder deep (``Projects/<project>/file.md``);
+    the other PARA roots are flat. Returns a POSIX path string, or ``None`` when
+    the inputs are inconsistent (an unknown root, a missing filename, or
+    ``para == "Projects"`` with no project). Path *safety* — escapes, forbidden
+    roots — is still enforced afterwards by ``resolve_safe_target``.
+    """
+    if para not in ALLOWED_PARA_ROOTS or not filename:
+        return None
+    if para == "Projects":
+        if not project:
+            return None
+        return f"Projects/{project}/{filename}"
+    return f"{para}/{filename}"
+
+
+def reconcile_placement(original: str, model_para: str,
+                        model_project: str | None) -> tuple[str, str | None]:
+    """Let a note's own frontmatter override the model's placement.
+
+    Returns the ``(para, project)`` that win. A note captured with an explicit
+    ``para`` (and optionally ``project``) is filed where it says, not where the
+    model guessed — this is the deterministic, opt-in escape hatch for the cases
+    where the human disagrees with the classifier (e.g. durable reference that
+    relates to an active project but belongs in ``Resources``). Rules:
+
+    - an explicit valid ``para`` in the note wins;
+    - rerouting to a *different* root than the model chose drops the model's
+      project association — a flat root (Areas/Resources/Archive) carries none;
+    - an explicit ``project`` in the note wins over the model's.
+
+    A non-``Projects`` root is forced to ``project = None``; the caller rejects
+    the incoherent ``Projects``-without-a-project case.
+    """
+    inner, _ = split_frontmatter(original)
+    user_fm = parse_frontmatter(inner)[1] if inner else {}
+
+    para, project = model_para, model_project
+    user_para = user_fm.get("para")
+    if user_para in ALLOWED_PARA_ROOTS:
+        para = user_para
+        if user_para != model_para:
+            project = None
+    if "project" in user_fm:
+        project = user_fm["project"] or None
+    if para != "Projects":
+        project = None
+    return para, project
+
+
 def unique_destination(dest: Path) -> Path:
     """Never overwrite an already-filed note (immutability). Add a suffix."""
     if not dest.exists():
@@ -410,13 +462,35 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
 
     original = md_file.read_text(encoding="utf-8")
 
+    # Capture-time placement override: a note's own frontmatter wins over the
+    # model for where it is filed. Reconcile para/project *before* merging so the
+    # written frontmatter, the physical destination and the index all agree.
+    # Rules: an explicit `para`/`project` in the note overrides the model's; a
+    # reroute to a *different* root drops the model's project (a flat root carries
+    # none); and `Projects` without a project is incoherent → rejected below.
+    para, project = reconcile_placement(original, para, project)
+
+    placement = build_target_path(para, project, dest.name)
+    if placement is None:
+        print(f"  ! Rejected {md_file.name}: inconsistent placement override "
+              f"(para={para!r}, project={project!r}). Left in Inbox.")
+        return None
+    dest = resolve_safe_target(placement)
+    if dest is None:
+        print(f"  ! Rejected placement '{placement}' for {md_file.name}: outside "
+              f"allowed PARA roots. Left in Inbox.")
+        return None
+
     # Merge the mandatory metadata into any frontmatter the note already carries
     # (templated notes bring their own); existing fields are kept verbatim, only
-    # missing mandatory ones are added — so we never stack two `---` blocks.
+    # missing mandatory ones are added — so we never stack two `---` blocks. The
+    # reconciled para/project are passed in so a freshly added project field is
+    # coherent with the chosen root.
     frontmatter, note_body, effective = merge_frontmatter(
         original, domain=domain, tags=tags, date=processing_date,
         para=para, project=project,
     )
+
     title = extract_title(note_body, md_file.stem)
 
     # Format the Markdown body (captured content + generated Links section) but

@@ -88,6 +88,42 @@ the index (the folder listing is authoritative). The user creates a project
 simply by making a folder under `Projects/`. The LLM only files into a project
 that already exists in the index.
 
+### Capture-time placement override (deterministic escape hatch)
+
+The hierarchy is an LLM judgment call, so it is *non-deterministic* — the same
+note could classify differently on different runs, and the model's notion of
+"tied to an active project" is broad enough to pull durable reference material
+into a project just because a related project is active (e.g. Kubernetes
+PV/PVC concept notes vacuumed into a `cka` exam-prep project).
+
+To take back control without re-prompting, the user may **declare placement in
+the captured note's own frontmatter**. It is opt-in (only reach for it when you
+disagree with the classifier) so frictionless capture is preserved:
+
+```yaml
+---
+para: Resources        # I decide: durable reference, not project work
+---
+```
+
+`reconcile_placement` then lets the note's own `para`/`project` win over the
+model's choice for the **physical destination, the written frontmatter, and the
+index entry** — all three stay consistent. Rules:
+
+- An explicit, valid `para` in the note overrides the model's.
+- Rerouting to a *different* root than the model picked **drops** the model's
+  project association — a flat root (Areas/Resources/Archive) never carries a
+  project. An explicit `project` in the note also wins.
+- `para: Projects` with no resolvable project is incoherent → the note is
+  **rejected and left in the Inbox** rather than filed approximately.
+
+The LLM is still called for enrichment (domain, tags, wikilinks); only the
+placement decision is taken over. The model keeps the destination only when the
+note declares no override. This also closes a latent inconsistency: previously a
+note could declare `para: Resources` in its frontmatter (which `merge_frontmatter`
+keeps verbatim) yet be filed into `Projects/<x>/` by the model, leaving the
+file's location at odds with its own metadata.
+
 ## `vault.index.json` schema
 
 The index is the LLM's **only** source of truth about the vault's contents.

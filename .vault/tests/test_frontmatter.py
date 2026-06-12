@@ -127,3 +127,71 @@ def test_apply_filed_merges_templated_note_end_to_end(vault):
     assert entry["tags"] == []
     assert entry["domain"] == "leetcode"
     assert "golang" not in index["tags"]
+
+
+def test_capture_time_para_override_wins_over_model_placement(vault):
+    """A note that declares its own `para` is filed there, not where the model
+    chose — keeping the file's location consistent with its frontmatter/index."""
+    note = vault.drop_note(
+        "pv-pvc.md",
+        "---\n"
+        "para: Resources\n"
+        "---\n"
+        "\n# PV, PVC, StorageClass\n\nDurable Kubernetes reference.\n",
+    )
+    # The model, seeing an active `cka` project, wants this under Projects/cka/.
+    decision = {
+        "status": "filed",
+        "reason": "Relates to the active cka project.",
+        "target_path": "Projects/cka/kubernetes-persistent-volumes.md",
+        "domain": "kubernetes",
+        "tags": ["storage"],
+        "para": "Projects",
+        "project": "cka",
+        "wikilinks": [],
+    }
+    index = vault.read_index()
+
+    outcome = vault.module.apply_filed(note, decision, index, "2026-06-10")
+    assert outcome["status"] == "filed"
+
+    # Filed under Resources/, keeping the model's basename; the Projects/ path is
+    # never created and the Inbox note is gone.
+    assert outcome["target_path"] == "Resources/kubernetes-persistent-volumes.md"
+    assert (vault.root / outcome["target_path"]).exists()
+    assert not (vault.root / "Projects" / "cka").exists()
+    assert not note.exists()
+
+    # Frontmatter and index agree with the override.
+    written = (vault.root / outcome["target_path"]).read_text(encoding="utf-8")
+    assert "para: Resources" in written and "para: Projects" not in written
+    entry = index["notes"][-1]
+    assert entry["para"] == "Resources"
+    assert entry["project"] is None
+
+
+def test_inconsistent_override_projects_without_project_is_rejected(vault):
+    """`para: Projects` with no project is incoherent — the note stays in Inbox."""
+    note = vault.drop_note(
+        "stray.md",
+        "---\n"
+        "para: Projects\n"
+        "---\n"
+        "\n# Stray\n\nNo project declared.\n",
+    )
+    decision = {
+        "status": "filed",
+        "reason": "Reference material.",
+        "target_path": "Resources/stray.md",
+        "domain": "kubernetes",
+        "tags": [],
+        "para": "Resources",
+        "project": None,
+        "wikilinks": [],
+    }
+    index = vault.read_index()
+
+    outcome = vault.module.apply_filed(note, decision, index, "2026-06-10")
+    assert outcome is None
+    assert note.exists()  # left untouched in the Inbox
+    assert index["notes"] == []
