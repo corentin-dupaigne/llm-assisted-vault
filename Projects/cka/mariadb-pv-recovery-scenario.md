@@ -1,19 +1,22 @@
 ---
 project: cka
 para: Projects
+domain: devops
+tags: [kubernetes, storage]
+date: 2026-06-12
 ---
-
 > [!question] Scenario
 > A user accidentally deleted the MariaDB Deployment in the `mariadb` namespace. The deployment was configured with persistent storage. Your responsibility is to re-establish the deployment while ensuring data is preserved by reusing the available PersistentVolume.
 
 > [!todo] Task
 > A PersistentVolume already exists and is **retained** for reuse. Only one PV exists.
+>
 > - Create a PVC named `mariadb` in the `mariadb` namespace: Access Mode `ReadWriteOnce`, Storage `250Mi`
 > - Edit `~/mariadb-deploy.yaml` to use that PVC
 > - Apply the updated Deployment
 > - Ensure the Deployment is running and stable
 
----
+______________________________________________________________________
 
 ## Solution
 
@@ -39,9 +42,11 @@ Key fields to read off:
 
 > [!info] If the PV were `Released` instead of `Available`
 > A retained PV whose old PVC was deleted keeps a stale `claimRef` and shows `Released` — it will **not** bind to a new PVC until you clear it:
+>
 > ```bash
 > kubectl patch pv mariadb-pv -p '{"spec":{"claimRef": null}}'
 > ```
+>
 > Here the PV is already `Available`, so this step is **not needed**.
 
 ### 2. Create the PVC
@@ -77,8 +82,9 @@ kubectl get pvc -n mariadb
 
 > [!warning] If the PVC stays `Pending`
 > The two usual culprits, in order:
+>
 > 1. `storageClassName` mismatch — `standard` vs `Standard` (case-sensitive), or accidentally omitted (k3s/default clusters inject the default class instead).
-> 2. A `Released` PV with a stale `claimRef` (see callout above).
+> 1. A `Released` PV with a stale `claimRef` (see callout above).
 
 ### 3. Wire the Deployment to the PVC
 
@@ -116,6 +122,7 @@ spec:
 ```
 
 > [!note] Wiring checklist
+>
 > - `volumes[].name` (`mariadb-storage`) must equal `volumeMounts[].name`.
 > - `claimName` must equal the PVC name (`mariadb`).
 > - Deployment `metadata.namespace` must be `mariadb`.
@@ -136,7 +143,7 @@ kubectl describe pod -n mariadb -l app=mariadb   # confirm volume mounted
 kubectl logs -n mariadb -l app=mariadb           # confirm MariaDB started clean
 ```
 
----
+______________________________________________________________________
 
 ## Key concepts
 
@@ -159,3 +166,8 @@ kubectl logs -n mariadb -l app=mariadb           # confirm MariaDB started clean
 | `standard` (named) | matches a PV labelled `standard`, or provisions via that class |
 | *omitted* | default class injected (≠ no class) — **wrong here**, would miss the PV |
 | `""` | no class, no default — binds only to a *classless* PV |
+
+## Links
+
+- [[kubernetes-persistent-volumes-pvc-storageclass|Pv, Pvc, Storageclass]]
+- [[cka-prep-workflow-killercoda|Dumb It Guy Questions Setup]]
