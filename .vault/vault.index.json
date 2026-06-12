@@ -1,5 +1,6 @@
 {
   "projects": [
+    "cka",
     "neetcode-150"
   ],
   "domains": [
@@ -7,7 +8,8 @@
     "leetcode",
     "docker",
     "golang",
-    "textile-science"
+    "textile-science",
+    "devops"
   ],
   "tags": [
     "pharmacology",
@@ -23,7 +25,8 @@
     "storage",
     "apparel",
     "biohacking",
-    "performance"
+    "performance",
+    "kubernetes"
   ],
   "notes": [
     {
@@ -204,6 +207,41 @@
       "para": "Resources",
       "project": null,
       "date": "2026-06-11"
+    },
+    {
+      "title": "Dumb It Guy Questions Setup",
+      "path": "Projects/cka/cka-prep-workflow-killercoda.md",
+      "domain": "devops",
+      "tags": [
+        "kubernetes"
+      ],
+      "para": "Projects",
+      "project": "cka",
+      "date": "2026-06-12"
+    },
+    {
+      "title": "Pv, Pvc, Storageclass",
+      "path": "Resources/kubernetes-persistent-volumes-pvc-storageclass.md",
+      "domain": "devops",
+      "tags": [
+        "kubernetes",
+        "storage"
+      ],
+      "para": "Resources",
+      "project": "cka",
+      "date": "2026-06-12"
+    },
+    {
+      "title": "STATUS must be Bound, VOLUME must be mariadb-pv",
+      "path": "Projects/cka/mariadb-pv-recovery-scenario.md",
+      "domain": "devops",
+      "tags": [
+        "kubernetes",
+        "storage"
+      ],
+      "para": "Projects",
+      "project": "cka",
+      "date": "2026-06-12"
     }
   ]
 }
