@@ -3,11 +3,16 @@ difficulty: medium
 neetcode_section: Array & Hashing
 struggled: true
 project: neetcode-150
+domain: leetcode
+tags: [array-hashing, hashmap, golang]
+date: 2026-06-12
+para: Projects
 ---
 ## Initial Intuition
 
 - Mon intuition naive est qu'il est possible de faire une double boucle ou pour chaque nombre nombre de l'array de nombre je cherche son nombre d'iteration puis ajoute dans une hashmap frequency ou key: frequency, value: array de nombre. Par exemple si 3 et 2 apparaissent 2x alors: m[1] = [3, 2]. Le souci est que cela creerait une complexite de O(n2) ce qui n'est pas optimal.
 - Il faudrait pouvoir obtenir une map ou array de frequency en un seul passage.
+
 ## My Solution
 
 ```go
@@ -56,6 +61,7 @@ func topKFrequent(nums []int, k int) []int {
 // Space: O(?)
 
 ```
+
 ## Delta
 
 Ma methode est optimale en temps mais la methode de trie par frequence avec heap permet d'etre optimale en space.
@@ -66,3 +72,11 @@ Quand la clé de tri est un entier dans un intervalle borné et connu → indexe
 
 > [!info] Indexation par clé
 > **Indexer par clé** = utiliser la valeur elle-même comme **position (index)** dans un tableau, au lieu de la stocker et de la retrouver par comparaison.
+
+## Links
+
+- [[bucket-sort|Bucket Sort Algorithm]]
+- [[contains-duplicate|Contains Duplicate]]
+- [[two-sum|Two Sum]]
+- [[golang-maps|Golang Maps Cheatsheet]]
+- [[golang-slices|Golang Slices]]
