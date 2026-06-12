@@ -1,5 +1,7 @@
 [
   "dataview",
   "obsidian-icon-folder",
-  "templater-obsidian"
+  "templater-obsidian",
+  "obsidian-vimrc-support",
+  "obsidian-auto-link-title"
 ]
