@@ -9,7 +9,7 @@
     "docker",
     "golang",
     "textile-science",
-    "devops"
+    "kubernetes"
   ],
   "tags": [
     "pharmacology",
@@ -26,7 +26,7 @@
     "apparel",
     "biohacking",
     "performance",
-    "kubernetes"
+    "cka"
   ],
   "notes": [
     {
@@ -211,9 +211,9 @@
     {
       "title": "Dumb It Guy Questions Setup",
       "path": "Projects/cka/cka-prep-workflow-killercoda.md",
-      "domain": "devops",
+      "domain": "kubernetes",
       "tags": [
-        "kubernetes"
+        "devops, cka"
       ],
       "para": "Projects",
       "project": "cka",
@@ -222,9 +222,9 @@
     {
       "title": "Pv, Pvc, Storageclass",
       "path": "Resources/kubernetes-persistent-volumes-pvc-storageclass.md",
-      "domain": "devops",
+      "domain": "kubernetes",
       "tags": [
-        "kubernetes",
+        "devops",
         "storage"
       ],
       "para": "Resources",
@@ -234,10 +234,11 @@
     {
       "title": "STATUS must be Bound, VOLUME must be mariadb-pv",
       "path": "Projects/cka/mariadb-pv-recovery-scenario.md",
-      "domain": "devops",
+      "domain": "kubernetes",
       "tags": [
-        "kubernetes",
-        "storage"
+        "devops",
+        "storage",
+		"cka"
       ],
       "para": "Projects",
       "project": "cka",

@@ -1,8 +1,10 @@
 ---
 project: cka
 para: Resources
-domain: devops
-tags: [kubernetes, storage]
+domain: kubernetes
+tags:
+  - storage
+  - devops
 date: 2026-06-12
 ---
 ## Persistent Volume
