@@ -1,8 +1,11 @@
 ---
 project: cka
 para: Projects
-domain: devops
-tags: [kubernetes, storage]
+domain: kubernetes
+tags:
+  - storage
+  - devops
+  - cka
 date: 2026-06-12
 ---
 > [!question] Scenario
