@@ -1,8 +1,10 @@
 ---
 project: cka
 para: Projects
-domain: devops
-tags: [kubernetes]
+domain: kubernetes
+tags:
+  - devops
+  - cka
 date: 2026-06-12
 ---
 [GitHub - vj2201/CKA-PREP-2025-v2 · GitHub](https://github.com/vj2201/CKA-PREP-2025-v2)
