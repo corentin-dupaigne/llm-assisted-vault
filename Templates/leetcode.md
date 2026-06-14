@@ -27,13 +27,13 @@ review_after: <% tp.date.now("YYYY-MM-DD", reviewOffset) %>
 reviews: 0
 tags: [leetcode, neetcode-150, <% section.toLowerCase().replace(/[^a-z0-9]+/g, "-") %>]
 ---
-# <% tp.file.title %>
-
 ## Initial Intuition
+
 <!-- Before coding: pattern recognized? Approach envisioned? Edge cases? -->
 
 
 ## My Solution
+
 ```go
 // Time: O(?)
 // Space: O(?)
@@ -41,6 +41,7 @@ tags: [leetcode, neetcode-150, <% section.toLowerCase().replace(/[^a-z0-9]+/g, "
 ```
 
 ### Optimal Solution
+
 ```go
 // Time: O(?)
 // Space: O(?)
@@ -48,13 +49,16 @@ tags: [leetcode, neetcode-150, <% section.toLowerCase().replace(/[^a-z0-9]+/g, "
 ```
 
 ## Delta
+
 <!-- The key difference between your approach and the optimal one -->
 
 
 ## Pattern
+
 <!-- "When I see X, I think Y." — phrased generically -->
 
 
 ## Review Log
+
 <!-- Date — could you reproduce it cold? what tripped you up? -->
 - <% tp.date.now("YYYY-MM-DD") %> — first solve
