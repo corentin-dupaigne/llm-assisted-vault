@@ -9,7 +9,8 @@
     "docker",
     "golang",
     "textile-science",
-    "kubernetes"
+    "kubernetes",
+    "travel"
   ],
   "tags": [
     "pharmacology",
@@ -26,7 +27,12 @@
     "apparel",
     "biohacking",
     "performance",
-    "cka"
+    "cka",
+    "food",
+    "tourism",
+    "leetcode",
+    "neetcode-150",
+    "arrays-hashing"
   ],
   "notes": [
     {
@@ -238,7 +244,7 @@
       "tags": [
         "devops",
         "storage",
-		"cka"
+        "cka"
       ],
       "para": "Projects",
       "project": "cka",
@@ -267,6 +273,40 @@
       "para": "Projects",
       "project": "neetcode-150",
       "date": "2026-06-12"
+    },
+    {
+      "title": "Date Versailles",
+      "path": "Resources/versailles-visit-itinerary.md",
+      "domain": "travel",
+      "tags": [
+        "food",
+        "tourism"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-14"
+    },
+    {
+      "title": "Encode And Decode Strings",
+      "path": "Projects/neetcode-150/encode-decode-strings.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "arrays-hashing"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-14"
+    },
+    {
+      "title": "String Manipulation Golang",
+      "path": "Resources/golang-strings.md",
+      "domain": "golang",
+      "tags": [],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-14"
     }
   ]
 }

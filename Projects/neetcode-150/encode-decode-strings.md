@@ -10,13 +10,15 @@ tags:
   - leetcode
   - neetcode-150
   - arrays-hashing
+domain: leetcode
+date: 2026-06-14
+para: Projects
 ---
 ## Initial Intuition
 
 Mon intuition est qu'il faut ajouter un ou plusieurs caracteres delimiteurs entre chaque mot pour encode. Puis dans la fonction decode en iterant sur les byte du string on append chaque byte dans une variable out of the scope (current_word) et des qu'on croise le caractere delimiteur on append le mot forme dans le array et on vide la variable current_word. Le souci est qu'il faut s'assurer que la variable delimiteur n'entre pas en conflit avec les bytes des mots, il faut donc s'assurer de trouver un delimiteur qui ne sera pas conflictuel. Theoriquement il serait possible d'avoir un string long de caracteres aleatoires comme delimiteur et il sera tres peu probable que les string fournis contiennent ce string exact mais cela n'est pas optimal.
 Je pense qu'il faudrait utiliser un delimiteur dynamique, par exemple la longueur du string. Ou bien on pourrait ajouter au debut du string encode la longueur de chaque mot separee par un delimiteur (le delimiteur est necessaire pour eviter les bug dans le cas ou des mots ont des longueurs depassant les chiffres). Puis en decodant il faudra simplement garder en memoire la longueur de chaque mots puis former les mots en iterant jusqu'a longueur_mot[i]. Il faut egalement gerer le conflit potentiel entre le delimiteur et le contenu des strings. Par exemple si j'append 8%4%3%. Il faut ecrire dans le texte append au debut du string la longueur du string contenant les metadata donnant la longueur de chaque mot.
 -> 83%4%6%8% // 9 est le nombre de caracteres apres lui meme, de ce fait la fonction de decoding sait ou les metadata s'arretent.
-
 
 ## My Solution
 
@@ -148,15 +150,24 @@ func (sSolution) Decode(encoded string) []string {
 
 ## Delta
 
-Ma solution est optimale en terme de temps mais pas en terme de stockage. 
-
+Ma solution est optimale en terme de temps mais pas en terme de stockage.
 
 ## Pattern
 
 <!-- "When I see X, I think Y." — phrased generically -->
 
-
 ## Review Log
 
 <!-- Date — could you reproduce it cold? what tripped you up? -->
+
 - 2026-06-13 — first solve
+
+## Links
+
+- [[contains-duplicate|Contains Duplicate]]
+- [[two-sum|Two Sum]]
+- [[valid-anagram|Valid Anagram]]
+- [[group-anagrams|Group Anagrams]]
+- [[top-k-frequent-elements|Top K Frequent Elements]]
+- [[golang-slices|Golang Slices]]
+- [[golang-maps|Golang Maps Cheatsheet]]
