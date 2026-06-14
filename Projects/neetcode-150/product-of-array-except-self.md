@@ -6,11 +6,14 @@ project: neetcode-150
 date_solved: 2026-06-14
 review_after: 2026-06-17
 reviews: 0
+domain: leetcode
+tags: [array-hashing, golang, neetcode-150]
+date: 2026-06-14
+para: Projects
 ---
 ## Initial Intuition
 
 - Mon intuition naive est qu'il est possible de former l'array de resultat avec une double boucle mais cela ferait une complexite O(n2) et ce n'est donc pas optimal.
-
 
 ## My Solution
 
@@ -76,6 +79,7 @@ func productExceptSelf(nums []int) []int {
 ## Delta
 
 ## Delta
+
 - Ma première solution était fonctionnelle mais non optimale en espace : O(n) à cause des deux arrays `prefix` et `suffix` séparés, au lieu de O(1).
 - **Erreur d'initialisation (0 vs 1)** : pour le premier élément du prefix et le dernier du suffix, j'avais mis 0, en partant du principe que le premier num n'a pas de prefix et le dernier pas de suffix. Mais comme on calcule un **produit**, l'élément neutre est 1, pas 0 (`x * 1 = x`, alors que `x * 0 = 0` détruirait tout le résultat). Règle générale : la valeur initiale d'un prefix/suffix = l'élément neutre de l'opération (0 pour une somme, 1 pour un produit).
 - **Erreur d'opérateur** : dans ma version initiale j'avais additionné (`+`) au lieu de multiplier (`*`) — réflexe du prefix sum classique appliqué à tort à un produit.
@@ -84,12 +88,21 @@ func productExceptSelf(nums []int) []int {
 ## Pattern
 
 Quand il est question de process un ensemble de nombre sauf l'element actuel, il faut directement penser a l'algorithme prefix - sufix consistant a :
+
 - Build l'array de prefix
 - Build l'array de suffix
 - Build l'array de resultat en traitant prefix avec suffix
 
-
 ## Review Log
 
 <!-- Date — could you reproduce it cold? what tripped you up? -->
+
 - 2026-06-14 — first solve
+
+## Links
+
+- [[contains-duplicate|Contains Duplicate]]
+- [[two-sum|Two Sum]]
+- [[top-k-frequent-elements|Top K Frequent Elements]]
+- [[golang-arrays|Golang Array]]
+- [[golang-slices|Golang Slices]]
