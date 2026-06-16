@@ -6,15 +6,18 @@ project: neetcode-150
 date_solved: 2026-06-16
 review_after: 2026-06-23
 reviews: 0
+domain: leetcode
+tags: [two-pointers, golang, neetcode-150]
+date: 2026-06-16
+para: Projects
 ---
 ## Initial Intuition
 
-Mon intuition est qu'il est possible de simplement placer un pointeur au debut du string (i) et un a la fin (j), comparer str[i] et str[j], les deux elements doivent etre les memes sinon on retourne false. Puis on incremente i et decremente j, tant que i < j. 
+Mon intuition est qu'il est possible de simplement placer un pointeur au debut du string (i) et un a la fin (j), comparer str[i] et str[j], les deux elements doivent etre les memes sinon on retourne false. Puis on incremente i et decremente j, tant que i < j.
 Apres la boucle, on retourne true.
 
 - time : O(n)
 - space O(1)
-
 
 ## My Solution
 
@@ -122,3 +125,7 @@ Ma solution n'etait pas fonctionnelle a cause des potentiels overflow du a mon i
 ## Review Log
 
 - 2026-06-16 — Un peu fastidieux, et erreur de fonctionnalite.
+
+## Links
+
+- [[golang-strings|String Manipulation Golang]]
