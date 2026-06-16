@@ -1,5 +1,4 @@
 ---
-project: cka
 para: Resources
 domain: kubernetes
 tags:
