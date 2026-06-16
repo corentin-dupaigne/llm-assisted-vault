@@ -32,7 +32,8 @@
     "tourism",
     "leetcode",
     "neetcode-150",
-    "arrays-hashing"
+    "arrays-hashing",
+    "two-pointers"
   ],
   "notes": [
     {
@@ -320,6 +321,19 @@
       "para": "Projects",
       "project": "neetcode-150",
       "date": "2026-06-14"
+    },
+    {
+      "title": "Valid Palindrone",
+      "path": "Projects/neetcode-150/valid-palindrome.md",
+      "domain": "leetcode",
+      "tags": [
+        "two-pointers",
+        "golang",
+        "neetcode-150"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-16"
     }
   ]
 }
