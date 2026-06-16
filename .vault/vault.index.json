@@ -33,7 +33,12 @@
     "leetcode",
     "neetcode-150",
     "arrays-hashing",
-    "two-pointers"
+    "two-pointers",
+    "kubernetes",
+    "pods",
+    "init-containers",
+    "sidecar",
+    "helm"
   ],
   "notes": [
     {
@@ -346,6 +351,47 @@
       ],
       "para": "Projects",
       "project": "neetcode-150",
+      "date": "2026-06-16"
+    },
+    {
+      "title": "Init Containers & Sidecars",
+      "path": "Resources/kubernetes-init-containers-sidecars.md",
+      "domain": "kubernetes",
+      "tags": [
+        "kubernetes",
+        "cka",
+        "pods",
+        "init-containers",
+        "sidecar"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-16"
+    },
+    {
+      "title": "Longest Consecutive Sequence",
+      "path": "Projects/neetcode-150/longest-consecutive-sequence.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "arrays-hashing"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-16"
+    },
+    {
+      "title": "Create namespace",
+      "path": "Projects/cka/argocd-helm-install-no-crds.md",
+      "domain": "kubernetes",
+      "tags": [
+        "devops",
+        "cka",
+        "helm"
+      ],
+      "para": "Projects",
+      "project": "cka",
       "date": "2026-06-16"
     }
   ]

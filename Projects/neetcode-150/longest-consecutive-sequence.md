@@ -7,13 +7,15 @@ date_solved: 2026-06-15
 review_after: 2026-06-22
 reviews: 0
 tags: [leetcode, neetcode-150, arrays-hashing]
+domain: leetcode
+date: 2026-06-16
+para: Projects
 ---
 ## Initial Intuition
 
 Mon intuition initiale est de d'abord build une hashmap ou chaque num de l'array nums est une clef de la hashmap, et les values sont vides. Cela va permettre de check en O(1) si un num exite dans le array. Maintenant pour chercher la longest sequence on va iterer sur chaque num, si num -1 n'existe pas dans la hashmap on sait que c'est le debut d'une sequence. Une fois qu'on est usr un num du debut d'une sequence on va check si num + 1 existe dans la hashmap, puis num + 1 + 1, etc. Jusqu'a que curr_num + 1 n'exite pas. A chaque fois qu'on trouve un num dans la hashmap on incremente le compteur. A la fin de l'iteration on check si compteur > max_compteur, si c'est le cas max_compteur = compteur. A la fin on retourne max_compteur.
 
 - Au niveau de l'estimation de la complexite, on fait deux boucles non imbriquees c'est donc du O(n) + O(n) = O(n). Et pour le space c'est du O(n) aussi car on store les elements dans une hashmap.
-
 
 ## My Solution
 
@@ -110,7 +112,15 @@ Le fix `range nums` → `range m` corrige ça : les clés de la map étant
 uniques, chaque valeur n'est visitée qu'une fois quel que soit le nombre
 de doublons → O(n) garanti dans tous les cas.
 
-
 ## Review Log
 
 - 2026-06-15 — Reussi rapidement mais solution pas optimale dans le pire cas avec beaucoup de doublons O(n2) vs O(n) mais refait de maniere optimale
+
+## Links
+
+- [[contains-duplicate|Contains Duplicate]]
+- [[two-sum|Two Sum]]
+- [[valid-anagram|Valid Anagram]]
+- [[group-anagrams|Group Anagrams]]
+- [[top-k-frequent-elements|Top K Frequent Elements]]
+- [[golang-maps|Golang Maps Cheatsheet]]
