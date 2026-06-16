@@ -52,13 +52,6 @@ tags: [leetcode, neetcode-150, <% section.toLowerCase().replace(/[^a-z0-9]+/g, "
 
 <!-- The key difference between your approach and the optimal one -->
 
-
-## Pattern
-
-<!-- "When I see X, I think Y." — phrased generically -->
-
-
 ## Review Log
 
-<!-- Date — could you reproduce it cold? what tripped you up? -->
 - <% tp.date.now("YYYY-MM-DD") %> — first solve
