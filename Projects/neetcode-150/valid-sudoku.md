@@ -9,14 +9,17 @@ tags:
   - leetcode
   - neetcode-150
   - arrays-hashing
+domain: leetcode
+date: 2026-06-17
+para: Projects
 ---
 ## Initial Intuition
 
-Mon intuition est qu'il faut faire trois boucles pour checker toutes les conditions. 
-1. Une boucle qui check que les conditions sont respectees pour les rows
-2. Une boucle qui check que les conditions sont respectees pour les cols
-3. Une boucle qui check que les conditions sont respectees pour les box 3x3
+Mon intuition est qu'il faut faire trois boucles pour checker toutes les conditions.
 
+1. Une boucle qui check que les conditions sont respectees pour les rows
+1. Une boucle qui check que les conditions sont respectees pour les cols
+1. Une boucle qui check que les conditions sont respectees pour les box 3x3
 
 ## My Solution
 
@@ -90,3 +93,13 @@ func isValidSudoku(board [][]byte) bool {
 ## Review Log
 
 - 2026-06-16 — first solve
+
+## Links
+
+- [[contains-duplicate|Contains Duplicate]]
+- [[two-sum|Two Sum]]
+- [[valid-anagram|Valid Anagram]]
+- [[group-anagrams|Group Anagrams]]
+- [[top-k-frequent-elements|Top K Frequent Elements]]
+- [[longest-consecutive-sequence|Longest Consecutive Sequence]]
+- [[golang-maps|Golang Maps Cheatsheet]]
