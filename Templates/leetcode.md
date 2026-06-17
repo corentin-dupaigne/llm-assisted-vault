@@ -23,8 +23,6 @@ neetcode_section: "<% section %>"
 struggled: <% struggled %>
 project: neetcode-150
 date_solved: <% tp.date.now("YYYY-MM-DD") %>
-review_after: <% tp.date.now("YYYY-MM-DD", reviewOffset) %>
-reviews: 0
 tags: [leetcode, neetcode-150, <% section.toLowerCase().replace(/[^a-z0-9]+/g, "-") %>]
 ---
 ## Initial Intuition
