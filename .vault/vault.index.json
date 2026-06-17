@@ -393,6 +393,19 @@
       "para": "Projects",
       "project": "cka",
       "date": "2026-06-16"
+    },
+    {
+      "title": "Valid Sudoku",
+      "path": "Projects/neetcode-150/valid-sudoku.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "arrays-hashing"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-17"
     }
   ]
 }
