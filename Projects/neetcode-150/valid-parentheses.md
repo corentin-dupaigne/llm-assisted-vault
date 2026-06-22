@@ -5,10 +5,14 @@ struggled: false
 project: neetcode-150
 date_solved: 2026-06-19
 tags: [leetcode, neetcode-150, stack]
+domain: leetcode
+date: 2026-06-22
+para: Projects
 ---
 ## Initial Intuition
 
-Mon intuition est qu'il faut utiliser le stack comme un cache. Des qu'on croise une parenthese ouvrante, on pop les elements du array dans un stack jusqu'a ce qu'on trouve une parenthese fermante ou qu'on ait parcouru tout le tableau. Une fois qu'on a trouve la parenthese fermante, on repop. Si le tableau est vide sans qu'on ait trouve la parenthese fermante on return false. Puis on pop tout les elements du stack servant de cache sur le stack original. A la fin, si le stack est vide -> on retourne true. 
+Mon intuition est qu'il faut utiliser le stack comme un cache. Des qu'on croise une parenthese ouvrante, on pop les elements du array dans un stack jusqu'a ce qu'on trouve une parenthese fermante ou qu'on ait parcouru tout le tableau. Une fois qu'on a trouve la parenthese fermante, on repop. Si le tableau est vide sans qu'on ait trouve la parenthese fermante on return false. Puis on pop tout les elements du stack servant de cache sur le stack original. A la fin, si le stack est vide -> on retourne true.
+
 - J'ai l'impression que cette solution serait O(n2) en temps car pour chaque element je dois reparcourir le tableau.
 
 ## My Solution
@@ -129,3 +133,9 @@ Ma solution etait optimale.
 ## Review Log
 
 - 2026-06-19 — first solve
+
+## Links
+
+- [[daily-temperatures|Daily Temperatures]]
+- [[evaluate-reverse-polish-notation|Evaluate Reverse Polish Notation]]
+- [[golang-slices|Golang Slices]]

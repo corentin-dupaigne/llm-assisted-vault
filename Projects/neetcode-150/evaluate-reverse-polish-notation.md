@@ -5,18 +5,21 @@ struggled: false
 project: neetcode-150
 date_solved: 2026-06-21
 tags: [leetcode, neetcode-150, stack]
+domain: leetcode
+date: 2026-06-22
+para: Projects
 ---
 ## Initial Intuition
 
 Mon intuition est qu'il faut iterer sur les characteres du string:
+
 - Quand c'est un chiffre -> push sur le stack
-- Quand c'est un operator 
-	- si c'est un + on ajoute stack.pop() + stack.pop() et on ajoute a la variable res
-	- Si c'est un * on fait res *= stack.pop()
-	- Si c'est un - on fait res -= stack.pop()
+- Quand c'est un operator
+  - si c'est un + on ajoute stack.pop() + stack.pop() et on ajoute a la variable res
+  - Si c'est un * on fait res \*= stack.pop()
+  - Si c'est un - on fait res -= stack.pop()
 
 On retourne res.
-
 
 ## My Solution
 
@@ -129,3 +132,8 @@ Mon intuition initiale etait proche de la solution mais non fonctionelle. J'ai p
 ## Review Log
 
 - 2026-06-21 — first solve
+
+## Links
+
+- [[daily-temperatures|Daily Temperatures]]
+- [[golang-slices|Golang Slices]]
