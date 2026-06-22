@@ -1,4 +1,10 @@
-
+---
+domain: golang
+tags: []
+date: 2026-06-22
+para: Resources
+project: null
+---
 An **interface** is a set of method signatures. A type satisfies it **implicitly** — just by having those methods, no `implements` keyword.
 
 ## Declaration
@@ -56,12 +62,20 @@ type ReadWriter interface {
 ```
 
 > [!note] Key facts
+>
 > - An interface value is a pair: **(type, value)**.
 > - A nil interface (`type=nil, value=nil`) differs from an interface holding a nil pointer — the classic `err != nil` trap.
 > - Keep interfaces **small**: `io.Reader` is one method. Big interfaces are a smell.
 > - Define interfaces on the **consumer** side, not the producer.
 
 ## See also
+
 - [[Go Struct]]
 - [[Go Errors]]
 - [[Go Generics]]
+
+## Links
+
+- [[golang-maps|Golang Maps Cheatsheet]]
+- [[golang-slices|Golang Slices]]
+- [[golang-strings|String Manipulation Golang]]

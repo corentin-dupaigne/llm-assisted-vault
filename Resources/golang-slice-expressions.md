@@ -1,4 +1,10 @@
-
+---
+domain: golang
+tags: []
+date: 2026-06-22
+para: Resources
+project: null
+---
 The `a[low:high]` expression is a **slice expression**; using it is called **slicing**.
 
 ## Forms
@@ -19,3 +25,8 @@ arr[:3]    // [10 20 30]
 arr[2:]    // [30 40 50]
 arr[:]     // whole thing
 ```
+
+## Links
+
+- [[golang-arrays|Golang Array]]
+- [[golang-slices|Golang Slices]]
