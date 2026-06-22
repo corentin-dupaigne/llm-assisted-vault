@@ -8,11 +8,13 @@ tags:
   - leetcode
   - neetcode-150
   - two-pointers
+domain: leetcode
+date: 2026-06-22
+para: Projects
 ---
 ## Initial Intuition
 
 Mon intuition est qu'il est est possible d'iterer sur chaque num du tableau, et pour chacun on effectue un double pointeur ou target est -elem, de ce fait la somme de ces trois nombres sera 0.
-
 
 ## My Solution
 
@@ -72,3 +74,9 @@ func threeSum(nums []int) [][]int {
 ## Review Log
 
 - 2026-06-17 — first solve
+
+## Links
+
+- [[two-sum-ii-input-array-is-sorted|Two Integer Sum Ii]]
+- [[valid-palindrome|Valid Palindrone]]
+- [[golang-sorting|Golang Sorting]]

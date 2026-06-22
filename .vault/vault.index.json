@@ -38,7 +38,8 @@
     "pods",
     "init-containers",
     "sidecar",
-    "helm"
+    "helm",
+    "stack"
   ],
   "notes": [
     {
@@ -406,6 +407,85 @@
       "para": "Projects",
       "project": "neetcode-150",
       "date": "2026-06-17"
+    },
+    {
+      "title": "3Sum",
+      "path": "Projects/neetcode-150/three-sum.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "two-pointers"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-22"
+    },
+    {
+      "title": "Daily Temperatures",
+      "path": "Projects/neetcode-150/daily-temperatures.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "stack"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-22"
+    },
+    {
+      "title": "Evaluate Reverse Polish Notation",
+      "path": "Projects/neetcode-150/evaluate-reverse-polish-notation.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "stack"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-22"
+    },
+    {
+      "title": "Valid Parentheses",
+      "path": "Projects/neetcode-150/valid-parentheses.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "stack"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-22"
+    },
+    {
+      "title": "Go Interface",
+      "path": "Resources/golang-interfaces.md",
+      "domain": "golang",
+      "tags": [],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-22"
+    },
+    {
+      "title": "Go Struct",
+      "path": "Resources/golang-structs.md",
+      "domain": "golang",
+      "tags": [],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-22"
+    },
+    {
+      "title": "Golang Slicing",
+      "path": "Resources/golang-slice-expressions.md",
+      "domain": "golang",
+      "tags": [],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-22"
     }
   ]
 }

@@ -1,4 +1,10 @@
-
+---
+domain: golang
+tags: []
+date: 2026-06-22
+para: Resources
+project: null
+---
 ## Declaration
 
 ```go
@@ -53,3 +59,9 @@ type User struct {
     Age  int    `json:"age,omitempty"`
 }
 ```
+
+## Links
+
+- [[golang-interfaces|Go Interface]]
+- [[golang-maps|Golang Maps Cheatsheet]]
+- [[golang-slices|Golang Slices]]

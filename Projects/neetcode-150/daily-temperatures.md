@@ -5,10 +5,14 @@ struggled: false
 project: neetcode-150
 date_solved: 2026-06-22
 tags: [leetcode, neetcode-150, stack]
+domain: leetcode
+date: 2026-06-22
+para: Projects
 ---
 ## Initial Intuition
 
 Mon intuition est qu'on peut utiliser un stack sous forme de cache, on itere sur les nombres :
+
 - tant que le nombre actuel est plus grand que le top du stack, on pop, puis on push l'element actuel.
 
 Pour correctement completer l'array de resultat on peut utiliser utilise une struct composee de deux elements, val et index et le stack sera composee d'elements de cette struct.
@@ -16,7 +20,6 @@ Pour correctement completer l'array de resultat on peut utiliser utilise une str
 Donc quand on pop un element pour res[i] = val, i -> poped.idx, val = le nombre d'elements poped avant cet element.
 
 Mon intuition au niveau de la complexite est O(n) pour time and space.
-
 
 ## My Solution
 
@@ -81,3 +84,7 @@ Ma solution est optimale en terme de complexite mais la struct n'etait pas neces
 ## Review Log
 
 - 2026-06-22 — first solve
+
+## Links
+
+- [[golang-slices|Golang Slices]]
