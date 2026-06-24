@@ -5,11 +5,13 @@ struggled: true
 project: neetcode-150
 date_solved: 2026-06-22
 tags: [leetcode, neetcode-150, stack]
+domain: leetcode
+date: 2026-06-24
+para: Projects
 ---
 ## Initial Intuition
 
 Je n'ai eu aucune intuition sur la solution, j'ai effectue l'exercice en visualisant la solution de l'algorithme.
-
 
 ## My Solution
 
@@ -109,3 +111,12 @@ Ma solution est optimale en complexite mais pourrait etre plus propre. Je fais b
 ## Review Log
 
 - 2026-06-22 — first solve
+
+## Links
+
+- [[daily-temperatures|Daily Temperatures]]
+- [[evaluate-reverse-polish-notation|Evaluate Reverse Polish Notation]]
+- [[valid-parentheses|Valid Parentheses]]
+- [[golang-sorting|Golang Sorting]]
+- [[golang-slices|Golang Slices]]
+- [[golang-structs|Go Struct]]

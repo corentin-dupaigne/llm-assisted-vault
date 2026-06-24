@@ -5,11 +5,13 @@ struggled: false
 project: neetcode-150
 date_solved: 2026-06-24
 tags: [leetcode, neetcode-150, binary-search]
+domain: leetcode
+date: 2026-06-24
+para: Projects
 ---
 ## Initial Intuition
 
 La solution naive est evidement de parcourir tous l'array jusqu'a trouver le plus petit element, ce qui ferait du O(n).
-
 
 ## My Solution
 
