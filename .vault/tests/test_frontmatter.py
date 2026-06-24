@@ -90,7 +90,7 @@ def test_existing_block_list_tags_are_read(vault):
 def test_apply_filed_merges_templated_note_end_to_end(vault):
     """Full filing path (no API): templated note → one block, index uses effective values."""
     note = vault.drop_note(
-        "two-sum.md",
+        "Two Sum.md",
         "---\n"
         "tags: []\n"
         "neetcode_section: Array & Hashing\n"
@@ -102,7 +102,7 @@ def test_apply_filed_merges_templated_note_end_to_end(vault):
     decision = {
         "status": "filed",
         "reason": "Project note.",
-        "target_path": "Projects/neetcode-150/two-sum.md",
+        "target_path": "Projects/neetcode-150/Two Sum.md",
         "domain": "leetcode",
         "tags": ["golang", "array-hashing"],  # should NOT win over existing tags: []
         "para": "Projects",
@@ -113,6 +113,9 @@ def test_apply_filed_merges_templated_note_end_to_end(vault):
 
     outcome = vault.module.apply_filed(note, decision, index, "2026-06-10")
     assert outcome["status"] == "filed"
+
+    # The filename is the readable title (the H1), not a slug.
+    assert outcome["target_path"] == "Projects/neetcode-150/Two Sum.md"
 
     written = (vault.root / outcome["target_path"]).read_text(encoding="utf-8")
     # Exactly one frontmatter block, with the template fields preserved and the
@@ -126,6 +129,7 @@ def test_apply_filed_merges_templated_note_end_to_end(vault):
     entry = index["notes"][-1]
     assert entry["tags"] == []
     assert entry["domain"] == "leetcode"
+    assert entry["title"] == "Two Sum"
     assert "golang" not in index["tags"]
 
 
@@ -133,11 +137,11 @@ def test_capture_time_para_override_wins_over_model_placement(vault):
     """A note that declares its own `para` is filed there, not where the model
     chose — keeping the file's location consistent with its frontmatter/index."""
     note = vault.drop_note(
-        "pv-pvc.md",
+        "PV, PVC, StorageClass.md",
         "---\n"
         "para: Resources\n"
         "---\n"
-        "\n# PV, PVC, StorageClass\n\nDurable Kubernetes reference.\n",
+        "\nDurable Kubernetes reference.\n",
     )
     # The model, seeing an active `cka` project, wants this under Projects/cka/.
     decision = {
@@ -155,9 +159,9 @@ def test_capture_time_para_override_wins_over_model_placement(vault):
     outcome = vault.module.apply_filed(note, decision, index, "2026-06-10")
     assert outcome["status"] == "filed"
 
-    # Filed under Resources/, keeping the model's basename; the Projects/ path is
-    # never created and the Inbox note is gone.
-    assert outcome["target_path"] == "Resources/kubernetes-persistent-volumes.md"
+    # Filed under Resources/ with the readable title (the H1) as filename; the
+    # Projects/ path is never created and the Inbox note is gone.
+    assert outcome["target_path"] == "Resources/PV, PVC, StorageClass.md"
     assert (vault.root / outcome["target_path"]).exists()
     assert not (vault.root / "Projects" / "cka").exists()
     assert not note.exists()

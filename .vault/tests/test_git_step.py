@@ -61,21 +61,21 @@ def test_commit_and_push_is_noop_when_nothing_changed(git_vault):
 
 
 def test_empty_inbox_run_reconciles_edited_note_to_the_remote(git_vault):
-    """Issue #10: editing a filed note's metadata/title is pushed even with an
-    empty Inbox — no API call, just the index correction committed to the remote.
+    """Issue #10: editing a filed note's frontmatter is pushed even with an empty
+    Inbox — no API call, just the index correction committed to the remote.
     """
     gv = git_vault
 
     # A note already filed, tracked and pushed, with its index entry in place.
-    (gv.root / "Resources" / "tcp.md").write_text(
+    (gv.root / "Resources" / "TCP.md").write_text(
         "---\ndomain: networking\ntags: [protocols]\ndate: 2026-06-04\n"
-        "para: Resources\nproject: null\n---\n# TCP\n\nReference.\n",
+        "para: Resources\nproject: null\n---\nReference.\n",
         encoding="utf-8",
     )
     gv.index_path.write_text(json.dumps({
         "projects": [], "domains": ["networking"], "tags": ["protocols"],
         "notes": [{
-            "title": "TCP", "path": "Resources/tcp.md", "domain": "networking",
+            "title": "TCP", "path": "Resources/TCP.md", "domain": "networking",
             "tags": ["protocols"], "para": "Resources", "project": None,
             "date": "2026-06-04",
         }],
@@ -85,10 +85,10 @@ def test_empty_inbox_run_reconciles_edited_note_to_the_remote(git_vault):
     gv.repo.git.push()
     before = gv.remote_head_sha()
 
-    # The user edits the note's title and domain by hand. The Inbox stays empty.
-    (gv.root / "Resources" / "tcp.md").write_text(
+    # The user edits the note's domain by hand. The Inbox stays empty.
+    (gv.root / "Resources" / "TCP.md").write_text(
         "---\ndomain: transport-protocols\ntags: [protocols]\ndate: 2026-06-04\n"
-        "para: Resources\nproject: null\n---\n# Transmission Control Protocol\n\nReference.\n",
+        "para: Resources\nproject: null\n---\nReference.\n",
         encoding="utf-8",
     )
 
@@ -103,7 +103,7 @@ def test_empty_inbox_run_reconciles_edited_note_to_the_remote(git_vault):
     assert "vault.index.json" in gv.remote_files()
     index = gv.read_index()
     entry = index["notes"][0]
-    assert entry["title"] == "Transmission Control Protocol"
+    assert entry["title"] == "TCP"            # unchanged: the title is the filename
     assert entry["domain"] == "transport-protocols"
     assert index["domains"] == ["transport-protocols"]
 

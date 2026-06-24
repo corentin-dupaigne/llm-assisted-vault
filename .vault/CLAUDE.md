@@ -146,7 +146,7 @@ The index is the LLM's **only** source of truth about the vault's contents.
 ```json
 {
   "title": "Note Title",
-  "path": "Resources/note-filename.md",
+  "path": "Resources/Note Title.md",
   "domain": "kubernetes",
   "tags": ["k3s", "devops"],
   "para": "Resources",
@@ -170,7 +170,7 @@ makes no API call, so it stays within the cost guard.
 It rebuilds the index from the notes actually on disk across the four PARA roots:
 
 - Every indexed note is **refreshed** from its file. `domain`, `tags` and `date`
-  are re-read from the note's frontmatter and `title` from its first H1, while
+  are re-read from the note's frontmatter and `title` is the filename, while
   `para`/`project` are derived from the file's **location** (so a hand-moved note
   self-corrects). A note's existing `date` is kept if the file has none, so a
   hand-written note without a date does not churn the index.
@@ -202,8 +202,8 @@ project: <project name or null>
 ### Merging with existing frontmatter
 
 A captured note may already carry its own frontmatter (e.g. an Obsidian/Dataview
-template with fields like `difficulty` or `struggled`). These five fields are
-therefore **merged**, not prepended, by `merge_frontmatter`:
+template with fields like `difficulty` or `struggled`). These five mandatory
+fields are therefore **merged**, not prepended, by `merge_frontmatter`:
 
 - An existing field — **mandatory or not** — is kept **verbatim** and never
   overridden. If the note already defines `tags: []`, that value stays, even
@@ -221,23 +221,32 @@ of the note:
 ```markdown
 ## Links
 
-- [[existing-note-filename|Existing Note Title]]
+- [[Existing Note Title]]
 ```
 
-Obsidian resolves a wikilink by the target file's **basename**, not its title.
-Filed notes have slugified filenames (`contains-duplicate.md`) while their titles
-are human-readable (`Contains Duplicate`), so a `[[Contains Duplicate]]` link
-resolves to nothing and clicking it spawns a stray note at the vault root. The
-model is therefore instructed (system prompt + `file_note` schema) to build each
-link from the note's **filename** — the `path` basename — with the title as the
-display alias: `[[file-stem|Title]]`. Because the filename is copied verbatim
-from the index `path` (not slugified from the title), the link is reliable.
+## Filenames are the readable title
 
+A filed note's filename **is** its human-readable title (`ArgoCD Helm Install No
+CRDs.md`), not a slug. Obsidian is built around filename-as-title, so this keeps
+every native surface — the file explorer, quick-switcher, graph node labels, and
+the Dataview MOCs in `Atlas/` — readable with no extra metadata, and lets a
+wikilink resolve as the bare `[[Note Title]]` (Obsidian resolves by basename, and
+the basename is the title). The filename is derived in code by
+`title_to_filename`, which is a *light* sanitisation — not slugging: it keeps
+spaces and capitalisation and only strips/replaces the characters that are
+illegal in a filename or that break wikilinks (`: ? * " < > | # ^ [ ]`, and `/`,
+`\` → `-`). So `TCP/IP` is filed as `TCP-IP.md` while its index `title` keeps the
+exact `TCP/IP`. The title itself is the note's **Inbox filename** — the readable
+name you give the capture; the note body (including any heading) is never
+inspected.
+
+The model is instructed (system prompt + `file_note` schema) to build each link
+as a bare `[[Note Title]]` using the title verbatim from the index.
 `resolve_wikilinks` is a code-side safety net over that contract: it matches each
-link's basename against the indexed notes, re-derives the alias from the index
-`title` (so display text is always canonical), de-duplicates, and **drops** any
-link whose basename matches no indexed note — so a hallucinated link can never
-be written broken.
+proposed link against the indexed notes by **title or basename**, re-emits it as
+the canonical basename (so it always resolves), de-duplicates, and **drops** any
+link matching no indexed note — so a hallucinated link can never be written
+broken.
 
 ## Markdown formatting
 

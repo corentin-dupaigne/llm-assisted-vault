@@ -170,7 +170,7 @@ def test_wikilinks_reference_existing_titles_only(vault):
         tags=["networking"],
         notes=[{
             "title": "Kubernetes Cluster Networking",
-            "path": "Resources/kubernetes-cluster-networking.md",
+            "path": "Resources/Kubernetes Cluster Networking.md",
             "domain": "kubernetes",
             "tags": ["networking"],
             "para": "Resources",
@@ -196,18 +196,14 @@ def test_wikilinks_reference_existing_titles_only(vault):
     body = dest.read_text(encoding="utf-8")
     notes = vault.read_index()["notes"]
     existing_stems = {n["path"].rsplit("/", 1)[-1].removesuffix(".md") for n in notes}
-    titles_by_stem = {n["path"].rsplit("/", 1)[-1].removesuffix(".md"): n["title"] for n in notes}
 
-    # Links are emitted as [[file-stem|Title]] so Obsidian resolves them by
-    # basename; the stem must name a real note and the alias its canonical title.
+    # Links are emitted as bare [[Note Title]] — the filename is the title now, so
+    # the link must name a real note's basename and carry no alias.
     links = re.findall(r"\[\[([^\]]+)\]\]", body)
     for link in links:
-        stem, _, alias = link.partition("|")
-        assert stem in existing_stems, (
-            f"wikilink [[{link}]] stem does not match any existing note filename"
-        )
-        assert alias == titles_by_stem[stem], (
-            f"wikilink [[{link}]] alias is not the note's canonical title"
+        assert "|" not in link, f"wikilink [[{link}]] should be bare (no alias)"
+        assert link in existing_stems, (
+            f"wikilink [[{link}]] does not match any existing note filename"
         )
     # The "## Links" section exists iff at least one wikilink was injected.
     assert ("## Links" in body) == bool(links)
