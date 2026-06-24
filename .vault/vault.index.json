@@ -39,7 +39,8 @@
     "init-containers",
     "sidecar",
     "helm",
-    "stack"
+    "stack",
+    "binary-search"
   ],
   "notes": [
     {
@@ -486,6 +487,73 @@
       "para": "Resources",
       "project": null,
       "date": "2026-06-22"
+    },
+    {
+      "title": "Cart Fleet",
+      "path": "Projects/neetcode-150/car-fleet.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "stack"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-24"
+    },
+    {
+      "title": "Container With The Most Water",
+      "path": "Projects/neetcode-150/container-with-most-water.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "two-pointers"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-24"
+    },
+    {
+      "title": "Find Minimum In Rotated Sorted Array",
+      "path": "Projects/neetcode-150/find-minimum-in-rotated-sorted-array.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "binary-search"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-24"
+    },
+    {
+      "title": "Koko Eating Bananas",
+      "path": "Projects/neetcode-150/koko-eating-bananas.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "binary-search"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-06-24"
+    },
+    {
+      "title": "Kubernetes Volumes",
+      "path": "Projects/cka/kubernetes-volumes-emptydir-sidecar.md",
+      "domain": "kubernetes",
+      "tags": [
+        "devops",
+        "cka",
+        "storage",
+        "pods",
+        "sidecar"
+      ],
+      "para": "Projects",
+      "project": "cka",
+      "date": "2026-06-24"
     }
   ]
 }
