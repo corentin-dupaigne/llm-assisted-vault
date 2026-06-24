@@ -44,7 +44,7 @@
   ],
   "notes": [
     {
-      "title": "Caffeine Pharmacology And Biohacking",
+      "title": "caffeine-pharmacology-biohacking",
       "path": "Resources/caffeine-pharmacology-biohacking.md",
       "domain": "biohacking",
       "tags": [
@@ -59,7 +59,7 @@
       "date": "2026-06-11"
     },
     {
-      "title": "Contains Duplicate",
+      "title": "contains-duplicate",
       "path": "Projects/neetcode-150/contains-duplicate.md",
       "domain": "leetcode",
       "tags": [
@@ -72,7 +72,7 @@
       "date": "2026-06-10"
     },
     {
-      "title": "Docker Image Layers And Copy On Write",
+      "title": "docker-image-layers-cow",
       "path": "Resources/docker-image-layers-cow.md",
       "domain": "docker",
       "tags": [
@@ -85,7 +85,7 @@
       "date": "2026-06-05"
     },
     {
-      "title": "Golang Loops And Range",
+      "title": "golang-loops",
       "path": "Resources/golang-loops.md",
       "domain": "golang",
       "tags": [],
@@ -94,7 +94,7 @@
       "date": "2026-06-11"
     },
     {
-      "title": "Golang Maps Cheatsheet",
+      "title": "golang-maps",
       "path": "Resources/golang-maps.md",
       "domain": "golang",
       "tags": [
@@ -105,7 +105,7 @@
       "date": "2026-06-11"
     },
     {
-      "title": "L Theanine Pharmacology And Biohacking",
+      "title": "l-theanine-pharmacology-biohacking",
       "path": "Resources/l-theanine-pharmacology-biohacking.md",
       "domain": "biohacking",
       "tags": [
@@ -119,7 +119,7 @@
       "date": "2026-06-11"
     },
     {
-      "title": "Merino Wool Sock Material Science And Recommendations",
+      "title": "merino-wool-socks-guide",
       "path": "Resources/merino-wool-socks-guide.md",
       "domain": "textile-science",
       "tags": [
@@ -131,7 +131,7 @@
       "date": "2026-06-11"
     },
     {
-      "title": "Rhodiola Rosea Pharmacology And Biohacking",
+      "title": "rhodiola-rosea-pharmacology-biohacking",
       "path": "Resources/rhodiola-rosea-pharmacology-biohacking.md",
       "domain": "biohacking",
       "tags": [
@@ -144,7 +144,7 @@
       "date": "2026-06-11"
     },
     {
-      "title": "Two Sum",
+      "title": "two-sum",
       "path": "Projects/neetcode-150/two-sum.md",
       "domain": "leetcode",
       "tags": [
@@ -157,7 +157,7 @@
       "date": "2026-06-10"
     },
     {
-      "title": "Underwear Material Science And Reproductive Health",
+      "title": "underwear-material-science-reproductive-health",
       "path": "Resources/underwear-material-science-reproductive-health.md",
       "domain": "textile-science",
       "tags": [
@@ -170,7 +170,7 @@
       "date": "2026-06-05"
     },
     {
-      "title": "Valid Anagram",
+      "title": "valid-anagram",
       "path": "Projects/neetcode-150/valid-anagram.md",
       "domain": "leetcode",
       "tags": [
@@ -183,7 +183,7 @@
       "date": "2026-06-11"
     },
     {
-      "title": "Group Anagrams",
+      "title": "group-anagrams",
       "path": "Projects/neetcode-150/group-anagrams.md",
       "domain": "leetcode",
       "tags": [
@@ -196,7 +196,7 @@
       "date": "2026-06-11"
     },
     {
-      "title": "Golang Array",
+      "title": "golang-arrays",
       "path": "Resources/golang-arrays.md",
       "domain": "golang",
       "tags": [],
@@ -205,7 +205,7 @@
       "date": "2026-06-11"
     },
     {
-      "title": "Golang Slices",
+      "title": "golang-slices",
       "path": "Resources/golang-slices.md",
       "domain": "golang",
       "tags": [],
@@ -214,7 +214,7 @@
       "date": "2026-06-11"
     },
     {
-      "title": "Golang Sorting",
+      "title": "golang-sorting",
       "path": "Resources/golang-sorting.md",
       "domain": "golang",
       "tags": [],
@@ -223,35 +223,11 @@
       "date": "2026-06-11"
     },
     {
-      "title": "Dumb It Guy Questions Setup",
+      "title": "cka-prep-workflow-killercoda",
       "path": "Projects/cka/cka-prep-workflow-killercoda.md",
       "domain": "kubernetes",
       "tags": [
-        "devops, cka"
-      ],
-      "para": "Projects",
-      "project": "cka",
-      "date": "2026-06-12"
-    },
-    {
-      "title": "Pv, Pvc, Storageclass",
-      "path": "Resources/kubernetes-persistent-volumes-pvc-storageclass.md",
-      "domain": "kubernetes",
-      "tags": [
         "devops",
-        "storage"
-      ],
-      "para": "Resources",
-      "project": "cka",
-      "date": "2026-06-12"
-    },
-    {
-      "title": "STATUS must be Bound, VOLUME must be mariadb-pv",
-      "path": "Projects/cka/mariadb-pv-recovery-scenario.md",
-      "domain": "kubernetes",
-      "tags": [
-        "devops",
-        "storage",
         "cka"
       ],
       "para": "Projects",
@@ -259,7 +235,32 @@
       "date": "2026-06-12"
     },
     {
-      "title": "Bucket Sort Algorithm",
+      "title": "kubernetes-persistent-volumes-pvc-storageclass",
+      "path": "Resources/kubernetes-persistent-volumes-pvc-storageclass.md",
+      "domain": "kubernetes",
+      "tags": [
+        "storage",
+        "devops"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-06-12"
+    },
+    {
+      "title": "mariadb-pv-recovery-scenario",
+      "path": "Projects/cka/mariadb-pv-recovery-scenario.md",
+      "domain": "kubernetes",
+      "tags": [
+        "storage",
+        "devops",
+        "cka"
+      ],
+      "para": "Projects",
+      "project": "cka",
+      "date": "2026-06-12"
+    },
+    {
+      "title": "bucket-sort",
       "path": "Resources/bucket-sort.md",
       "domain": "leetcode",
       "tags": [
@@ -270,7 +271,7 @@
       "date": "2026-06-12"
     },
     {
-      "title": "Top K Frequent Elements",
+      "title": "top-k-frequent-elements",
       "path": "Projects/neetcode-150/top-k-frequent-elements.md",
       "domain": "leetcode",
       "tags": [
@@ -283,7 +284,7 @@
       "date": "2026-06-12"
     },
     {
-      "title": "Date Versailles",
+      "title": "versailles-visit-itinerary",
       "path": "Resources/versailles-visit-itinerary.md",
       "domain": "travel",
       "tags": [
@@ -295,7 +296,7 @@
       "date": "2026-06-14"
     },
     {
-      "title": "Encode And Decode Strings",
+      "title": "encode-decode-strings",
       "path": "Projects/neetcode-150/encode-decode-strings.md",
       "domain": "leetcode",
       "tags": [
@@ -308,7 +309,7 @@
       "date": "2026-06-14"
     },
     {
-      "title": "String Manipulation Golang",
+      "title": "golang-strings",
       "path": "Resources/golang-strings.md",
       "domain": "golang",
       "tags": [],
@@ -317,7 +318,7 @@
       "date": "2026-06-14"
     },
     {
-      "title": "Product Of Array Except Self",
+      "title": "product-of-array-except-self",
       "path": "Projects/neetcode-150/product-of-array-except-self.md",
       "domain": "leetcode",
       "tags": [
@@ -330,7 +331,7 @@
       "date": "2026-06-14"
     },
     {
-      "title": "Valid Palindrone",
+      "title": "valid-palindrome",
       "path": "Projects/neetcode-150/valid-palindrome.md",
       "domain": "leetcode",
       "tags": [
@@ -343,7 +344,7 @@
       "date": "2026-06-16"
     },
     {
-      "title": "Two Integer Sum Ii",
+      "title": "two-sum-ii-input-array-is-sorted",
       "path": "Projects/neetcode-150/two-sum-ii-input-array-is-sorted.md",
       "domain": "leetcode",
       "tags": [
@@ -356,7 +357,7 @@
       "date": "2026-06-16"
     },
     {
-      "title": "Init Containers & Sidecars",
+      "title": "kubernetes-init-containers-sidecars",
       "path": "Resources/kubernetes-init-containers-sidecars.md",
       "domain": "kubernetes",
       "tags": [
@@ -371,7 +372,7 @@
       "date": "2026-06-16"
     },
     {
-      "title": "Longest Consecutive Sequence",
+      "title": "longest-consecutive-sequence",
       "path": "Projects/neetcode-150/longest-consecutive-sequence.md",
       "domain": "leetcode",
       "tags": [
@@ -384,7 +385,7 @@
       "date": "2026-06-16"
     },
     {
-      "title": "Create namespace",
+      "title": "argocd-helm-install-no-crds",
       "path": "Projects/cka/argocd-helm-install-no-crds.md",
       "domain": "kubernetes",
       "tags": [
@@ -397,7 +398,7 @@
       "date": "2026-06-16"
     },
     {
-      "title": "Valid Sudoku",
+      "title": "valid-sudoku",
       "path": "Projects/neetcode-150/valid-sudoku.md",
       "domain": "leetcode",
       "tags": [
@@ -410,7 +411,7 @@
       "date": "2026-06-17"
     },
     {
-      "title": "3Sum",
+      "title": "three-sum",
       "path": "Projects/neetcode-150/three-sum.md",
       "domain": "leetcode",
       "tags": [
@@ -423,7 +424,7 @@
       "date": "2026-06-22"
     },
     {
-      "title": "Daily Temperatures",
+      "title": "daily-temperatures",
       "path": "Projects/neetcode-150/daily-temperatures.md",
       "domain": "leetcode",
       "tags": [
@@ -436,7 +437,7 @@
       "date": "2026-06-22"
     },
     {
-      "title": "Evaluate Reverse Polish Notation",
+      "title": "evaluate-reverse-polish-notation",
       "path": "Projects/neetcode-150/evaluate-reverse-polish-notation.md",
       "domain": "leetcode",
       "tags": [
@@ -449,7 +450,7 @@
       "date": "2026-06-22"
     },
     {
-      "title": "Valid Parentheses",
+      "title": "valid-parentheses",
       "path": "Projects/neetcode-150/valid-parentheses.md",
       "domain": "leetcode",
       "tags": [
@@ -462,7 +463,7 @@
       "date": "2026-06-22"
     },
     {
-      "title": "Go Interface",
+      "title": "golang-interfaces",
       "path": "Resources/golang-interfaces.md",
       "domain": "golang",
       "tags": [],
@@ -471,7 +472,7 @@
       "date": "2026-06-22"
     },
     {
-      "title": "Go Struct",
+      "title": "golang-structs",
       "path": "Resources/golang-structs.md",
       "domain": "golang",
       "tags": [],
@@ -480,7 +481,7 @@
       "date": "2026-06-22"
     },
     {
-      "title": "Golang Slicing",
+      "title": "golang-slice-expressions",
       "path": "Resources/golang-slice-expressions.md",
       "domain": "golang",
       "tags": [],
@@ -489,7 +490,7 @@
       "date": "2026-06-22"
     },
     {
-      "title": "Cart Fleet",
+      "title": "car-fleet",
       "path": "Projects/neetcode-150/car-fleet.md",
       "domain": "leetcode",
       "tags": [
@@ -502,7 +503,7 @@
       "date": "2026-06-24"
     },
     {
-      "title": "Container With The Most Water",
+      "title": "container-with-most-water",
       "path": "Projects/neetcode-150/container-with-most-water.md",
       "domain": "leetcode",
       "tags": [
@@ -515,7 +516,7 @@
       "date": "2026-06-24"
     },
     {
-      "title": "Find Minimum In Rotated Sorted Array",
+      "title": "find-minimum-in-rotated-sorted-array",
       "path": "Projects/neetcode-150/find-minimum-in-rotated-sorted-array.md",
       "domain": "leetcode",
       "tags": [
@@ -528,7 +529,7 @@
       "date": "2026-06-24"
     },
     {
-      "title": "Koko Eating Bananas",
+      "title": "koko-eating-bananas",
       "path": "Projects/neetcode-150/koko-eating-bananas.md",
       "domain": "leetcode",
       "tags": [
@@ -541,7 +542,7 @@
       "date": "2026-06-24"
     },
     {
-      "title": "Kubernetes Volumes",
+      "title": "kubernetes-volumes-emptydir-sidecar",
       "path": "Projects/cka/kubernetes-volumes-emptydir-sidecar.md",
       "domain": "kubernetes",
       "tags": [
@@ -554,6 +555,33 @@
       "para": "Projects",
       "project": "cka",
       "date": "2026-06-24"
+    },
+    {
+      "title": "Report template",
+      "path": "Archive/devops_aws/Report template.md",
+      "domain": null,
+      "tags": [],
+      "para": "Archive",
+      "project": null,
+      "date": null
+    },
+    {
+      "title": "Report",
+      "path": "Archive/devops_aws/Report.md",
+      "domain": null,
+      "tags": [],
+      "para": "Archive",
+      "project": null,
+      "date": null
+    },
+    {
+      "title": "reamde",
+      "path": "Archive/devops_aws/reamde.md",
+      "domain": null,
+      "tags": [],
+      "para": "Archive",
+      "project": null,
+      "date": null
     }
   ]
 }
