@@ -158,6 +158,33 @@ The index is the LLM's **only** source of truth about the vault's contents.
 After each run, the new note is appended to `notes`, and any genuinely new
 domains/tags are added to their lists (reusing existing equivalents otherwise).
 
+### Verifying the index against the vault (reconciliation)
+
+The filing pipeline only ever writes the index entry for the note it just filed,
+so a note edited *after* it was filed — its frontmatter, its title — would leave
+the index permanently stale. To keep `vault.index.json` the true source of truth,
+`reconcile_index` runs at the start of **every** push (right after `sync_projects`
+and **before** any filing), regardless of whether the Inbox holds notes — and it
+makes no API call, so it stays within the cost guard.
+
+It rebuilds the index from the notes actually on disk across the four PARA roots:
+
+- Every indexed note is **refreshed** from its file. `domain`, `tags` and `date`
+  are re-read from the note's frontmatter and `title` from its first H1, while
+  `para`/`project` are derived from the file's **location** (so a hand-moved note
+  self-corrects). A note's existing `date` is kept if the file has none, so a
+  hand-written note without a date does not churn the index.
+- An indexed note whose file is **gone** is dropped.
+- A note found on disk but **never indexed** (created or moved in by hand) is
+  added, in a stable sorted order.
+- `domains` and `tags` are recomputed as the values **in use** by the surviving
+  notes: existing entries keep their order (diff-friendly), newly seen values are
+  appended, and values no note uses any more are pruned.
+
+The pass is order-stable and a no-op when the index already matches disk, so a
+fully in-sync vault pushes nothing. When the Inbox is empty but a reconciliation
+did change the index, the run commits it as `chore(llm): reconcile vault index`.
+
 ## Frontmatter schema
 
 Injected at the very top of every filed note, before existing content:

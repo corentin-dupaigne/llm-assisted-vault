@@ -301,6 +301,119 @@ def format_markdown(text: str) -> str:
     return mdformat.text(text, extensions={"wikilink"})
 
 
+# --- Index reconciliation ----------------------------------------------------
+
+def scan_filed_notes() -> dict[str, Path]:
+    """Map every filed note's repo-relative path to its file, across PARA roots.
+
+    Walks the four PARA roots recursively (only ``Projects/`` nests, one level
+    deep). ``Atlas/``, ``Templates/``, ``Attachments/`` and ``Inbox/`` are
+    deliberately not scanned — they are never part of the index.
+    """
+    found: dict[str, Path] = {}
+    for root in sorted(ALLOWED_PARA_ROOTS):
+        base = REPO_ROOT / root
+        if not base.is_dir():
+            continue
+        for path in base.rglob("*.md"):
+            if path.is_file():
+                found[path.relative_to(REPO_ROOT).as_posix()] = path
+    return found
+
+
+def entry_from_file(rel_path: str, path: Path, existing: dict | None) -> dict:
+    """Build an index entry from a filed note's current on-disk state.
+
+    ``para``/``project`` are derived from the file's *location* (authoritative
+    for where the note physically lives, so a hand-moved note self-corrects);
+    ``domain``/``tags``/``date`` are read from its frontmatter and ``title`` from
+    its first H1. A missing ``date`` falls back to the note's existing index
+    entry, so a hand-written note without one does not churn the index.
+    """
+    text = path.read_text(encoding="utf-8")
+    inner, body = split_frontmatter(text)
+    values = parse_frontmatter(inner)[1] if inner else {}
+
+    parts = Path(rel_path).parts
+    para = parts[0]
+    project = parts[1] if para == "Projects" and len(parts) > 2 else None
+
+    tags = values.get("tags")
+    if not isinstance(tags, list):
+        tags = [tags] if tags else []
+
+    return {
+        "title": extract_title(body, path.stem),
+        "path": rel_path,
+        "domain": values.get("domain"),
+        "tags": tags,
+        "para": para,
+        "project": project,
+        "date": values.get("date") or (existing or {}).get("date"),
+    }
+
+
+def collect_canonical(existing: list[str], in_use: list[str]) -> list[str]:
+    """Canonical list of the values actually in use, stable for diffs.
+
+    Keeps the existing entries that are still in use in their current order (so
+    the file does not churn), then appends any newly seen values in order of
+    first appearance. Values no note uses any more are dropped — the list is
+    defined as the domains/tags currently *in use*.
+    """
+    in_use_set = set(in_use)
+    result: list[str] = []
+    seen: set[str] = set()
+    for value in [*existing, *in_use]:
+        if value in in_use_set and value not in seen:
+            result.append(value)
+            seen.add(value)
+    return result
+
+
+def reconcile_index(index: dict) -> bool:
+    """Re-derive the index entries from the vault's filed notes on disk.
+
+    The index is the LLM's only source of truth, but a user may edit a filed
+    note's frontmatter or rename its title by hand — and the filing pipeline,
+    which only ever writes the *new* note it just filed, would never propagate
+    those edits. This refreshes every indexed note from its file, drops entries
+    whose file is gone, adds notes that appeared on disk, and recomputes the
+    ``domains``/``tags`` canonical lists from actual usage. Returns ``True`` if
+    anything changed, so the caller can persist and commit the correction.
+    """
+    on_disk = scan_filed_notes()
+    old_notes = index.get("notes", [])
+
+    notes: list[dict] = []
+    seen: set[str] = set()
+    # Refresh notes already in the index in their current order (diff-friendly);
+    # drop any whose file no longer exists.
+    for note in old_notes:
+        rel = note.get("path")
+        if rel in on_disk and rel not in seen:
+            notes.append(entry_from_file(rel, on_disk[rel], note))
+            seen.add(rel)
+    # Append notes present on disk but never indexed (created or moved in by
+    # hand), sorted for a stable order.
+    for rel in sorted(on_disk):
+        if rel not in seen:
+            notes.append(entry_from_file(rel, on_disk[rel], None))
+            seen.add(rel)
+
+    domains = collect_canonical(index.get("domains", []),
+                                [n["domain"] for n in notes if n["domain"]])
+    tags = collect_canonical(index.get("tags", []),
+                             [t for n in notes for t in n["tags"]])
+
+    if (notes == old_notes and domains == index.get("domains", [])
+            and tags == index.get("tags", [])):
+        return False
+
+    index["notes"], index["domains"], index["tags"] = notes, domains, tags
+    return True
+
+
 # --- Path safety -------------------------------------------------------------
 
 def resolve_safe_target(target_path: str) -> Path | None:
@@ -620,31 +733,40 @@ def process_notes(client: Anthropic, system_prompt: str,
 
 
 def main(commit: bool = True) -> int:
-    # Step 0 — Guard: no Inbox notes means no work and no API call.
-    inbox_notes = sorted(p for p in INBOX_DIR.glob("*.md") if p.is_file())
-    if not inbox_notes:
-        print("Inbox is empty. Nothing to process.")
-        return 0
-
     processing_date = date.today().isoformat()
-    system_prompt = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
-    client = Anthropic()  # reads ANTHROPIC_API_KEY from the environment
 
-    # Sync the active-project list from the Projects/ folder before filing, so
-    # the LLM classifies against the projects that actually exist on disk. Each
-    # note in process_notes reloads the index from disk, so persist the change.
+    # Step 0 — Verify the index against the vault, every push. Sync the active
+    # projects from the Projects/ folder and reconcile every filed note's entry
+    # with its on-disk frontmatter, title and location, so manual edits reach the
+    # index even when the Inbox is empty (no API call is made here). process_notes
+    # reloads the index from disk per note, so persist the correction first.
     index = load_index()
-    if sync_projects(index):
+    index_changed = sync_projects(index)
+    index_changed |= reconcile_index(index)
+    if index_changed:
         save_index(index)
-        print(f"Detected projects: {index['projects'] or '(none)'}")
+        print("Index verified and updated to match the vault's on-disk state.")
 
-    print(f"Processing {len(inbox_notes)} note(s) from Inbox...")
-    outcomes = process_notes(client, system_prompt, inbox_notes, processing_date)
+    # Step 1–2 — File the Inbox. Guarded: an empty Inbox means no work and no API
+    # call (controlled cost), but the reconciliation above still ran.
+    inbox_notes = sorted(p for p in INBOX_DIR.glob("*.md") if p.is_file())
+    outcomes: list[dict] = []
+    if inbox_notes:
+        system_prompt = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
+        client = Anthropic()  # reads ANTHROPIC_API_KEY from the environment
+        print(f"Processing {len(inbox_notes)} note(s) from Inbox...")
+        outcomes = process_notes(client, system_prompt, inbox_notes, processing_date)
+    else:
+        print("Inbox is empty. Nothing to file.")
 
-    # Step 3 — Commit and push the whole run as one record.
+    # Step 3 — Commit and push the whole run as one record. When nothing was
+    # filed, only the index correction (if any) is recorded; commit_and_push is a
+    # no-op when the tree is clean, so a fully in-sync vault pushes nothing.
     if commit:
         repo = git.Repo(REPO_ROOT)
-        commit_and_push(repo, build_commit_message(outcomes))
+        message = (build_commit_message(outcomes) if outcomes
+                   else "chore(llm): reconcile vault index")
+        commit_and_push(repo, message)
     return 0
 
 
