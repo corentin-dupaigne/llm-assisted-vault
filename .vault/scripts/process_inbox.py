@@ -94,6 +94,12 @@ CLASSIFY_TOOL = {
 # Inbox itself are deliberately excluded — filing there is forbidden.
 ALLOWED_PARA_ROOTS = {"Projects", "Areas", "Resources", "Archive"}
 
+# Roots whose notes are grouped one folder deep by their `domain` (issue #12):
+# `Resources/<domain>/note.md`, `Areas/<domain>/note.md`. This keeps these flat
+# dumps browsable. `Projects/` groups by project instead and `Archive/` stays
+# flat (inactive material needs no navigable structure).
+DOMAIN_FOLDERED_ROOTS = {"Resources", "Areas"}
+
 
 # --- Index helpers -----------------------------------------------------------
 
@@ -442,14 +448,18 @@ def resolve_safe_target(target_path: str) -> Path | None:
     return candidate
 
 
-def build_target_path(para: str, project: str | None, filename: str) -> str | None:
+def build_target_path(para: str, project: str | None, filename: str,
+                      domain: str | None = None) -> str | None:
     """Compose a repo-relative target path from placement fields + filename.
 
-    ``Projects`` notes live one subfolder deep (``Projects/<project>/file.md``);
-    the other PARA roots are flat. Returns a POSIX path string, or ``None`` when
-    the inputs are inconsistent (an unknown root, a missing filename, or
-    ``para == "Projects"`` with no project). Path *safety* — escapes, forbidden
-    roots — is still enforced afterwards by ``resolve_safe_target``.
+    ``Projects`` notes live one subfolder deep under their project
+    (``Projects/<project>/file.md``); ``Resources``/``Areas`` notes live one
+    subfolder deep under their ``domain`` (``Resources/<domain>/file.md``, issue
+    #12); ``Archive`` stays flat. Returns a POSIX path string, or ``None`` when
+    the inputs are inconsistent (an unknown root, a missing filename,
+    ``Projects`` with no project, or a domain-foldered root with no domain). Path
+    *safety* — escapes, forbidden roots — is still enforced afterwards by
+    ``resolve_safe_target``.
     """
     if para not in ALLOWED_PARA_ROOTS or not filename:
         return None
@@ -457,6 +467,10 @@ def build_target_path(para: str, project: str | None, filename: str) -> str | No
         if not project:
             return None
         return f"Projects/{project}/{filename}"
+    if para in DOMAIN_FOLDERED_ROOTS:
+        if not domain:
+            return None
+        return f"{para}/{domain}/{filename}"
     return f"{para}/{filename}"
 
 
@@ -472,7 +486,7 @@ def reconcile_placement(original: str, model_para: str,
 
     - an explicit valid ``para`` in the note wins;
     - rerouting to a *different* root than the model chose drops the model's
-      project association — a flat root (Areas/Resources/Archive) carries none;
+      project association — a non-project root (Areas/Resources/Archive) carries none;
     - an explicit ``project`` in the note wins over the model's.
 
     A non-``Projects`` root is forced to ``project = None``; the caller rejects
@@ -570,6 +584,7 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
 
     tags = decision.get("tags") or []
     project = decision.get("project")
+    filename = dest.name  # the safe basename derived from the model's target_path
     # Resolve the model's title-based links to Obsidian-resolvable basename links.
     wikilinks = resolve_wikilinks(decision.get("wikilinks") or [], index)
 
@@ -579,11 +594,25 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
     # model for where it is filed. Reconcile para/project *before* merging so the
     # written frontmatter, the physical destination and the index all agree.
     # Rules: an explicit `para`/`project` in the note overrides the model's; a
-    # reroute to a *different* root drops the model's project (a flat root carries
-    # none); and `Projects` without a project is incoherent → rejected below.
+    # reroute to a *different* root drops the model's project (a non-project root
+    # carries none); and `Projects` without a project is incoherent → rejected below.
     para, project = reconcile_placement(original, para, project)
 
-    placement = build_target_path(para, project, dest.name)
+    # Merge the mandatory metadata into any frontmatter the note already carries
+    # (templated notes bring their own); existing fields are kept verbatim, only
+    # missing mandatory ones are added — so we never stack two `---` blocks. The
+    # reconciled para/project are passed in so a freshly added project field is
+    # coherent with the chosen root. Done *before* composing the destination so a
+    # domain-foldered note (Resources/Areas) is filed under its *effective*
+    # domain — the same value written to the index.
+    frontmatter, note_body, effective = merge_frontmatter(
+        original, domain=domain, tags=tags, date=processing_date,
+        para=para, project=project,
+    )
+    eff_domain = effective["domain"] or domain
+    eff_tags = effective["tags"] or []
+
+    placement = build_target_path(para, project, filename, eff_domain)
     if placement is None:
         print(f"  ! Rejected {md_file.name}: inconsistent placement override "
               f"(para={para!r}, project={project!r}). Left in Inbox.")
@@ -593,16 +622,6 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
         print(f"  ! Rejected placement '{placement}' for {md_file.name}: outside "
               f"allowed PARA roots. Left in Inbox.")
         return None
-
-    # Merge the mandatory metadata into any frontmatter the note already carries
-    # (templated notes bring their own); existing fields are kept verbatim, only
-    # missing mandatory ones are added — so we never stack two `---` blocks. The
-    # reconciled para/project are passed in so a freshly added project field is
-    # coherent with the chosen root.
-    frontmatter, note_body, effective = merge_frontmatter(
-        original, domain=domain, tags=tags, date=processing_date,
-        para=para, project=project,
-    )
 
     title = extract_title(note_body, md_file.stem)
 
@@ -624,9 +643,8 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
 
     # --- Index update --------------------------------------------------------
     # Mirror the note's effective metadata (existing frontmatter wins over the
-    # model's values for any field the note already defined) into the index.
-    eff_domain = effective["domain"] or domain
-    eff_tags = effective["tags"] or []
+    # model's values for any field the note already defined) into the index;
+    # eff_domain/eff_tags were resolved above to compose the destination.
     index.setdefault("notes", []).append({
         "title": title,
         "path": rel_dest,

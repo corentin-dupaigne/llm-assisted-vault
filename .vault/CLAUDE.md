@@ -33,8 +33,8 @@ hidden `.vault/` directory so the vault stays clean and tool-portable.
 |-------------------------------|-----------------------------------------------------------|
 | `Inbox/`                      | Drop zone — the single entry point for new notes.         |
 | `Projects/`                   | Active work; one subfolder per active project at runtime. |
-| `Areas/`                      | Ongoing responsibilities without a deadline (flat).       |
-| `Resources/`                  | Reference material and general knowledge (flat).          |
+| `Areas/`                      | Ongoing responsibilities; one subfolder per `domain`.     |
+| `Resources/`                  | Reference material and general knowledge; one per `domain`.|
 | `Archive/`                    | Inactive or completed items (flat).                       |
 | `Atlas/`                      | Maps of Content (MOCs); maintained manually by the user.  |
 | `Templates/`                  | Note templates; never touched by automation.              |
@@ -54,9 +54,13 @@ govern the whole tree. The script derives both roots from its own location —
 `VAULT_DIR` (`.vault/`) for the machinery and index, `REPO_ROOT` (its parent)
 for the PARA folders and `.git` — so the two never get confused.
 
-`Projects/`, `Areas/`, `Resources/`, and `Archive/` have no subfolders, except
-`Projects/`, which gets one subfolder per active project. Empty folders are kept
-in git with a `.gitkeep` file.
+`Archive/` is flat. `Projects/` gets one subfolder per active project.
+`Resources/` and `Areas/` get one subfolder per `domain` — a note's domain is
+its folder (`Resources/<domain>/note.md`), keeping these otherwise-large flat
+dumps browsable (issue #12). The folder is derived in code from the note's
+`para`/`project`/`domain` (`build_target_path`), so the on-disk location, the
+written frontmatter and the index entry always agree. Empty folders are kept in
+git with a `.gitkeep` file.
 
 ## Absolute rules
 
@@ -112,8 +116,8 @@ index entry** — all three stay consistent. Rules:
 
 - An explicit, valid `para` in the note overrides the model's.
 - Rerouting to a *different* root than the model picked **drops** the model's
-  project association — a flat root (Areas/Resources/Archive) never carries a
-  project. An explicit `project` in the note also wins.
+  project association — a non-project root (Areas/Resources/Archive) never carries
+  a project. An explicit `project` in the note also wins.
 - `para: Projects` with no resolvable project is incoherent → the note is
   **rejected and left in the Inbox** rather than filed approximately.
 
