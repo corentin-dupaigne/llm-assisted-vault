@@ -1,3 +1,10 @@
+---
+domain: kubernetes
+tags: [devops, cka, storage, pods, sidecar]
+date: 2026-06-24
+para: Projects
+project: cka
+---
 > [!abstract] TL;DR
 > A volume grafts a filesystem onto a container's directory tree at a `mountPath`. The container writes to a normal-looking path; the kernel transparently redirects those writes to the volume's real backing store. **What** the storage is = `volumes` (Pod level). **Where** it's plugged in = `volumeMounts` (container level). The shared `name` is the cable connecting the two.
 
@@ -5,13 +12,12 @@
 
 Every volume is declared once and mounted wherever needed.
 
-| Field          | Level          | Answers                    | Example                                          |
+| Field | Level | Answers | Example |
 | -------------- | -------------- | -------------------------- | ------------------------------------------------ |
-| `volumes`      | Pod            | *"What is the storage?"*   | `emptyDir`, `persistentVolumeClaim`, `configMap` |
-| `volumeMounts` | each container | *"Where do I plug it in?"* | `mountPath: /var/log`                            |
+| `volumes` | Pod | *"What is the storage?"* | `emptyDir`, `persistentVolumeClaim`, `configMap` |
+| `volumeMounts` | each container | *"Where do I plug it in?"* | `mountPath: /var/log` |
 
 The `name` in `volumeMounts` must match the `name` in `volumes` **exactly**. A typo here is the classic silent failure: the Pod starts but the sharing doesn't work.
-
 
 > [!warning] Common misconception
 > A **symlink** is a file containing a *path* to another file — indirection at the path level, visible to the program (`ls -l` shows `-> target`).
@@ -29,6 +35,7 @@ The name is literal: **a directory that starts empty**. The name describes its *
 
 > [!tip] CKA triage reflex
 > The implicit question in every volume task: *does the data need to survive the Pod or be shared across Pods?*
+>
 > - **Yes** → [[PersistentVolumes\|PVC]]
 > - **No** (scratch, or sharing between containers of one Pod) → `emptyDir`
 
@@ -81,3 +88,9 @@ spec:
 
 > [!info] Modern sidecars (1.28+)
 > There's now a real "sidecar" API: an `initContainer` with `restartPolicy: Always`, fixing startup/shutdown ordering. For the CKA and this exercise, "sidecar" just means "a second ordinary container in `spec.containers`."
+
+## Links
+
+- [[kubernetes-persistent-volumes-pvc-storageclass|Pv, Pvc, Storageclass]]
+- [[kubernetes-init-containers-sidecars|Init Containers & Sidecars]]
+- [[mariadb-pv-recovery-scenario|STATUS must be Bound, VOLUME must be mariadb-pv]]

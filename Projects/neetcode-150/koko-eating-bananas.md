@@ -8,12 +8,14 @@ tags:
   - leetcode
   - neetcode-150
   - binary-search
+domain: leetcode
+date: 2026-06-24
+para: Projects
 ---
 ## Initial Intuition
 
 Mon intuition pour cet exercice est qu'on peut obtenir le nombre d'heures necessaires pour manger toutes les bananes par rapport a k grace au calcul sum(piles) / k.
-Au niveau de l'application du pattern binary search, je pense qu'il faut l'utiliser pour trouver k. Peut etre pouvons nous commencer avec k = 1, verifier si sum(piles)/k <= hours, si c'est le cas on retourne k, sinon on multiplie k par 2. si sum(piles)/k > hours, on divise par 2. Je pense qu'il y a une faille dans cette solution car si apres une division ou multiplication par * 2 sum(piles)/k <= hours est true cela ne garanti pas que c'est le plus petit k possible.
-
+Au niveau de l'application du pattern binary search, je pense qu'il faut l'utiliser pour trouver k. Peut etre pouvons nous commencer avec k = 1, verifier si sum(piles)/k \<= hours, si c'est le cas on retourne k, sinon on multiplie k par 2. si sum(piles)/k > hours, on divise par 2. Je pense qu'il y a une faille dans cette solution car si apres une division ou multiplication par * 2 sum(piles)/k \<= hours est true cela ne garanti pas que c'est le plus petit k possible.
 
 ## My Solution
 
@@ -66,3 +68,8 @@ On calcul mid (mid == k), on increment un compteur totalHours ou l'on process le
 ## Review Log
 
 - 2026-06-24 — first solve
+
+## Links
+
+- [[find-minimum-in-rotated-sorted-array|Find Minimum In Rotated Sorted Array]]
+- [[golang-sorting|Golang Sorting]]
