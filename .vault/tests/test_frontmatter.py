@@ -155,9 +155,9 @@ def test_capture_time_para_override_wins_over_model_placement(vault):
     outcome = vault.module.apply_filed(note, decision, index, "2026-06-10")
     assert outcome["status"] == "filed"
 
-    # Filed under Resources/<domain>/, keeping the model's basename; the Projects/
-    # path is never created and the Inbox note is gone.
-    assert outcome["target_path"] == "Resources/kubernetes/kubernetes-persistent-volumes.md"
+    # Filed under Resources/, keeping the model's basename; the Projects/ path is
+    # never created and the Inbox note is gone.
+    assert outcome["target_path"] == "Resources/kubernetes-persistent-volumes.md"
     assert (vault.root / outcome["target_path"]).exists()
     assert not (vault.root / "Projects" / "cka").exists()
     assert not note.exists()
