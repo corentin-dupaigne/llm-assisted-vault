@@ -1,8 +1,9 @@
 name: Process Inbox
 
-# Runs the LLM-assisted filing pipeline on every push to main. The script
-# self-guards: if the Inbox holds no Markdown notes it exits immediately with
-# no API call, so empty pushes incur no cost.
+# Runs the LLM-assisted filing pipeline on every push to main. The script first
+# verifies vault.index.json against the notes on disk (reconciling any hand-edited
+# metadata/title) with no API call, then files the Inbox. If the Inbox holds no
+# Markdown notes no API call is made, so empty pushes incur no model cost.
 on:
   push:
     branches:
