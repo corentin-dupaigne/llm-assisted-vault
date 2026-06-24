@@ -39,9 +39,9 @@ If, after applying this hierarchy, you cannot confidently place the note, return
 - Inspect the `notes` array in the index and identify existing notes that are **genuinely relevant** to link to from this new note.
 - Relevance means a real conceptual connection — the new note continues, depends on, contradicts, or directly relates to the existing one.
 - **Never link to a note merely because it shares a domain or tag.** A shared label is not relevance.
-- Build each wikilink from the target note's **filename**, not its title. The filename is the `path` value in the index with the directory and the `.md` extension removed (its *basename*). Use the note's title as the display alias, in the form `[[file-stem|Note Title]]`.
-  - Obsidian resolves a wikilink by the file's basename; using the title would point at a file that does not exist and create a stray note. Always take the basename verbatim from the `path` field — never invent or re-slugify it.
-  - Example: a note with `"title": "Contains Duplicate"` and `"path": "Projects/neetcode-150/contains-duplicate.md"` must be linked as `[[contains-duplicate|Contains Duplicate]]`.
+- Build each wikilink from the target note's **title** exactly as it appears in the index, in the bare form `[[Note Title]]`. Filenames are the readable title, so Obsidian resolves the link by that title directly — no alias is needed.
+  - Example: a note with `"title": "Contains Duplicate"` must be linked as `[[Contains Duplicate]]`.
+  - Use the title verbatim from the index — never invent or re-slugify it.
 - If no existing note is genuinely relevant, return an empty `wikilinks` list. An empty list is the correct and expected answer when nothing relates.
 
 ---
@@ -54,12 +54,12 @@ Respond with **strict JSON only**. No prose, no explanation, no markdown code fe
 {
   "status": "filed",
   "reason": "Short explanation of the classification decision",
-  "target_path": "Resources/note-filename.md",
+  "target_path": "Resources/Note Title.md",
   "domain": "kubernetes",
   "tags": ["k3s", "devops"],
   "para": "Resources",
   "project": null,
-  "wikilinks": ["[[existing-note-filename|Existing Note Title]]"]
+  "wikilinks": ["[[Existing Note Title]]"]
 }
 ```
 
@@ -67,12 +67,12 @@ Field rules:
 
 - `status`: always `"filed"` for a successful classification.
 - `reason`: one short sentence justifying the decision.
-- `target_path`: the full destination path including the filename, e.g. `Areas/health-routine.md` or `Projects/website-redesign/launch-plan.md`. Use a clear, lowercase, hyphen-separated filename derived from the note's subject, ending in `.md`.
+- `target_path`: the full destination path including the filename, e.g. `Areas/Morning Routine.md` or `Projects/website-redesign/Launch Plan.md`. Use the note's human-readable title as the filename (spaces and normal capitalisation), ending in `.md`.
 - `domain`: exactly one lowercase hyphen-separated string.
 - `tags`: a list of lowercase hyphen-separated strings; may be empty.
 - `para`: one of `"Projects"`, `"Areas"`, `"Resources"`, `"Archive"` — must be consistent with `target_path`.
 - `project`: the project name string when `para` is `"Projects"`, otherwise `null`.
-- `wikilinks`: a list of `[[file-stem|Title]]` strings built from each target note's filename; may be empty.
+- `wikilinks`: a list of bare `[[Note Title]]` strings built from each target note's title; may be empty.
 
 ---
 

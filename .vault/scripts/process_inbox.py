@@ -57,8 +57,9 @@ CLASSIFY_TOOL = {
             "reason": {"type": "string", "description": "Short justification."},
             "target_path": {
                 "type": "string",
-                "description": "Full destination path including filename, "
-                               "e.g. 'Resources/note-filename.md'.",
+                "description": "Full destination path including a readable "
+                               "filename (the note's title, with spaces), e.g. "
+                               "'Resources/Contains Duplicate.md'.",
             },
             "domain": {
                 "type": "string",
@@ -78,12 +79,9 @@ CLASSIFY_TOOL = {
                 "type": "array",
                 "items": {"type": "string"},
                 "description": "Links to relevant existing notes, built from each "
-                               "note's FILENAME (its 'path' basename without the "
-                               "'.md'), with the note's title as the display "
-                               "alias: '[[file-stem|Note Title]]'. E.g. for a note "
-                               "at 'Resources/contains-duplicate.md' titled "
-                               "'Contains Duplicate', emit "
-                               "'[[contains-duplicate|Contains Duplicate]]'.",
+                               "note's title (which is its filename), e.g. "
+                               "'[[Contains Duplicate]]'. Use the exact title as "
+                               "it appears in the index.",
             },
         },
         "required": ["status", "reason"],
@@ -138,13 +136,34 @@ def sync_projects(index: dict) -> bool:
 
 # --- Note helpers ------------------------------------------------------------
 
-def extract_title(content: str, fallback_stem: str) -> str:
-    """Title of a note: its first H1 heading, else a humanized filename stem."""
-    for line in content.splitlines():
-        match = re.match(r"^#\s+(.+?)\s*$", line)
-        if match:
-            return match.group(1).strip()
-    return fallback_stem.replace("-", " ").replace("_", " ").strip().title()
+def title_from_stem(stem: str) -> str:
+    """A filed note's title is its filename stem — the human-readable name the
+    user gave the capture. Used verbatim (only trimmed) so acronyms and casing
+    are preserved (``ArgoCD``, ``CRDs``, ``PV, PVC``). The note body — including
+    any heading — is never inspected; titles come from the filename alone."""
+    return stem.strip()
+
+
+# Characters forbidden in (or hostile to) a note filename: the OS/Obsidian-illegal
+# set plus the wikilink-significant `# ^ [ ]` and the alias pipe `|`.
+_FILENAME_FORBIDDEN_RE = re.compile(r'[:?*"<>|#^\[\]]')
+_FILENAME_SLASH_RE = re.compile(r"[\\/]+")
+_FILENAME_WS_RE = re.compile(r"\s+")
+
+
+def title_to_filename(title: str) -> str:
+    """Turn a note's human title into a readable, Obsidian-safe filename.
+
+    Deliberately *not* slugging: spaces and case are preserved so the filename
+    reads as the title (``ArgoCD Helm Install No CRDs.md``) and resolves as a
+    bare ``[[wikilink]]``. Only the characters that are illegal in a filename or
+    that break wikilinks are removed/replaced — the minimal cleanup Obsidian
+    itself does (``TCP/IP`` -> ``TCP-IP``, ``What is REST?`` -> ``What is REST``).
+    """
+    name = _FILENAME_SLASH_RE.sub("-", title)
+    name = _FILENAME_FORBIDDEN_RE.sub("", name)
+    name = _FILENAME_WS_RE.sub(" ", name).strip(" .")
+    return f"{name or 'untitled'}.md"
 
 
 # The metadata every filed note must carry. Order is the canonical layout used
@@ -254,33 +273,41 @@ def merge_frontmatter(original: str, *, domain: str, tags: list[str], date: str,
 
 
 def resolve_wikilinks(raw_links: list[str], index: dict) -> list[str]:
-    """Validate the model's filename-based wikilinks against the index.
+    """Validate the model's wikilinks against the index, as bare ``[[Title]]``.
 
-    Obsidian resolves a wikilink by the target file's *basename*, not by its
-    frontmatter title — so the model is asked to build each link from the note's
-    filename (the `path` basename), producing `[[file-stem|Title]]`. This is a
-    safety net over that contract: each link's target is matched against the
-    indexed note basenames, and the alias is re-derived from the index `title`
-    so the display text is always canonical. A link whose basename matches no
-    indexed note (a hallucinated target) is dropped rather than written broken —
-    that is what would otherwise spawn a stray note at the vault root.
+    Filenames are the readable title now, so Obsidian resolves a link by its
+    basename directly — the model is asked to build each link from the target
+    note's title (``[[ArgoCD Helm Install No CRDs]]``). This is a safety net over
+    that contract: each link is matched against the indexed notes by title *or*
+    basename and re-emitted as the canonical basename, so it always resolves. A
+    link matching no indexed note (a hallucinated target) is dropped rather than
+    written broken — that is what would otherwise spawn a stray note.
     """
-    by_stem: dict[str, str] = {}
+    by_title: dict[str, str] = {}   # title -> file basename
+    by_stem: set[str] = set()       # known file basenames
     for note in index.get("notes", []):
-        title, path = note.get("title"), note.get("path")
-        if title and path:
-            by_stem[Path(path).stem] = title
+        path = note.get("path")
+        if not path:
+            continue
+        stem = Path(path).stem
+        by_stem.add(stem)
+        if note.get("title"):
+            by_title[note["title"]] = stem
 
     resolved: list[str] = []
     seen: set[str] = set()
     for raw in raw_links:
-        # Accept whatever the model emitted ([[stem]], [[stem|Alias]], a path,
-        # or a name with .md) and reduce it to the bare basename to match on.
+        # Accept whatever the model emitted ([[Title]], [[Title|alias]], a name
+        # with .md, or a path) and reduce it to the target text to match on.
         target = raw.strip().strip("[]").split("|", 1)[0].strip()
-        stem = Path(target).stem
-        title = by_stem.get(stem)
-        if title and stem not in seen:
-            resolved.append(f"[[{stem}|{title}]]")
+        if target.endswith(".md"):
+            target = target[:-3]
+        stem = by_title.get(target)
+        if stem is None:
+            cand = target.rsplit("/", 1)[-1]  # last path component, if any
+            stem = cand if cand in by_stem else (target if target in by_stem else None)
+        if stem and stem not in seen:
+            resolved.append(f"[[{stem}]]")
             seen.add(stem)
     return resolved
 
@@ -326,12 +353,12 @@ def entry_from_file(rel_path: str, path: Path, existing: dict | None) -> dict:
 
     ``para``/``project`` are derived from the file's *location* (authoritative
     for where the note physically lives, so a hand-moved note self-corrects);
-    ``domain``/``tags``/``date`` are read from its frontmatter and ``title`` from
-    its first H1. A missing ``date`` falls back to the note's existing index
+    ``domain``/``tags``/``date`` are read from its frontmatter and ``title`` is
+    its filename. A missing ``date`` falls back to the note's existing index
     entry, so a hand-written note without one does not churn the index.
     """
     text = path.read_text(encoding="utf-8")
-    inner, body = split_frontmatter(text)
+    inner, _ = split_frontmatter(text)
     values = parse_frontmatter(inner)[1] if inner else {}
 
     parts = Path(rel_path).parts
@@ -343,7 +370,7 @@ def entry_from_file(rel_path: str, path: Path, existing: dict | None) -> dict:
         tags = [tags] if tags else []
 
     return {
-        "title": extract_title(body, path.stem),
+        "title": title_from_stem(path.stem),
         "path": rel_path,
         "domain": values.get("domain"),
         "tags": tags,
@@ -562,28 +589,31 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
               f"fields. Left in Inbox.")
         return None
 
-    dest = resolve_safe_target(target_path)
-    if dest is None:
-        print(f"  ! Rejected target_path '{target_path}' for {md_file.name}: "
-              f"outside allowed PARA roots. Left in Inbox.")
-        return None
-
     tags = decision.get("tags") or []
     project = decision.get("project")
-    # Resolve the model's title-based links to Obsidian-resolvable basename links.
+    # Validate the model's links against the index and reduce them to bare,
+    # resolvable [[Title]] wikilinks (the filename is the readable title now).
     wikilinks = resolve_wikilinks(decision.get("wikilinks") or [], index)
 
     original = md_file.read_text(encoding="utf-8")
 
+    # The note's human-readable name is its Inbox filename. The destination
+    # filename is derived from it — kept readable and Obsidian-safe rather than
+    # slugified — so the note reads as its title across Obsidian and resolves as a
+    # bare [[wikilink]]. The model's target_path is only a completeness signal;
+    # the actual filename is taken from the title in code.
+    title = title_from_stem(md_file.stem)
+    filename = title_to_filename(title)
+
     # Capture-time placement override: a note's own frontmatter wins over the
-    # model for where it is filed. Reconcile para/project *before* merging so the
-    # written frontmatter, the physical destination and the index all agree.
-    # Rules: an explicit `para`/`project` in the note overrides the model's; a
-    # reroute to a *different* root drops the model's project (a flat root carries
-    # none); and `Projects` without a project is incoherent → rejected below.
+    # model for where it is filed. Reconcile para/project *before* composing the
+    # destination so the written frontmatter, the physical location and the index
+    # all agree. Rules: an explicit `para`/`project` in the note overrides the
+    # model's; a reroute to a *different* root drops the model's project (a flat
+    # root carries none); and `Projects` without a project is incoherent → below.
     para, project = reconcile_placement(original, para, project)
 
-    placement = build_target_path(para, project, dest.name)
+    placement = build_target_path(para, project, filename)
     if placement is None:
         print(f"  ! Rejected {md_file.name}: inconsistent placement override "
               f"(para={para!r}, project={project!r}). Left in Inbox.")
@@ -603,8 +633,6 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
         original, domain=domain, tags=tags, date=processing_date,
         para=para, project=project,
     )
-
-    title = extract_title(note_body, md_file.stem)
 
     # Format the Markdown body (captured content + generated Links section) but
     # keep the merged frontmatter out of the formatter, then reattach it.
