@@ -1,9 +1,5 @@
 ---
-project: neetcode-150
-domain: leetcode
-tags: [linked-list, neetcode-150, golang]
 date: 2026-07-02
-para: Projects
 ---
 # Dummy Head Node
 
