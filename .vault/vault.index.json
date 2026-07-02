@@ -40,7 +40,8 @@
     "sidecar",
     "helm",
     "stack",
-    "binary-search"
+    "binary-search",
+    "linked-list"
   ],
   "notes": [
     {
@@ -582,6 +583,44 @@
       "para": "Archive",
       "project": null,
       "date": null
+    },
+    {
+      "title": "Merge two linked lists",
+      "path": "Projects/neetcode-150/Merge two linked lists.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "linked-list"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-07-02"
+    },
+    {
+      "title": "Zagreb Addresses",
+      "path": "Resources/Zagreb Addresses.md",
+      "domain": "travel",
+      "tags": [
+        "food",
+        "tourism"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-07-02"
+    },
+    {
+      "title": "pattern linked list",
+      "path": "Projects/neetcode-150/pattern linked list.md",
+      "domain": "leetcode",
+      "tags": [
+        "linked-list",
+        "neetcode-150",
+        "golang"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-07-02"
     }
   ]
 }
