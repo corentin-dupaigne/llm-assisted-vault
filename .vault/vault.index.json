@@ -610,8 +610,36 @@
       "date": "2026-07-02"
     },
     {
-      "title": "pattern linked list",
-      "path": "Projects/neetcode-150/pattern linked list.md",
+      "title": "Floyd's Tortoise and Hare",
+      "path": "Projects/neetcode-150/Floyd's Tortoise and Hare.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "linked-list",
+        "two-pointers",
+        "golang"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-07-02"
+    },
+    {
+      "title": "Linked List cycle Definition",
+      "path": "Projects/neetcode-150/Linked List cycle Definition.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "linked-list"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-07-02"
+    },
+    {
+      "title": "pattern linked list dummy head node",
+      "path": "Projects/neetcode-150/pattern linked list dummy head node.md",
       "domain": "leetcode",
       "tags": [
         "linked-list",

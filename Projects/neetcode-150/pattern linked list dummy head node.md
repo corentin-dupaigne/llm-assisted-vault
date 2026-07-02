@@ -1,5 +1,9 @@
 ---
 date: 2026-07-02
+domain: leetcode
+tags: [linked-list, neetcode-150, golang]
+para: Projects
+project: neetcode-150
 ---
 # Dummy Head Node
 
@@ -73,3 +77,9 @@ This is the linked-list instance of a broader move: **when the first item behave
 ## Links
 
 - [[Merge two linked lists]]
+
+## Links
+
+- [[Merge two linked lists]]
+- [[Floyd's Tortoise and Hare]]
+- [[Linked List cycle Definition]]
