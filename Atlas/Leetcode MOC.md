@@ -3,29 +3,22 @@ type: moc
 theme: leetcode
 created: 2026-06-17
 ---
-# Leetcode — Map of Content
-
-> [!info] Navigation map for the **Neetcode** theme.
-> The lists below populate automatically from each note's metadata.
-> There is nothing to maintain by hand. Requires the **Dataview** plugin.
-
-## Primary notes
-Notes whose `domain` **is** this theme — the reference material *about* it.
+## Exercices I struggled with
 
 ```dataview
 LIST
 FROM "Projects" OR "Areas" OR "Resources" OR "Archive"
 WHERE domain = this.theme
+AND struggled = True
 SORT date DESC
 ```
 
-## Related notes
-Notes that merely *touch* this theme through their `tags`.
-
+## Exercices I did not struggle with
 ```dataview
 LIST
 FROM "Projects" OR "Areas" OR "Resources" OR "Archive"
-WHERE contains(tags, this.theme) AND domain != this.theme
+WHERE domain = this.theme
+AND struggled = False
 SORT date DESC
 ```
 
