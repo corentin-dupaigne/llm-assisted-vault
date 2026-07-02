@@ -5,6 +5,9 @@ struggled: false
 project: neetcode-150
 date_solved: 2026-06-30
 tags: [leetcode, neetcode-150, linked-list]
+domain: leetcode
+date: 2026-07-02
+para: Projects
 ---
 ## Initial Intuition
 
@@ -13,7 +16,6 @@ Mon intuition est qu'il suffisait simplement de relier la tail de la premiere li
 Je pense que l'algo est de d'iterer sur les deux list en meme temps tant qu'il y a un next sur les deux, pour le current de chaque liste on prend le premier en plus petit et on l'ajoute sur la nouvelle liste (je me demande si il n'est pas possible d'utiliser une liste deja existante au lieu d'en recreer une pour economiser de l'espace). A la fin d'une liste, si reste des elements dans la deuxieme liste on les ajoutes seulement a la suite.
 
 Il y a un probleme avec ma logique -> j'avance tout le temps les deux listes mais parfois il faudrait n'en avancer qu'une. Par exemple si j'ai une liste 10-9-8 et 2-3-4. Il ne faut avancer que la 2eme vu que la 1ere est plus grande que tous les elements de la deuxieme.
-
 
 ## My Solution
 
@@ -117,3 +119,8 @@ Ma complexite etait optimale mais le code pouvait etre ameliore en terme de prop
 ## Review Log
 
 - 2026-06-30 — first solve
+
+## Links
+
+- [[contains-duplicate]]
+- [[two-sum]]
