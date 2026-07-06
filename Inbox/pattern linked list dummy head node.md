@@ -1,12 +1,6 @@
 ---
-date: 2026-07-02
-domain: leetcode
-tags: [linked-list, neetcode-150, golang]
-para: Projects
-project: neetcode-150
+para: Resources
 ---
-# Dummy Head Node
-
 ## One-liner
 
 A throwaway placeholder node placed *before* the list so the **first node stops being a special case**. One uniform loop handles every node, first included.

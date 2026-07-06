@@ -1,9 +1,13 @@
 ---
-domain: leetcode
-tags: [leetcode, neetcode-150, linked-list, two-pointers, golang]
+tags:
+  - leetcode
+  - neetcode-150
+  - linked-list
+  - two-pointers
+  - golang
 date: 2026-07-02
-para: Projects
-project: neetcode-150
+para: Resources
+project:
 ---
 > [!abstract] One-liner
 > Two pointers through the same list — `slow` moves 1, `fast` moves 2. If the list has a cycle they collide; if it doesn't, `fast` reaches `nil`. O(n) time, **O(1) space**.
