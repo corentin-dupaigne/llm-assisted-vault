@@ -1,4 +1,10 @@
-
+---
+domain: golang
+tags: []
+date: 2026-07-06
+para: Resources
+project: null
+---
 The fundamental streaming-input interface in Go. A single method; anything that implements it can be read from uniformly.
 
 ```go
@@ -8,12 +14,14 @@ type Reader interface {
 ```
 
 ## Contract
+
 - Copies **up to** `len(p)` bytes into `p`, returns `n` = bytes actually copied.
 - May return `0 < n < len(p)` — never assume the buffer is filled.
 - Can return `n > 0` **and** a non-nil `err` (incl. `io.EOF`) together → process `p[:n]` *first*, then check `err`.
 - `io.EOF` signals the stream is exhausted.
 
 ## Why it matters
+
 One tiny method → composability. Readers wrap readers, each layer still an `io.Reader`:
 
 ```go
@@ -21,6 +29,7 @@ gzip.NewReader(bufio.NewReader(file))
 ```
 
 ## Common usage
+
 Rarely called directly — wrap it instead:
 
 ```go
@@ -29,11 +38,12 @@ scanner := bufio.NewScanner(r)    // line-oriented
 io.Copy(dst, r)                   // stream to a writer
 ```
 
----
+______________________________________________________________________
 
 ## Related concepts
 
 ### io.Writer
+
 The symmetric output interface — same shape, opposite direction.
 
 ```go
@@ -47,6 +57,7 @@ type Writer interface {
 - Combine the two for bidirectional streams: `io.ReadWriter` (e.g. a `net.Conn`).
 
 ### os.Stdin
+
 Standard input, declared as an `*os.File` wrapping file descriptor 0:
 
 ```go
@@ -62,6 +73,7 @@ json.NewDecoder(os.Stdin).Decode(&conf)   // stream-parse straight off fd 0
 > `os.Stdout` / `os.Stderr` are the `io.Writer` counterparts (fds 1 and 2).
 
 ### io.ReadAll
+
 Reads an *entire* stream into one owned `[]byte`.
 
 ```go
@@ -74,6 +86,7 @@ func ReadAll(r io.Reader) ([]byte, error)
 - Caveats: blocks until the source is **closed**, and holds everything in RAM. Guard untrusted input with `io.LimitReader(r, max)`.
 
 ### io.EOF
+
 The sentinel error meaning "no more input."
 
 ```go
@@ -84,4 +97,10 @@ var EOF = errors.New("EOF")
 - `io.ErrUnexpectedEOF` is the *distinct* error for hitting EOF mid-value (e.g. a truncated read that expected more).
 
 ## Mental model
+
 `Read` = "give me the next chunk, once." `io.ReadAll` = "keep calling `Read` until `io.EOF`, give me everything." `io.Writer` = the same primitive in reverse. `os.Stdin` = a concrete `io.Reader` you get for free.
+
+## Links
+
+- [[golang-interfaces]]
+- [[golang-strings]]

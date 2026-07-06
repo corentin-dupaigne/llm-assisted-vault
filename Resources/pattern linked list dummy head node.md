@@ -1,5 +1,9 @@
 ---
 para: Resources
+domain: leetcode
+tags: [linked-list, golang]
+date: 2026-07-06
+project: null
 ---
 ## One-liner
 
@@ -71,6 +75,12 @@ This is the linked-list instance of a broader move: **when the first item behave
 ## Links
 
 - [[Merge two linked lists]]
+
+## Links
+
+- [[Merge two linked lists]]
+- [[Floyd's Tortoise and Hare]]
+- [[Linked List cycle Definition]]
 
 ## Links
 
