@@ -5,11 +5,13 @@ struggled: false
 project: neetcode-150
 date_solved: 2026-07-05
 tags: [leetcode, neetcode-150, binary-search]
+domain: leetcode
+date: 2026-07-06
+para: Projects
 ---
 ## Initial Intuition
 
 <!-- Before coding: pattern recognized? Approach envisioned? Edge cases? -->
-
 
 ## My Solution
 
@@ -116,3 +118,9 @@ My solution was optimal for complexity but could have been better in code qualit
 ## Review Log
 
 - 2026-07-05 — first solve
+
+## Links
+
+- [[find-minimum-in-rotated-sorted-array]]
+- [[koko-eating-bananas]]
+- [[golang-maps]]

@@ -8,6 +8,7 @@ tags:
 date: 2026-07-02
 para: Resources
 project:
+domain: leetcode
 ---
 > [!abstract] One-liner
 > Two pointers through the same list — `slow` moves 1, `fast` moves 2. If the list has a cycle they collide; if it doesn't, `fast` reaches `nil`. O(n) time, **O(1) space**.
@@ -95,6 +96,15 @@ Both are time-optimal (must look at each node once). The "can you do better?" al
 
 ## Links
 
+- [[Merge two linked lists]]
+- [[valid-palindrome]]
+- [[two-sum-ii-input-array-is-sorted]]
+- [[three-sum]]
+- [[container-with-most-water]]
+
+## Links
+
+- [[Linked List cycle Definition]]
 - [[Merge two linked lists]]
 - [[valid-palindrome]]
 - [[two-sum-ii-input-array-is-sorted]]
