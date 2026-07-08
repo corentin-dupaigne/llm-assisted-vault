@@ -96,7 +96,7 @@ Both are time-optimal (must look at each node once). The "can you do better?" al
 
 ## Links
 
-- [[Merge two linked lists]]
+- [[Merge two Linked lists 1]]
 - [[valid-palindrome]]
 - [[two-sum-ii-input-array-is-sorted]]
 - [[three-sum]]
@@ -105,7 +105,7 @@ Both are time-optimal (must look at each node once). The "can you do better?" al
 ## Links
 
 - [[Linked List cycle Definition]]
-- [[Merge two linked lists]]
+- [[Merge two Linked lists 1]]
 - [[valid-palindrome]]
 - [[two-sum-ii-input-array-is-sorted]]
 - [[three-sum]]

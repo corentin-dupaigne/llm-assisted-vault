@@ -74,16 +74,16 @@ This is the linked-list instance of a broader move: **when the first item behave
 
 ## Links
 
-- [[Merge two linked lists]]
+- [[Merge two Linked lists 1]]
 
 ## Links
 
-- [[Merge two linked lists]]
+- [[Merge two Linked lists 1]]
 - [[Floyd's Tortoise and Hare]]
 - [[Linked List cycle Definition]]
 
 ## Links
 
-- [[Merge two linked lists]]
+- [[Merge two Linked lists 1]]
 - [[Floyd's Tortoise and Hare]]
 - [[Linked List cycle Definition]]
