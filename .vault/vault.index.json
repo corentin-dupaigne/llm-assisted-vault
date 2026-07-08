@@ -1,6 +1,7 @@
 {
   "projects": [
     "cka",
+    "cni",
     "neetcode-150"
   ],
   "domains": [
@@ -683,6 +684,55 @@
       "para": "Resources",
       "project": null,
       "date": "2026-07-06"
+    },
+    {
+      "title": "Merge two Linked lists 1",
+      "path": "Projects/neetcode-150/Merge two Linked lists 1.md",
+      "domain": null,
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "linked-list"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": null
+    },
+    {
+      "title": "Remove nth node from the end",
+      "path": "Projects/neetcode-150/Remove nth node from the end.md",
+      "domain": null,
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "linked-list"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": null
+    },
+    {
+      "title": "Go Project Structure — Rules & Conventions",
+      "path": "Resources/Go Project Structure — Rules & Conventions.md",
+      "domain": "golang",
+      "tags": [
+        "devops"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-07-08"
+    },
+    {
+      "title": "IPAM (IP Address Management)",
+      "path": "Resources/IPAM (IP Address Management).md",
+      "domain": "kubernetes",
+      "tags": [
+        "devops",
+        "pods"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-07-08"
     }
   ]
 }

@@ -1,4 +1,10 @@
-
+---
+domain: golang
+tags: [devops]
+date: 2026-07-08
+para: Resources
+project: null
+---
 Go's project layout is governed by two distinct categories: rules the compiler enforces (code will not build if violated) and conventions the community and tooling expect (nothing prevents violating them, but doing so signals unfamiliarity with the ecosystem). The two are worth keeping separate, because the enforced rules constrain how you *can* structure a project, while the conventions describe how you *should*.
 
 ## Compiler-enforced rules
@@ -61,3 +67,9 @@ The mechanism is best understood as project-private (more precisely, subtree-pri
 ## Review considerations
 
 The characteristics that indicate a sound Go layout are package boundaries that correspond to genuine responsibilities, an absence of import cycles, a thin `main`, deliberate use of `internal/` as a privacy boundary, and `testdata/` for fixtures. The recurring indicators of an inexperienced layout are a `utils` or `common` grab-bag, business logic accumulated in `main`, and a type-based folder structure (`models`, `services`, `controllers`) imported from another ecosystem. Idiomatic Go tends to be simpler than newcomers expect; correct boundaries matter more than an abundance of them.
+
+## Links
+
+- [[golang-interfaces]]
+- [[golang-structs]]
+- [[Roadmap]]
