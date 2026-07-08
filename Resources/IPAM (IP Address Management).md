@@ -1,4 +1,10 @@
-
+---
+domain: kubernetes
+tags: [devops, pods]
+date: 2026-07-08
+para: Resources
+project: null
+---
 ## Definition
 
 IPAM is the networking function responsible for managing a **pool of IP addresses**: allocating addresses, tracking which are in use, and releasing them when no longer needed. It manages *addresses*, not the entities that borrow them.
@@ -46,3 +52,8 @@ The same core problem exists anywhere there's a finite address pool and multiple
 ## Key takeaway
 
 IPAM is a fundamental, decades-old networking primitive. Its concepts — CIDR carving, allocation tracking, lease/release, collision avoidance, durable state — recur across DHCP, cloud networking, virtualization, and network design generally. Understanding it in one context transfers directly to the others.
+
+## Links
+
+- [[Roadmap]]
+- [[kubernetes-persistent-volumes-pvc-storageclass]]
