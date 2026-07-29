@@ -1,4 +1,10 @@
-
+---
+domain: kubernetes
+tags: [devops, pods]
+date: 2026-07-29
+para: Resources
+project: null
+---
 > [!info] Article metadata
 > **Applies to:** Supported versions of Windows Server and Windows Client
 > **Original KB number:** 164015
@@ -53,7 +59,7 @@ So now you know, for this example using a 255.255.255.0 subnet mask, that the ne
 
 Almost all decimal subnet masks convert to binary numbers that are all ones on the left and all zeros on the right. Some other common subnet masks are:
 
-| Decimal         | Binary                            |
+| Decimal | Binary |
 | --------------- | --------------------------------- |
 | 255.255.255.192 | 1111111.11111111.1111111.11000000 |
 | 255.255.255.224 | 1111111.11111111.1111111.11100000 |
@@ -163,3 +169,8 @@ It is recommended that a system administrator responsible for TCP/IP networks ha
 ## Third-party information disclaimer
 
 The third-party products that this article discusses are manufactured by companies that are independent of Microsoft. Microsoft makes no warranty, implied or otherwise, about the performance or reliability of these products.
+
+## Links
+
+- [[IPAM (IP Address Management)]]
+- [[Roadmap]]
