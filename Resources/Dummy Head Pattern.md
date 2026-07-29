@@ -1,7 +1,10 @@
 ---
 para: Resources
+domain: leetcode
+tags: [linked-list, golang, neetcode-150]
+date: 2026-07-29
+project: null
 ---
-
 > [!abstract] One-liner
 > Manufacture a fake predecessor for the head so that every node in the list can be treated identically. It is a **syntactic** trick, not a memory-management one.
 
@@ -68,16 +71,16 @@ return dummy.Next
 
 ## Classification
 
-| Problem                     | Dummy? | Mode | Why                                          |
+| Problem | Dummy? | Mode | Why |
 | --------------------------- | :----: | ---- | -------------------------------------------- |
-| Remove Nth Node From End    |   ✅    | 1    | The head itself may be the target            |
-| Remove Linked List Elements |   ✅    | 1    | The head may match the value                 |
-| Merge Two Sorted Lists      |   ✅    | 2    | Unknown which list's head wins               |
-| Add Two Numbers             |   ✅    | 2    | Output built from nothing                    |
-| Partition List              |   ✅    | 2    | Two lists built, then spliced                |
-| Reverse Linked List         |   ❌    | —    | `prev` starts `nil` and *is* the accumulator |
-| Linked List Cycle           |   ❌    | —    | Returns a bool, mutates nothing              |
-| Middle of the Linked List   |   ❌    | —    | Read-only traversal                          |
+| Remove Nth Node From End | ✅ | 1 | The head itself may be the target |
+| Remove Linked List Elements | ✅ | 1 | The head may match the value |
+| Merge Two Sorted Lists | ✅ | 2 | Unknown which list's head wins |
+| Add Two Numbers | ✅ | 2 | Output built from nothing |
+| Partition List | ✅ | 2 | Two lists built, then spliced |
+| Reverse Linked List | ❌ | — | `prev` starts `nil` and *is* the accumulator |
+| Linked List Cycle | ❌ | — | Returns a bool, mutates nothing |
+| Middle of the Linked List | ❌ | — | Read-only traversal |
 
 Note that **Merge Two Sorted Lists deletes nothing** and still uses a dummy. This is the diagnostic case for whether your mental model is correct.
 
@@ -89,8 +92,8 @@ Note that **Merge Two Sorted Lists deletes nothing** and still uses a dummy. Thi
 This is false and will mislead you:
 
 1. **Go is garbage collected.** Dropping the last reference to a removed node is the *desired* outcome, not a leak.
-2. **`head = head.Next` leaks nothing.** It is correct, GC-safe code. The reason to avoid it is that it is a *second branch*, not that it is unsafe.
-3. **Merge Two Sorted Lists** removes zero nodes and still needs a dummy — impossible under the leak model.
+1. **`head = head.Next` leaks nothing.** It is correct, GC-safe code. The reason to avoid it is that it is a *second branch*, not that it is unsafe.
+1. **Merge Two Sorted Lists** removes zero nodes and still needs a dummy — impossible under the leak model.
 
 The bug the dummy prevents is a **nil-pointer / wrong-return-value** bug, from branch proliferation.
 
@@ -128,10 +131,19 @@ Correct, allocation-free, and harder to read under interview pressure. Know it e
 - **Cost:** one node.
 - **Benefit:** `prev.Next = cur.Next` is unconditionally valid. An entire category of edge-case bug stops existing.
 
----
+______________________________________________________________________
 
 ## Review Log
 
 | Date | Recall | Notes |
 |---|---|---|
 | 2026-07-10 | — | Created |
+
+## Links
+
+- [[Merge two linked lists]]
+- [[Merge two Linked lists 1]]
+- [[Remove nth node from the end]]
+- [[Add Two Numbers]]
+- [[Linked List cycle Definition]]
+- [[Floyd's Tortoise and Hare]]

@@ -674,18 +674,6 @@
       "date": "2026-07-06"
     },
     {
-      "title": "pattern linked list dummy head node",
-      "path": "Resources/pattern linked list dummy head node.md",
-      "domain": "leetcode",
-      "tags": [
-        "linked-list",
-        "golang"
-      ],
-      "para": "Resources",
-      "project": null,
-      "date": "2026-07-06"
-    },
-    {
       "title": "Merge two Linked lists 1",
       "path": "Projects/neetcode-150/Merge two Linked lists 1.md",
       "domain": null,
@@ -733,6 +721,57 @@
       "para": "Resources",
       "project": null,
       "date": "2026-07-08"
+    },
+    {
+      "title": "Add Two Numbers",
+      "path": "Projects/neetcode-150/Add Two Numbers.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "linked-list"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-07-29"
+    },
+    {
+      "title": "Copy Linked List With Random Pointer",
+      "path": "Projects/neetcode-150/Copy Linked List With Random Pointer.md",
+      "domain": "leetcode",
+      "tags": [
+        "leetcode",
+        "neetcode-150",
+        "linked-list"
+      ],
+      "para": "Projects",
+      "project": "neetcode-150",
+      "date": "2026-07-29"
+    },
+    {
+      "title": "Dummy Head Pattern",
+      "path": "Resources/Dummy Head Pattern.md",
+      "domain": "leetcode",
+      "tags": [
+        "linked-list",
+        "golang",
+        "neetcode-150"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-07-29"
+    },
+    {
+      "title": "Understanding TCP-IP addressing and subnetting basics",
+      "path": "Resources/Understanding TCP-IP addressing and subnetting basics.md",
+      "domain": "kubernetes",
+      "tags": [
+        "devops",
+        "pods"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-07-29"
     }
   ]
 }

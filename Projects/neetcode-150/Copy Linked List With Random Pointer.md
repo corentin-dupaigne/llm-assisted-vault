@@ -5,10 +5,13 @@ struggled: false
 project: neetcode-150
 date_solved: 2026-07-09
 tags: [leetcode, neetcode-150, linked-list]
+domain: leetcode
+date: 2026-07-29
+para: Projects
 ---
 ## Initial Intuition
 
-My intuition is that I need two iteration to create the deep copy. One iteration to create the deepcopy list, set the .Val and .Next for each node and set .Random to the idx of the node it points to (one-indexed). On the same iteration we build an hashmap where the key is the idx (one-indexed) of the current node and its value, a pointer to it. 
+My intuition is that I need two iteration to create the deep copy. One iteration to create the deepcopy list, set the .Val and .Next for each node and set .Random to the idx of the node it points to (one-indexed). On the same iteration we build an hashmap where the key is the idx (one-indexed) of the current node and its value, a pointer to it.
 On the second iteration, we replace the .Random value with m[curr.Random]
 
 ## My Solution
@@ -34,3 +37,11 @@ Mon intuition de la hashmap etait bonne mais pas ma logique et le contenu de la 
 ## Review Log
 
 - 2026-07-09 — first solve
+
+## Links
+
+- [[Merge two linked lists]]
+- [[Linked List cycle Definition]]
+- [[Floyd's Tortoise and Hare]]
+- [[Add Two Numbers]]
+- [[golang-maps]]

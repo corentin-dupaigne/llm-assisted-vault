@@ -5,11 +5,13 @@ struggled: true
 project: neetcode-150
 date_solved: 2026-07-14
 tags: [leetcode, neetcode-150, linked-list]
+domain: leetcode
+date: 2026-07-29
+para: Projects
 ---
 ## Initial Intuition
 
 <!-- Before coding: pattern recognized? Approach envisioned? Edge cases? -->
-
 
 ## My Solution
 
@@ -68,3 +70,11 @@ My solution would work on smaller linked list but on large one the computation p
 ## Review Log
 
 - 2026-07-14 — first solve
+
+## Links
+
+- [[Merge two linked lists]]
+- [[Linked List cycle Definition]]
+- [[Merge two Linked lists 1]]
+- [[Remove nth node from the end]]
+- [[Floyd's Tortoise and Hare]]
