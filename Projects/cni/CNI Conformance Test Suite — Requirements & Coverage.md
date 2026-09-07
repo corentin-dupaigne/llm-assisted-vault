@@ -1,3 +1,10 @@
+---
+domain: kubernetes
+tags: [devops, golang, pods]
+date: 2026-09-07
+para: Projects
+project: cni
+---
 Requirements derived from the CNI specification v1.1.0: https://www.cni.dev/docs/spec/
 
 ## Purpose & design
@@ -52,7 +59,7 @@ requirements at all, so they do not appear in the matrix below. They are listed 
 the "Runtime-only requirements" section at the end, purely to prevent them from being mistaken
 for plugin requirements and tested by accident.
 
----
+______________________________________________________________________
 
 ## 1. Process contract (all operations)
 
@@ -68,7 +75,7 @@ for plugin requirements and tested by accident.
 MUST. The suite asserts both but treats a missing/invalid error JSON as a weaker failure
 than a wrong exit code.
 
----
+______________________________________________________________________
 
 ## 2. ADD operation
 
@@ -84,7 +91,7 @@ Optional env: `CNI_ARGS`, `CNI_PATH`.
 | 2.5 | If missing/invalid required env var, the plugin returns an error with **code 4**, and the message must contain the names of the invalid variables. | MUST | TESTED — invoke ADD omitting each required env var in turn; expect code 4 and the variable name in `msg`/`details`. |
 | 2.6 | If supplied a `prevResult`, the plugin MUST handle it (pass through or modify) and MUST output it (with any modifications) as its result. | MUST | OUT OF SCOPE (C2 — requires a chain to supply a meaningful prevResult; applies only to chained plugins). |
 
----
+______________________________________________________________________
 
 ## 3. DEL operation
 
@@ -100,7 +107,7 @@ Optional env: **`CNI_NETNS`**, `CNI_ARGS`, `CNI_PATH`.
 | 3.4 | No stdout result structure is required on DEL success. | — | TESTED — assert DEL success produces no result JSON (empty stdout is acceptable). |
 | 3.5 | Required-env validation (code 4) applies as in ADD, for DEL's required set. | MUST | TESTED — omit `CNI_CONTAINERID`/`CNI_IFNAME`; expect code 4. Omitting `CNI_NETNS` must **not** error (it is optional for DEL). |
 
----
+______________________________________________________________________
 
 ## 4. CHECK operation
 
@@ -125,7 +132,7 @@ neutral single-plugin harness. Documented for completeness.
 plugin-dependent (a plugin may legitimately provide a minimal/no-op CHECK). The suite
 should not fail a plugin merely for a minimal CHECK; only 4.8 is neutrally assertable.
 
----
+______________________________________________________________________
 
 ## 5. VERSION operation
 
@@ -140,7 +147,7 @@ Required env: `CNI_COMMAND`. Input: a JSON on stdin containing `cniVersion`.
 runtime requirement, not the plugin's; see "Runtime-only requirements". The plugin's only
 obligation is to *report* its versions, covered by 5.2.)
 
----
+______________________________________________________________________
 
 ## 6. Error result structure
 
@@ -182,7 +189,7 @@ If config-error coverage for codes 2/7 is desired, the *user* could supply known
 configs for their plugin as additional inputs (the suite still forwards them opaquely). This
 keeps the suite from encoding any plugin's validation rules, at the cost of extra user input.
 
----
+______________________________________________________________________
 
 ## 7. Concurrency (Lifecycle & Ordering)
 
@@ -199,7 +206,7 @@ therefore not required to handle same-container concurrency, which is why 7.1 te
 lacking locking will double-allocate under this test. It is fully implementation-agnostic
 (it asserts only "no two containers got the same IP," observable from the results).
 
----
+______________________________________________________________________
 
 ## 8. STATUS operation
 
@@ -214,7 +221,7 @@ Required env: `CNI_COMMAND`. Optional: `CNI_PATH`.
 **Scope note:** STATUS is optional to implement for many plugins; the suite should skip
 gracefully if the plugin does not support it rather than fail.
 
----
+______________________________________________________________________
 
 ## 9. GC operation
 
@@ -231,7 +238,7 @@ see "Runtime-only requirements".)
 
 **Scope note:** GC is optional to implement; skip gracefully if unsupported.
 
----
+______________________________________________________________________
 
 ## 10. Delegation (Section 4)
 
@@ -244,11 +251,12 @@ specific. Documented for completeness:
 - It must forward stderr, and on ADD failure of a delegate, run DEL before returning failure.
 - On CHECK/DEL/GC it must also execute delegates and propagate their errors.
 
----
+______________________________________________________________________
 
 ## Coverage summary
 
 **Neutrally tested (the suite's mandatory bar):**
+
 - Process contract: exit codes (1.1, 1.2), error JSON presence (1.3).
 - ADD: interface creation (2.1), result schema (2.2), duplicate-ifname error (2.3),
   different-ifname allowed (2.4 partial), required-env / code 4 (2.5).
@@ -259,6 +267,7 @@ specific. Documented for completeness:
 - Concurrency: no double-allocation across containers (7.1).
 
 **Out of scope (plugin requirements a neutral harness cannot verify), by reason:**
+
 - **C1 (plugin-specific config):** codes 2, 7; unsupported-field and semantic-validation.
 - **C2 (runtime/chain/delegation):** prevResult (2.6, 4.1–4.3, 4.7), CHECK's chain
   requirements, all of Section 10, GC/STATUS delegation forwarding.
@@ -276,7 +285,7 @@ out-of-scope requirements (chaining, delegation, plugin-specific validation, run
 behavior) are, by construction, not verifiable without a runtime or knowledge of the
 plugin's implementation.
 
----
+______________________________________________________________________
 
 ## Runtime-only requirements (not tested — not the plugin's contract)
 
@@ -305,3 +314,9 @@ here solely so they are not mistaken for plugin behavior and tested by accident.
 
 These are the responsibility of the container runtime (e.g. the kubelet / CRI), not of the
 plugin under test, and cannot — and should not — be asserted by a plugin-conformance suite.
+
+## Links
+
+- [[Roadmap]]
+- [[IPAM (IP Address Management)]]
+- [[Understanding TCP-IP addressing and subnetting basics]]

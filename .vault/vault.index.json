@@ -772,6 +772,19 @@
       "para": "Resources",
       "project": null,
       "date": "2026-07-29"
+    },
+    {
+      "title": "CNI Conformance Test Suite — Requirements & Coverage",
+      "path": "Projects/cni/CNI Conformance Test Suite — Requirements & Coverage.md",
+      "domain": "kubernetes",
+      "tags": [
+        "devops",
+        "golang",
+        "pods"
+      ],
+      "para": "Projects",
+      "project": "cni",
+      "date": "2026-09-07"
     }
   ]
 }
