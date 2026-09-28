@@ -7,7 +7,6 @@ project: cni
 status: open
 severity: high
 ---
-
 Bug found while validating the tiny-cni DaemonSet on a live single-node minikube
 cluster (`cnitest`, k8s v1.35.1, docker driver) at image `1.0.0`.
 
@@ -187,11 +186,11 @@ Regression test that fails on today's code and passes after the fix:
 
 1. Single-replica Deployment + ClusterIP Service (`targetPort` ≠ `port`, to catch the
    headless port-remap trap below).
-2. From the pod, 10 requests to its own Service name → expect **10/10 success**, currently
+1. From the pod, 10 requests to its own Service name → expect **10/10 success**, currently
    0/10.
-3. Assert `/sys/class/net/<host veth>/brport/hairpin_mode` reads `1` for every port on
+1. Assert `/sys/class/net/<host veth>/brport/hairpin_mode` reads `1` for every port on
    `tcni-bridge`.
-4. Multi-replica variant: 30 requests from one backend to the Service, assert **0
+1. Multi-replica variant: 30 requests from one backend to the Service, assert **0
    timeouts** and that the caller appears among the responders.
 
 Worth adding to the e2e suite — see
@@ -214,3 +213,12 @@ it is 10/10 OK. Worth remembering when writing the regression test.
 - Also noted during the same session: the README roadmap claims pods cannot reach the
   internet, but egress works — `internal/network/network.go:184` installs the
   `MASQUERADE` rule and pods ping `8.8.8.8` fine. That roadmap line is stale.
+
+## Links
+
+- [[CNI Conformance Test Suite — Requirements & Coverage]]
+- [[Adrs to write]]
+- [[Roadmap]]
+- [[CNI Conformance Test Suite]]
+- [[IPAM (IP Address Management)]]
+- [[Understanding TCP-IP addressing and subnetting basics]]

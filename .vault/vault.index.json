@@ -11,7 +11,10 @@
     "golang",
     "textile-science",
     "kubernetes",
-    "travel"
+    "travel",
+    "mathematics",
+    "computer-vision",
+    "networking"
   ],
   "tags": [
     "pharmacology",
@@ -42,7 +45,15 @@
     "helm",
     "stack",
     "binary-search",
-    "linked-list"
+    "linked-list",
+    "networking",
+    "bug",
+    "statistics",
+    "probability",
+    "study-plan",
+    "flashcards",
+    "robotics",
+    "3d-reconstruction"
   ],
   "notes": [
     {
@@ -785,6 +796,108 @@
       "para": "Projects",
       "project": "cni",
       "date": "2026-09-07"
+    },
+    {
+      "title": "Adrs to write",
+      "path": "Projects/cni/Adrs to write.md",
+      "domain": "kubernetes",
+      "tags": [
+        "devops",
+        "golang",
+        "pods"
+      ],
+      "para": "Projects",
+      "project": "cni",
+      "date": "2026-09-28"
+    },
+    {
+      "title": "CNI Conformance Test Suite",
+      "path": "Projects/cni/CNI Conformance Test Suite.md",
+      "domain": "kubernetes",
+      "tags": [
+        "devops",
+        "golang",
+        "pods"
+      ],
+      "para": "Projects",
+      "project": "cni",
+      "date": "2026-09-07"
+    },
+    {
+      "title": "Go Package Naming Conventions",
+      "path": "Resources/Go Package Naming Conventions.md",
+      "domain": "golang",
+      "tags": [],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-09-28"
+    },
+    {
+      "title": "Hairpin bug - self-directed ClusterIP traffic is dropped",
+      "path": "Projects/cni/Hairpin bug - self-directed ClusterIP traffic is dropped.md",
+      "domain": "kubernetes",
+      "tags": [
+        "devops",
+        "golang",
+        "networking",
+        "bug"
+      ],
+      "para": "Projects",
+      "project": "cni",
+      "date": "2026-09-20"
+    },
+    {
+      "title": "Hairpin bug report from my custom cni plugin",
+      "path": "Projects/cni/Hairpin bug report from my custom cni plugin.md",
+      "domain": "kubernetes",
+      "tags": [
+        "devops",
+        "golang",
+        "networking",
+        "bug"
+      ],
+      "para": "Projects",
+      "project": "cni",
+      "date": "2026-09-28"
+    },
+    {
+      "title": "Planning de revisions - Rattrapages Proba Stats",
+      "path": "Resources/Planning de revisions - Rattrapages Proba Stats.md",
+      "domain": "mathematics",
+      "tags": [
+        "statistics",
+        "probability",
+        "study-plan",
+        "flashcards"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-09-28"
+    },
+    {
+      "title": "cours exploration",
+      "path": "Resources/cours exploration.md",
+      "domain": "computer-vision",
+      "tags": [
+        "robotics",
+        "3d-reconstruction",
+        "networking"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-09-28"
+    },
+    {
+      "title": "iptables Netfilter and masquerade",
+      "path": "Resources/iptables Netfilter and masquerade.md",
+      "domain": "networking",
+      "tags": [
+        "devops",
+        "kubernetes"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-09-28"
     }
   ]
 }

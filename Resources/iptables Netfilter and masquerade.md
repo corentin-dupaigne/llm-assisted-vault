@@ -1,3 +1,10 @@
+---
+domain: networking
+tags: [devops, kubernetes]
+date: 2026-09-28
+para: Resources
+project: null
+---
 https://thermalcircle.de/doku.php?id=blog:linux:nftables_packet_flow_netfilter_hooks_detail
 
 ## The layers (bottom to top)
@@ -9,6 +16,7 @@ Three distinct things, often conflated:
 - **A rule** — your instruction: *"for packets matching X, do action Y."* This is what you add/remove with the `iptables` command.
 
 Mental chain:
+
 > Netfilter hook (checkpoint) → iptables hook function (interceptor registered there) → your rule (match + action) → the action runs when a packet matches.
 
 ## Hooks (the checkpoints)
@@ -44,8 +52,16 @@ Rules live in **tables**, each hooking certain points:
 ## Masquerade
 
 **Masquerade is an *action* (a rule *target*), not the hook function.**
+
 - iptables registers *one* hook function at POSTROUTING (the interceptor).
 - That function walks your rules; when a packet matches a rule whose action is `MASQUERADE`, it **rewrites the packet's source IP** to the outgoing interface's current IP.
 - Masquerade = SNAT where the new source is "whatever the exit interface's IP is now" (vs. a fixed address) — convenient when the host IP may change.
 
 Other targets the same hook function can apply: `ACCEPT`, `DROP`, `DNAT`, `SNAT`, etc. Masquerade is just one.
+
+## Links
+
+- [[Hairpin bug - self-directed ClusterIP traffic is dropped]]
+- [[Hairpin bug report from my custom cni plugin]]
+- [[IPAM (IP Address Management)]]
+- [[Understanding TCP-IP addressing and subnetting basics]]
