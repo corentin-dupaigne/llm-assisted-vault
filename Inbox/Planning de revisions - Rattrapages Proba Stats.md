@@ -1,6 +1,3 @@
----
-para: Projects
----
 ## Hypothèses
 
 - **Deux examens** : Proba discrète (rattrapage **S7**) + Probabilités/Stats continues (rattrapage **S8**, **coefficient 2**).

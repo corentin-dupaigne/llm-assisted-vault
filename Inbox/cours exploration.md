@@ -1,0 +1,5 @@
+- Openworld recognition
+- video slam
+- Dataset automation
+- Gaussian Splatting
+- Synch PTP

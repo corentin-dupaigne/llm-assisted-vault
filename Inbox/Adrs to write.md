@@ -1,0 +1,2 @@
+This ADR should document the decision to **hardcode the pod subnet in the CNI config (aligned with the cluster CIDR) rather than fetching the node's `spec.podCIDR` from the Kubernetes API**, because single-node has one constant subnet and fetching would pull in disproportionate machinery (ServiceAccount, RBAC, API client), with the explicit note that this flips to API-fetching when multi-node makes per-node subnets a real requirement.
+
