@@ -402,8 +402,14 @@ prompt or the index format:
 
 ```bash
 .venv/bin/python .vault/scripts/eval.py --model claude-haiku-4-5 --rev my-notes
-.venv/bin/python .vault/scripts/eval.py --rescore .e2e-output/eval/<run>  # re-score, no API
+.venv/bin/python .vault/scripts/eval.py --rescore .vault/benchmarks/<run>  # re-score, no API
 ```
+
+Each run is written to `.vault/benchmarks/<date>-<model>/` (`cases.jsonl`: every
+raw decision; `summary.json`: the scores). The folder is tracked on purpose:
+the results describe your notes, so commit them on the notes branch, not on
+the framework branch. `--rescore` re-applies the current code-side checks to
+a saved run for free and writes `*.rescored.*` beside it.
 
 Link scores measure agreement with the links the vault kept (picked by the
 previous model), not absolute correctness; compare a candidate against a

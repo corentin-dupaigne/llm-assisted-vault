@@ -24,7 +24,8 @@ Usage (from the repo root; reads the key from ``.vault/.env``)::
     .venv/bin/python .vault/scripts/eval.py --model claude-haiku-4-5
     .venv/bin/python .vault/scripts/eval.py --model claude-sonnet-4-6 --rev my-notes --limit 10
 
-Results land in ``.e2e-output/eval/<model>-<timestamp>/`` (gitignored):
+Results land in ``.vault/benchmarks/<date>-<model>/`` — tracked, so a run is
+kept with the notes it was measured on (commit it on your notes branch):
 ``cases.jsonl`` (one line per case) and ``summary.json``. ``--rescore`` writes
 ``cases.rescored.jsonl`` / ``summary.rescored.json`` next to them.
 """
@@ -51,6 +52,7 @@ PRICES = {
     "claude-haiku-4-5": (1.0, 5.0),
     "claude-sonnet-4-6": (3.0, 15.0),
     "claude-sonnet-5-5": (2.0, 10.0),
+    "claude-opus-5-5": (4.0, 20.0),
 }
 
 _ORGANIZE_RE = re.compile(r"organize (.+?) → (.+)$")
@@ -332,8 +334,8 @@ def main() -> int:
         with ThreadPoolExecutor(max_workers=args.workers) as pool:
             results = list(pool.map(
                 lambda c: replay(client, system_prompt, args.model, c), cases))
-        out = args.out or (pi.REPO_ROOT / ".e2e-output" / "eval"
-                           / f"{args.model}-{datetime.now():%Y%m%d-%H%M%S}")
+        out = args.out or (pi.VAULT_DIR / "benchmarks"
+                           / f"{datetime.now():%Y-%m-%d}-{args.model}")
 
     summary = summarize(args.model, results, skipped)
     out.mkdir(parents=True, exist_ok=True)
