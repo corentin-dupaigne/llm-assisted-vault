@@ -294,6 +294,16 @@ def summarize(model: str, results: list[dict], skipped: list[str]) -> dict:
     }
 
 
+def new_run_dir(model: str) -> Path:
+    """``.vault/benchmarks/<date>-<model>``, suffixed if that run already
+    exists, so a new run never overwrites a saved one."""
+    base = pi.VAULT_DIR / "benchmarks" / f"{datetime.now():%Y-%m-%d}-{model}"
+    out, n = base, 2
+    while out.exists():
+        out, n = base.with_name(f"{base.name}-{n}"), n + 1
+    return out
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--model", default=pi.MODEL)
@@ -340,8 +350,11 @@ def main() -> int:
         with ThreadPoolExecutor(max_workers=args.workers) as pool:
             results = list(pool.map(
                 lambda c: replay(client, system_prompt, args.model, c), cases))
-        out = args.out or (pi.VAULT_DIR / "benchmarks"
-                           / f"{datetime.now():%Y-%m-%d}-{args.model}")
+        if results and all("error" in r for r in results):
+            print(f"! Every call failed, nothing written: {results[0]['error']}",
+                  file=sys.stderr)
+            return 1
+        out = args.out or new_run_dir(args.model)
 
     summary = summarize(args.model, results, skipped)
     out.mkdir(parents=True, exist_ok=True)

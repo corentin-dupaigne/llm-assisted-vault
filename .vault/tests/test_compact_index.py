@@ -115,3 +115,12 @@ def test_build_cases_replays_index_as_seen_at_filing_time(git_vault):
     assert second["expected"]["para"] == "Archive"
     assert second["expected"]["links"] == ["A"]
     assert second["expected"]["tags"] == ["tB"]
+
+
+def test_new_run_dir_never_reuses_a_saved_run(vault, monkeypatch, tmp_path):
+    ev = _load_eval()
+    monkeypatch.setattr(ev.pi, "VAULT_DIR", tmp_path)
+    first = ev.new_run_dir("m")
+    first.mkdir(parents=True)
+    second = ev.new_run_dir("m")
+    assert second != first and second.name == f"{first.name}-2"
