@@ -25,7 +25,8 @@ Usage (from the repo root; reads the key from ``.vault/.env``)::
     .venv/bin/python .vault/scripts/eval.py --model claude-sonnet-4-6 --rev my-notes --limit 10
 
 Results land in ``.e2e-output/eval/<model>-<timestamp>/`` (gitignored):
-``cases.jsonl`` (one line per case) and ``summary.json``.
+``cases.jsonl`` (one line per case) and ``summary.json``. ``--rescore`` writes
+``cases.rescored.jsonl`` / ``summary.rescored.json`` next to them.
 """
 
 from __future__ import annotations
@@ -99,6 +100,10 @@ def links_in(text: str) -> list[str]:
     return sorted({m.strip() for m in _LINK_RE.findall(links_section)})
 
 
+def case_id(commit: git.Commit, filename: str) -> str:
+    return f"{commit.authored_datetime.isoformat()}:{filename}"
+
+
 def build_cases(repo: git.Repo, rev: str) -> tuple[list[dict], list[str]]:
     cases: list[dict] = []
     skipped: list[str] = []
@@ -139,7 +144,9 @@ def build_cases(repo: git.Repo, rev: str) -> tuple[list[dict], list[str]]:
             final_fm = pi.parse_frontmatter(inner)[1] if inner else {}
             parts = Path(final).parts
             cases.append({
-                "id": f"{commit.hexsha[:7]}:{filename}",
+                # Author date + name survive a rebase (the SHA does not), so
+                # saved results stay comparable after history is rewritten.
+                "id": case_id(commit, filename),
                 "filename": filename,
                 "content": content.replace("\r\n", "\n").lstrip("﻿"),
                 "index": index,
@@ -288,7 +295,7 @@ def main() -> int:
     parser.add_argument("--out", type=Path, help="output directory")
     parser.add_argument("--rescore", type=Path, metavar="DIR",
                         help="re-score the decisions saved in DIR/cases.jsonl with the "
-                             "current code (no API calls); writes DIR/summary.json")
+                             "current code (no API calls); writes DIR/summary.rescored.json")
     args = parser.parse_args()
 
     try:
@@ -308,11 +315,16 @@ def main() -> int:
                  (args.rescore / "cases.jsonl").read_text(encoding="utf-8").splitlines()]
         by_id = {case["id"]: case for case in cases}
         model = json.loads((args.rescore / "summary.json").read_text())["model"]
+        missing = [r["id"] for r in saved if r["id"] not in by_id]
+        if missing:
+            print(f"! {len(missing)} saved cases no longer match the history "
+                  f"(e.g. {missing[0]}); nothing written.", file=sys.stderr)
+            return 1
         results = [r if "error" in r else score_case(
                        by_id[r["id"]], r["decision"],
                        {k: r[k] for k in ("seconds", "calls", "input_tokens",
                                           "output_tokens") if k in r})
-                   for r in saved if r["id"] in by_id]
+                   for r in saved]
         args.model, out = model, args.rescore
     else:
         system_prompt = pi.SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
@@ -325,10 +337,12 @@ def main() -> int:
 
     summary = summarize(args.model, results, skipped)
     out.mkdir(parents=True, exist_ok=True)
-    with (out / "cases.jsonl").open("w", encoding="utf-8") as fh:
+    # A rescore never overwrites the raw run: its results go to their own files.
+    suffix = ".rescored" if args.rescore else ""
+    with (out / f"cases{suffix}.jsonl").open("w", encoding="utf-8") as fh:
         for r in results:
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
-    (out / "summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n",
+    (out / f"summary{suffix}.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n",
                                       encoding="utf-8")
 
     for key in ("filed_valid", "placement_exact", "domain_exact_model_decided"):
