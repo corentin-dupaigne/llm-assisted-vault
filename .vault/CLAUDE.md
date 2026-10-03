@@ -45,6 +45,7 @@ hidden `.vault/` directory so the vault stays clean and tool-portable.
 | `.vault/tests/`               | End-to-end test suite (see Tests below).                  |
 | `.vault/vault.index.json`     | The vault's source of truth (see schema below).           |
 | `.vault/unfileable.json`      | Content hashes of Inbox notes left unfileable (see below). |
+| `.vault/aliases.json`         | Canonical spellings for domains/tags (see Naming conventions). |
 | `.vault/requirements-dev.txt` | Runtime + test dependencies.                              |
 | `.vault/.env`                 | Local `ANTHROPIC_API_KEY` (gitignored).                   |
 | `.github/workflows/process_inbox.yml` | Triggers the pipeline on push to `main`.          |
@@ -285,6 +286,25 @@ left untouched in `Inbox/` and are not formatted.
 - A note has **exactly one** `domain` and **zero or more** `tags`. The `domain`
   is the single subject the note is centrally about; `tags` are secondary
   subjects it merely touches on.
+
+These are enforced in code on the **model's** labels (`canonicalize_labels`,
+after `normalize_decision`), never on a note's own frontmatter:
+
+1. **Aliases** — `.vault/aliases.json` maps a variant to its canonical label
+   (`{"array-hashing": "arrays-hashing"}`). Edit it to settle a spelling for good.
+2. **Near-duplicates snap to the existing spelling** — labels that differ only by
+   hyphens or a plural `s` per word (`label_key`: `dev-ops` = `devops`,
+   `array-hashing` = `arrays-hashing`) become the label already in use (or its
+   alias). A domain prefers existing domains, a tag existing tags.
+3. **A domain is never also a tag** — it is removed from the tags.
+
+Semantic drift (a new `algorithms` domain next to `leetcode`) is not a spelling
+problem and is left to the prompt and the alias file. Drift already in filed
+notes is never rewritten; list it with the read-only lint:
+
+```bash
+.venv/bin/python .vault/scripts/lint_labels.py
+```
 
 ## Commit convention
 

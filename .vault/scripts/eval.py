@@ -188,7 +188,7 @@ def score_case(case: dict, raw_decision: dict, meta: dict) -> dict:
     content, index = case["content"], case["index"]
     inner, _ = pi.split_frontmatter(content)
     preset = pi.parse_frontmatter(inner)[1] if inner else {}
-    decision = pi.normalize_decision(raw_decision)
+    decision = pi.canonicalize_labels(pi.normalize_decision(raw_decision), index)
     result = {
         "id": case["id"],
         **meta,

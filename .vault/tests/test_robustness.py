@@ -306,3 +306,56 @@ def test_refusal_leaves_note_unfileable(vault):
     assert decision == {"status": "unfileable",
                         "reason": "model declined the note (refusal: general_harms)"}
     assert client.calls == 1
+
+
+# --- Label hygiene -------------------------------------------------------------------
+
+VOCAB = {"domains": ["kubernetes", "leetcode"], "tags": ["arrays-hashing", "devops"]}
+
+
+def test_near_duplicate_labels_snap_to_existing_spelling(vault):
+    decision = vault.module.canonicalize_labels(
+        {"domain": "kubernete", "tags": ["array-hashing", "dev-ops", "new-thing"]},
+        VOCAB, aliases={})
+    assert decision["domain"] == "kubernetes"
+    assert decision["tags"] == ["arrays-hashing", "devops", "new-thing"]
+
+
+def test_domain_is_removed_from_tags(vault):
+    decision = vault.module.canonicalize_labels(
+        {"domain": "leetcode", "tags": ["leetcode", "arrays-hashing", "array-hashing"]},
+        VOCAB, aliases={})
+    assert decision["tags"] == ["arrays-hashing"]
+
+
+def test_alias_wins_over_snapping(vault):
+    decision = vault.module.canonicalize_labels(
+        {"domain": "algorithms", "tags": ["k8s"]}, VOCAB,
+        aliases={"algorithms": "leetcode", "k8s": "kubernetes"})
+    assert decision["domain"] == "leetcode"
+    assert decision["tags"] == ["kubernetes"]
+
+
+def test_aliases_file_is_loaded_and_normalized(vault, monkeypatch, tmp_path):
+    path = tmp_path / "aliases.json"
+    path.write_text('{"Dev Ops": "devops"}', encoding="utf-8")
+    monkeypatch.setattr(vault.module, "ALIASES_PATH", path)
+    assert vault.module.load_aliases() == {"dev-ops": "devops"}
+
+
+def test_classify_note_applies_label_hygiene(vault):
+    vault.seed_index(**VOCAB)
+    client = FakeClient(dict(RESOURCE_DECISION, domain="Kubernetes",
+                             tags=["kubernetes", "Array Hashing"]))
+    decision = vault.module.classify_note(client, "system", "Body.", vault.read_index())
+    assert decision["domain"] == "kubernetes"
+    assert decision["tags"] == ["arrays-hashing"]
+
+
+def test_snapping_never_lands_on_an_aliased_spelling(vault):
+    # Early history only knows the old spelling; the model already uses the canonical one.
+    decision = vault.module.canonicalize_labels(
+        {"domain": "leetcode", "tags": ["arrays-hashing"]},
+        {"domains": ["leetcode"], "tags": ["array-hashing"]},
+        aliases={"array-hashing": "arrays-hashing"})
+    assert decision["tags"] == ["arrays-hashing"]

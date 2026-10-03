@@ -184,6 +184,10 @@ the notes the model produces.
 - **Model:** `claude-sonnet-4-6` by default; override with `VAULT_MODEL`.
   Measure a candidate first with `.vault/scripts/eval.py`, which replays the
   vault's filing history through it (see `.vault/CLAUDE.md`).
+- **Label hygiene:** the model's domain and tags are kept inside the vault's
+  vocabulary in code (aliases in `.vault/aliases.json`, near-duplicate
+  spellings snapped to the existing one); `.vault/scripts/lint_labels.py`
+  lists drift already in the vault.
 - **Compact index:** the model gets the projects, the domain/tag vocabulary
   and the note titles grouped by domain, not the full JSON index (about 37%
   fewer input tokens per call, growing with the vault).

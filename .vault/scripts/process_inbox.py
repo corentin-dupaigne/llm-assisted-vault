@@ -40,6 +40,8 @@ INDEX_PATH = VAULT_DIR / "vault.index.json"
 # unfileable note is not re-sent to the API on every push (controlled cost).
 UNFILEABLE_STATE_PATH = VAULT_DIR / "unfileable.json"
 SYSTEM_PROMPT_PATH = VAULT_DIR / "prompts" / "system.md"
+# Optional `{"variant": "canonical"}` map applied to the model's domain and tags.
+ALIASES_PATH = VAULT_DIR / "aliases.json"
 
 # Overridable for experiments (e.g. `VAULT_MODEL=claude-haiku-4-5`); see
 # `.vault/scripts/eval.py` to measure a model against the vault history first.
@@ -785,6 +787,57 @@ def normalize_decision(decision: dict) -> dict:
     return decision
 
 
+def label_key(label: str) -> str:
+    """Spelling-insensitive key for spotting near-duplicate labels: hyphens are
+    ignored and each word loses its trailing ``s`` (``arrays-hashing``,
+    ``array-hashing`` and ``arrayhashing`` share a key; so do ``dev-ops`` and
+    ``devops``)."""
+    return "".join(word.rstrip("s") for word in label.split("-"))
+
+
+def load_aliases() -> dict[str, str]:
+    if not ALIASES_PATH.is_file():
+        return {}
+    with ALIASES_PATH.open(encoding="utf-8") as fh:
+        return {_label(k): _label(v) for k, v in json.load(fh).items()}
+
+
+def canonicalize_labels(decision: dict, index: dict,
+                        aliases: dict[str, str] | None = None) -> dict:
+    """Keep the model's domain and tags inside the vault's existing vocabulary.
+
+    Applied after ``normalize_decision``, in this order: an alias from
+    ``aliases.json`` wins; otherwise a label that is a near-duplicate of one
+    already in use (see ``label_key``) is rewritten to the existing spelling (or
+    that spelling's alias) — a domain prefers existing domains, a tag existing
+    tags; then tags are
+    de-duplicated and the domain is removed from them (a note's domain is never
+    also its tag). Only the model's values pass through here; a note's own
+    frontmatter is kept verbatim by ``merge_frontmatter``.
+    """
+    aliases = load_aliases() if aliases is None else aliases
+    domains = index.get("domains") or []
+    tags = index.get("tags") or []
+
+    def canonical(label: str, first: list[str], second: list[str]) -> str:
+        if label in aliases:
+            return aliases[label]
+        key = label_key(label)
+        for existing in [*first, *second]:
+            if label_key(existing) == key:
+                return aliases.get(existing, existing)  # never snap back to an alias
+        return label
+
+    decision = dict(decision)
+    domain = decision.get("domain")
+    if domain:
+        decision["domain"] = domain = canonical(domain, domains, tags)
+    if "tags" in decision:
+        canon = [canonical(t, tags, domains) for t in decision["tags"]]
+        decision["tags"] = [t for t in dict.fromkeys(canon) if t != domain]
+    return decision
+
+
 def known_projects(index: dict) -> set[str]:
     return {p["name"] if isinstance(p, dict) else p for p in index.get("projects") or []}
 
@@ -815,7 +868,7 @@ def classify_note(client: Anthropic, system_prompt: str, content: str,
     """
     request = build_classification_request(system_prompt, content, index)
     decision, _ = run_classification(client, request)
-    return normalize_decision(decision)
+    return canonicalize_labels(normalize_decision(decision), index)
 
 
 # --- Filing ------------------------------------------------------------------
