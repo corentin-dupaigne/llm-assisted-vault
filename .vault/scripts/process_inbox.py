@@ -19,6 +19,7 @@ import json
 import os
 import re
 import sys
+from collections import Counter
 from datetime import date, datetime
 from pathlib import Path
 
@@ -36,6 +37,17 @@ REPO_ROOT = VAULT_DIR.parent
 INBOX_DIR = REPO_ROOT / "Inbox"
 PROJECTS_DIR = REPO_ROOT / "Projects"
 AREAS_DIR = REPO_ROOT / "Areas"
+ATLAS_DIR = REPO_ROOT / "Atlas"
+MOC_TEMPLATE_PATH = REPO_ROOT / "Templates" / "moc.md"
+
+# Notes placed directly in these folders (not via the Inbox) are enriched in
+# place when they carry no `domain`. Archive is left alone: enriching inactive
+# notes is not worth an API call.
+ENRICH_ROOTS = ("Projects", "Areas", "Resources")
+# Cap per run so a large backlog (e.g. an imported vault) is spread over pushes.
+ENRICH_MAX_PER_RUN = int(os.environ.get("VAULT_ENRICH_MAX_PER_RUN") or 20)
+# A domain with at least this many notes and no MOC in Atlas/ gets one.
+MOC_MIN_NOTES = int(os.environ.get("VAULT_MOC_MIN_NOTES") or 5)
 INDEX_PATH = VAULT_DIR / "vault.index.json"
 # Content hashes of Inbox notes the last run could not file, so an unchanged
 # unfileable note is not re-sent to the API on every push (controlled cost).
@@ -153,11 +165,12 @@ def save_unfileable_state(state: dict) -> None:
 
 
 def prune_unfileable_state() -> bool:
-    """Drop state for notes no longer in the Inbox (filed, renamed or deleted
-    by hand). Returns ``True`` if the state file changed."""
+    """Drop state for notes that are gone (filed, renamed or deleted by hand).
+    Keys are Inbox filenames, or repo-relative paths for notes enriched in
+    place. Returns ``True`` if the state file changed."""
     state = load_unfileable_state()
     kept = {name: entry for name, entry in state.items()
-            if (INBOX_DIR / name).is_file()}
+            if (INBOX_DIR / name).is_file() or (REPO_ROOT / name).is_file()}
     if kept == state:
         return False
     save_unfileable_state(kept)
@@ -482,6 +495,15 @@ def scan_filed_notes() -> dict[str, Path]:
     return found
 
 
+def placement_of(rel_path: str) -> tuple[str, str | None, str | None]:
+    """``(para, project, area)`` implied by a note's repo-relative location."""
+    parts = Path(rel_path).parts
+    para = parts[0]
+    project = parts[1] if para == "Projects" and len(parts) > 2 else None
+    area = parts[1] if para == "Areas" and len(parts) > 2 else None
+    return para, project, area
+
+
 def entry_from_file(rel_path: str, path: Path, existing: dict | None) -> dict:
     """Build an index entry from a filed note's current on-disk state.
 
@@ -495,10 +517,7 @@ def entry_from_file(rel_path: str, path: Path, existing: dict | None) -> dict:
     inner, _ = split_frontmatter(text)
     values = parse_frontmatter(inner)[1] if inner else {}
 
-    parts = Path(rel_path).parts
-    para = parts[0]
-    project = parts[1] if para == "Projects" and len(parts) > 2 else None
-    area = parts[1] if para == "Areas" and len(parts) > 2 else None
+    para, project, area = placement_of(rel_path)
 
     tags = values.get("tags")
     if not isinstance(tags, list):
@@ -727,11 +746,24 @@ def render_index_for_prompt(index: dict) -> str:
 
 
 def build_classification_request(system_prompt: str, content: str, index: dict,
-                                 model: str = MODEL) -> dict:
-    """The `messages.create` arguments for classifying one note."""
+                                 model: str = MODEL,
+                                 location: str | None = None) -> dict:
+    """The `messages.create` arguments for classifying one note.
+
+    ``location`` is set for a note the user already filed by hand: the model is
+    told the placement is decided and only enriches it.
+    """
+    placed = (
+        "## Location\n\n"
+        f"The user already filed this note at `{location}`. Do not reclassify "
+        "it: set `para`, `project` and `area` to match this location, use "
+        "`status: filed`, and provide the domain, tags and wikilinks. Never "
+        "link the note to itself.\n\n"
+    ) if location else ""
     user_message = (
         "## Note content\n\n"
         f"{content}\n\n"
+        f"{placed}"
         "## Vault index\n\n"
         f"{render_index_for_prompt(index)}"
     )
@@ -909,14 +941,15 @@ def invented_folder(original: str, para: str, project: str | None,
 
 
 def classify_note(client: Anthropic, system_prompt: str, content: str,
-                  index: dict) -> dict:
+                  index: dict, location: str | None = None) -> dict:
     """Call Claude and return the normalized decision dict.
 
     The model is made (forced tool use) or asked (`auto` on models that reject
     forcing) to call `file_note`; its already-parsed `input` is the decision. If
     no tool call comes back, or the model declines, the note is unfileable.
     """
-    request = build_classification_request(system_prompt, content, index)
+    request = build_classification_request(system_prompt, content, index,
+                                           location=location)
     decision, _ = run_classification(client, request)
     return canonicalize_labels(normalize_decision(decision), index)
 
@@ -1050,6 +1083,221 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
     }
 
 
+# --- In-place enrichment ----------------------------------------------------
+
+def needs_enrichment(path: Path) -> bool:
+    """A note the user put straight into a PARA folder and that was never
+    processed: it has content but no ``domain``. Once enriched it has one, so it
+    is never touched again. ``llm: skip`` in its frontmatter opts it out."""
+    inner, body = split_frontmatter(read_note(path))
+    values = parse_frontmatter(inner)[1] if inner else {}
+    if values.get("domain") or not body.strip():
+        return False
+    return str(values.get("llm") or "").lower() != "skip"
+
+
+def find_unenriched() -> list[Path]:
+    """Notes needing enrichment across ``ENRICH_ROOTS``, in a stable order."""
+    found: list[Path] = []
+    for root in ENRICH_ROOTS:
+        base = REPO_ROOT / root
+        if base.is_dir():
+            found += [p for p in sorted(base.rglob("*.md"))
+                      if p.is_file() and needs_enrichment(p)]
+    return found
+
+
+_LINKS_HEADING_RE = re.compile(r"^## Links\s*$", re.MULTILINE)
+
+
+def apply_in_place(path: Path, decision: dict, index: dict,
+                   processing_date: str) -> dict:
+    """Add the missing metadata and links to a note filed by hand.
+
+    The location is the user's decision: the note is never moved, and
+    ``para``/``project``/``area`` come from its folder. Only missing frontmatter
+    fields are added and a ``## Links`` section is appended (unless the note has
+    one); the body is otherwise left byte-for-byte as written — no reformatting,
+    since the user may still be editing it. If the model would have placed the
+    note elsewhere, that is returned as a hint for the commit message only.
+    """
+    rel = path.relative_to(REPO_ROOT).as_posix()
+    domain = decision.get("domain")
+    if not domain:
+        return {"status": "unfileable", "filename": rel,
+                "reason": "rejected: model omitted domain"}
+    para, project, area = placement_of(rel)
+    original = read_note(path)
+    frontmatter, body, _ = merge_frontmatter(
+        original, domain=domain, tags=decision.get("tags") or [],
+        date=processing_date, para=para, project=project, area=area)
+
+    links = [link for link in resolve_wikilinks(decision.get("wikilinks") or [], index)
+             if link != f"[[{path.stem}]]"]
+    if links and not _LINKS_HEADING_RE.search(body):
+        body = body.rstrip("\n") + "\n" + build_links_section(links)
+    path.write_text(frontmatter + body, encoding="utf-8")
+
+    outcome = {"status": "enriched", "filename": rel}
+    model_place = (decision.get("para"), decision.get("project") or None,
+                   decision.get("area") or None)
+    if model_place[0] and model_place != (para, project, area):
+        where = "/".join(part for part in model_place if part)
+        outcome["hint"] = f"model would have filed it under {where}"
+    print(f"  ✓ Enriched {rel} in place")
+    return outcome
+
+
+def process_in_place(client: Anthropic, system_prompt: str, paths: list[Path],
+                     processing_date: str) -> list[dict]:
+    """Enrich notes filed by hand (see ``apply_in_place``). Same cost guards as
+    the Inbox: a note unchanged since it came back unfileable is skipped, and an
+    API error is recorded without stopping the run. The index is refreshed from
+    disk afterwards."""
+    outcomes: list[dict] = []
+    state = load_unfileable_state()
+    state_before = dict(state)
+
+    for path in paths:
+        rel = path.relative_to(REPO_ROOT).as_posix()
+        print(f"- {rel} (in place)")
+        content = read_note(path)
+        digest = content_hash(content)
+        if state.get(rel, {}).get("sha256") == digest:
+            print("  · Skipped: unchanged since it was found unfileable.")
+            continue
+
+        index = load_index()
+        try:
+            decision = classify_note(client, system_prompt, content, index,
+                                     location=rel)
+        except APIError as exc:
+            reason = f"API error: {type(exc).__name__}: {exc}"[:200]
+            print(f"  ! {reason}", file=sys.stderr)
+            outcomes.append({"status": "error", "filename": rel, "reason": reason})
+            continue
+
+        if decision.get("status") == "filed":
+            outcome = apply_in_place(path, decision, index, processing_date)
+        else:
+            outcome = {"status": "unfileable", "filename": rel,
+                       "reason": decision.get("reason", "No reason provided.")}
+            print(f"  · Not enriched: {outcome['reason']}")
+
+        if outcome["status"] == "unfileable":
+            state[rel] = {"sha256": digest, "reason": outcome["reason"],
+                          "date": processing_date}
+        else:
+            state.pop(rel, None)
+            index = load_index()
+            if reconcile_index(index):
+                save_index(index)
+        outcomes.append(outcome)
+
+    if state != state_before:
+        save_unfileable_state(state)
+    return outcomes
+
+
+# --- Maps of Content -----------------------------------------------------------
+
+_TEMPLATER_BLOCK_RE = re.compile(r"<%\*.*?%>\n?", re.DOTALL)
+
+DEFAULT_MOC = """---
+type: moc
+theme: {theme}
+created: {created}
+---
+# {title} — Map of Content
+
+## Primary notes
+
+```dataview
+LIST
+FROM "Projects" OR "Areas" OR "Resources" OR "Archive"
+WHERE domain = this.theme
+SORT date DESC
+```
+
+## Related notes
+
+```dataview
+LIST
+FROM "Projects" OR "Areas" OR "Resources" OR "Archive"
+WHERE contains(tags, this.theme) AND domain != this.theme
+SORT date DESC
+```
+"""
+
+
+def moc_title(domain: str) -> str:
+    return " ".join(word.capitalize() for word in domain.split("-"))
+
+
+def render_moc(domain: str, created: str) -> str:
+    """The MOC for ``domain``, rendered from the user's ``Templates/moc.md``.
+
+    Both template syntaxes are filled in: Templater (``<% title %>``,
+    ``<% theme %>``, ``<% tp.date.now("YYYY-MM-DD") %>``, with its prompt block
+    dropped) and Obsidian core templates (``{{title}}``, ``{{date}}``). The
+    frontmatter ``theme:`` is always set to the domain. Editing the template
+    therefore changes every future MOC. Falls back to a built-in layout when the
+    template is missing or still has unknown placeholders.
+    """
+    title = moc_title(domain)
+    if MOC_TEMPLATE_PATH.is_file():
+        text = _TEMPLATER_BLOCK_RE.sub("", read_note(MOC_TEMPLATE_PATH))
+        for placeholder, value in (("<% title %>", title), ("<% theme %>", domain),
+                                   ('<% tp.date.now("YYYY-MM-DD") %>', created),
+                                   ("{{title}}", title), ("{{date}}", created)):
+            text = text.replace(placeholder, value)
+        inner, body = split_frontmatter(text)
+        if inner is not None:
+            lines = [line for line in inner.splitlines() if not line.startswith("theme:")]
+            text = "---\n" + "\n".join([*lines[:1], f"theme: {domain}", *lines[1:]]) \
+                + "\n---\n" + body
+        if "<%" not in text and "{{" not in text:
+            return text
+    return DEFAULT_MOC.format(theme=domain, title=title, created=created)
+
+
+def existing_moc_themes() -> set[str]:
+    themes: set[str] = set()
+    if ATLAS_DIR.is_dir():
+        for path in ATLAS_DIR.glob("*.md"):
+            inner, _ = split_frontmatter(read_note(path))
+            theme = parse_frontmatter(inner)[1].get("theme") if inner else None
+            if theme:
+                themes.add(str(theme))
+    return themes
+
+
+def create_mocs(index: dict, created: str) -> list[dict]:
+    """Create a MOC in ``Atlas/`` for each domain with ``MOC_MIN_NOTES`` notes or
+    more and no MOC yet (matched by the MOC's ``theme``). No API call.
+
+    Only new files are created — an existing MOC is never modified — and every
+    generated theme is remembered in ``index["generated_mocs"]``, so a MOC the
+    user deletes is not recreated.
+    """
+    counts = Counter(n["domain"] for n in index.get("notes", []) if n.get("domain"))
+    have = existing_moc_themes() | set(index.get("generated_mocs") or [])
+    outcomes: list[dict] = []
+    for domain, count in sorted(counts.items()):
+        if count < MOC_MIN_NOTES or domain in have:
+            continue
+        path = ATLAS_DIR / title_to_filename(f"{moc_title(domain)} MOC")
+        if path.exists():
+            continue
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(render_moc(domain, created), encoding="utf-8")
+        index.setdefault("generated_mocs", []).append(domain)
+        rel = path.relative_to(REPO_ROOT).as_posix()
+        print(f"  ✓ Created MOC {rel} ({count} {domain} notes)")
+        outcomes.append({"status": "moc", "filename": domain, "target_path": rel})
+    return outcomes
+
+
 # --- Commit message ----------------------------------------------------------
 
 def format_outcome_line(outcome: dict) -> str:
@@ -1057,6 +1305,11 @@ def format_outcome_line(outcome: dict) -> str:
         return f"organize {outcome['filename']} → {outcome['target_path']}"
     if outcome["status"] == "error":
         return f"error {outcome['filename']} — {outcome['reason']}"
+    if outcome["status"] == "enriched":
+        hint = f" — {outcome['hint']}" if outcome.get("hint") else ""
+        return f"enrich {outcome['filename']} in place{hint}"
+    if outcome["status"] == "moc":
+        return f"create MOC {outcome['target_path']}"
     return f"unfileable {outcome['filename']} — {outcome['reason']}"
 
 
@@ -1064,7 +1317,10 @@ def build_commit_message(outcomes: list[dict]) -> str:
     if len(outcomes) == 1:
         return f"chore(llm): {format_outcome_line(outcomes[0])}"
 
-    header = f"chore(llm): process {len(outcomes)} inbox notes"
+    inbox_only = all(o["status"] in ("filed", "unfileable", "error")
+                     and "/" not in o["filename"] for o in outcomes)
+    header = (f"chore(llm): process {len(outcomes)} inbox notes" if inbox_only
+              else f"chore(llm): {len(outcomes)} vault updates")
     body = "\n".join(f"- {format_outcome_line(o)}" for o in outcomes)
     return f"{header}\n\n{body}"
 
@@ -1191,17 +1447,33 @@ def main(commit: bool = True) -> int:
     if prune_unfileable_state():
         print("Dropped unfileable state for notes no longer in the Inbox.")
 
-    # Step 1–2 — File the Inbox. Guarded: an empty Inbox means no work and no API
-    # call (controlled cost), but the reconciliation above still ran.
+    # Step 1–2 — File the Inbox, then enrich notes filed by hand. Guarded: with
+    # nothing to do there is no API call (controlled cost), but the
+    # reconciliation above still ran.
     inbox_notes = sorted(p for p in INBOX_DIR.glob("*.md") if p.is_file())
+    to_enrich = find_unenriched()
     outcomes: list[dict] = []
-    if inbox_notes:
+    if inbox_notes or to_enrich:
         system_prompt = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
         client = Anthropic()  # reads ANTHROPIC_API_KEY from the environment
+    if inbox_notes:
         print(f"Processing {len(inbox_notes)} note(s) from Inbox...")
         outcomes = process_notes(client, system_prompt, inbox_notes, processing_date)
     else:
         print("Inbox is empty. Nothing to file.")
+    if to_enrich:
+        batch = to_enrich[:ENRICH_MAX_PER_RUN]
+        later = len(to_enrich) - len(batch)
+        print(f"Enriching {len(batch)} note(s) filed by hand"
+              + (f" ({later} more on later runs)..." if later else "..."))
+        outcomes += process_in_place(client, system_prompt, batch, processing_date)
+
+    # Step 2b — Maps of Content for domains that grew enough (no API call).
+    index = load_index()
+    moc_outcomes = create_mocs(index, processing_date)
+    if moc_outcomes:
+        save_index(index)
+        outcomes += moc_outcomes
 
     # Step 3 — Commit and push the whole run as one record. When nothing was
     # filed, only the index correction (if any) is recorded; commit_and_push is a

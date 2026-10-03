@@ -91,6 +91,8 @@ def _redirect_module_paths(monkeypatch, module, root: Path, index_path: Path):
     monkeypatch.setattr(module, "INBOX_DIR", root / "Inbox")
     monkeypatch.setattr(module, "PROJECTS_DIR", root / "Projects")
     monkeypatch.setattr(module, "AREAS_DIR", root / "Areas")
+    monkeypatch.setattr(module, "ATLAS_DIR", root / "Atlas")
+    monkeypatch.setattr(module, "MOC_TEMPLATE_PATH", root / "Templates" / "moc.md")
     monkeypatch.setattr(module, "INDEX_PATH", index_path)
     monkeypatch.setattr(module, "UNFILEABLE_STATE_PATH", root / "unfileable.json")
     monkeypatch.setattr(module, "ALIASES_PATH", root / "aliases.json")

@@ -16,13 +16,14 @@ result in `.vault/vault.index.json`. The whole run is committed back to the repo
 - **Frictionless capture** — the user drops raw notes in `Inbox/` and makes no
   filing decision at capture time.
 - **Immutability of filed notes** — once a note leaves the Inbox it is never
-  automatically moved or modified again.
+  automatically moved or modified again. A note the user files by hand is
+  never moved either, and is touched at most once: to add the metadata and
+  links it lacks (see *Notes filed by hand*).
 - **Full traceability** — every automated action is a distinct, identifiable
   commit (prefix `chore(llm):`) and is therefore reversible.
 - **Portability** — notes are plain Markdown with universal YAML frontmatter,
   readable outside any specific tool.
-- **Controlled cost** — if the Inbox holds no notes, no API call is made and no
-  processing occurs.
+- **Controlled cost** — if nothing needs filing or enriching, no API call is made.
 
 ## Repository structure
 
@@ -36,8 +37,8 @@ hidden `.vault/` directory so the vault stays clean and tool-portable.
 | `Areas/`                      | Ongoing responsibilities; optionally one subfolder per area. |
 | `Resources/`                  | Reference material and general knowledge (flat).          |
 | `Archive/`                    | Inactive or completed items (flat).                       |
-| `Atlas/`                      | Maps of Content (MOCs); maintained manually by the user.  |
-| `Templates/`                  | Note templates; never touched by automation.              |
+| `Atlas/`                      | Maps of Content (MOCs); yours, plus ones the bot creates.  |
+| `Templates/`                  | Note templates; read (never written) to render MOCs.      |
 | `Attachments/`                | Binary files and media; never touched by automation.      |
 | `.vault/`                     | All non-vault machinery (hidden from the vault view).     |
 | `.vault/prompts/system.md`    | System prompt sent to Claude for classification.          |
@@ -65,14 +66,19 @@ in git with a `.gitkeep` file.
 
 The automation must **never**:
 
-- Move or modify any file outside of `Inbox/`.
-- Touch `Atlas/`, `Templates/`, or `Attachments/`.
+- Move any file outside of `Inbox/`.
+- Modify a file outside of `Inbox/`, with one exception: a note filed by hand
+  that has no `domain` gets its missing frontmatter fields and a `## Links`
+  section added, once (*Notes filed by hand*).
+- Modify or delete anything in `Atlas/`. The automation may only *create* a
+  new MOC there (*Automatic MOCs*).
+- Touch `Templates/` (read only, to render MOCs) or `Attachments/`.
 - Delete any file.
 - Create links from existing notes toward the new note (links only ever flow
   **from** the new note **to** existing ones).
 - Overwrite an already-filed note (immutability — a suffix is added on collision).
-- Make an API call when the Inbox is empty, for an empty note, or for a note
-  unchanged since a previous run found it unfileable.
+- Make an API call when nothing needs filing or enriching, for an empty note,
+  or for a note unchanged since a previous run found it unfileable.
 
 If classification confidence is insufficient, the note is returned as
 `unfileable` and **left untouched in `Inbox/`** rather than placed approximately.
@@ -321,13 +327,57 @@ notes is never rewritten; list it with the read-only lint:
 .venv/bin/python .vault/scripts/lint_labels.py
 ```
 
+## Notes filed by hand
+
+A note put straight into `Projects/`, `Areas/` or `Resources/` (not through the
+Inbox) is enriched where it is. The trigger is missing metadata, not a new
+file: a note with content and no `domain` in its frontmatter
+(`find_unenriched`). Once enriched it has a domain, so it is never selected
+again. `Archive/` is skipped, and `llm: skip` in a note's frontmatter opts it
+out.
+
+- **The folder is the user's decision.** The note is never moved; `para`,
+  `project` and `area` come from its location (`placement_of`). The model is
+  told the location and only supplies domain, tags and links. If it would
+  have filed the note elsewhere, that is noted in the commit message
+  (`— model would have filed it under ...`), nothing more.
+- **Minimal change.** Only missing frontmatter fields are added (existing ones
+  are kept verbatim, as for Inbox notes) and a `## Links` section is appended
+  unless the note already has one. The body is otherwise left byte-for-byte as
+  written — no `mdformat` — and the note never links to itself.
+- **Same cost guards as the Inbox.** Unfileable answers are cached by content
+  hash (key: the note's path), API errors are isolated, and at most
+  `VAULT_ENRICH_MAX_PER_RUN` (default 20) notes are enriched per run; the rest
+  follow on later pushes.
+- **Conflict risk.** The bot commits a change to a note the user may still be
+  editing; pull before editing (e.g. Obsidian Git's pull on startup) to avoid
+  a merge conflict.
+
+Commit line: `enrich <path> in place[ — model would have filed it under X]`.
+
+## Automatic MOCs
+
+After filing and enriching, every domain used by at least `VAULT_MOC_MIN_NOTES`
+notes (default 5) that has no MOC in `Atlas/` — matched by the MOC's `theme`
+frontmatter — gets one, with no API call (`create_mocs`). It is rendered from
+`Templates/moc.md`: Templater (`<% title %>`, `<% theme %>`,
+`<% tp.date.now(...) %>`, prompt block dropped) and core-template
+(`{{title}}`, `{{date}}`) placeholders are filled in and `theme:` is set to the
+domain; a built-in layout is used if the template is missing. The file is
+`Atlas/<Domain Title> MOC.md`.
+
+Only new files are created; an existing MOC is never modified. Each generated
+theme is recorded in the index's `generated_mocs` list, so a MOC the user
+deletes is not recreated. Commit line: `create MOC <path>`.
+
 ## Commit convention
 
 All automated commits use the prefix **`chore(llm):`**.
 
 - Single filed note: `chore(llm): organize <filename> → <target_path>`
 - Single unfileable note: `chore(llm): unfileable <filename> — <reason>`
-- Multiple notes: one commit summarizing all outcomes.
+- Multiple notes: one commit summarizing all outcomes (`process N inbox notes`,
+  or `N vault updates` when it includes enrichments or MOCs).
 - A decision refused by the code-side checks is reported as
   `unfileable <filename> — rejected: <specific cause>` (e.g. `model omitted
   domain`, `inconsistent placement (...)`).

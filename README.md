@@ -60,7 +60,7 @@ The vault **root** holds only your PARA folders; all machinery lives in a hidden
 | `Areas/` | Ongoing responsibilities; one optional subfolder per area (`Areas/health/`). |
 | `Resources/` | Reference material and general knowledge. |
 | `Archive/` | Inactive or completed items. |
-| `Atlas/` | Maps of Content (MOCs), maintained by you. |
+| `Atlas/` | Maps of Content (MOCs): yours, plus ones created automatically. |
 | `Templates/` | Note templates (incl. an Obsidian MOC template). |
 | `Attachments/` | Binary files and media. |
 | `.vault/` | All automation: pipeline, prompt, index, tests, docs. |
@@ -149,18 +149,28 @@ in `.vault/vault.index.json` so the LLM can file work into `Projects/<name>/`:
 
 - **Frictionless capture** — no filing decisions at write time.
 - **Immutability** — once a note leaves the Inbox it is never auto-moved or
-  modified again.
+  modified again. A note you file by hand is never moved, and only gets its
+  missing metadata and links added, once.
 - **Full traceability** — every automated run is a distinct `chore(llm):` commit,
   so it is auditable and reversible.
 - **Portability** — plain Markdown + YAML, no proprietary lock-in.
-- **Controlled cost** — no Inbox notes means no API call; empty or unchanged
-  unfileable notes are never re-sent.
+- **Controlled cost** — nothing to file or enrich means no API call; empty or
+  unchanged unfileable notes are never re-sent.
 - **Visible failures** — an API error or a push that cannot land fails the
   workflow run instead of passing silently.
 
-The automation **never** touches anything outside `Inbox/`, never modifies
-`Atlas/` / `Templates/` / `Attachments/`, never deletes a file, and never links
-from existing notes back toward a new one.
+The automation **never** moves a note outside `Inbox/`, never modifies an
+existing MOC in `Atlas/` (it only creates new ones), never writes to
+`Templates/` / `Attachments/`, never deletes a file, and never links from
+existing notes back toward a new one.
+
+### Notes filed by hand and automatic MOCs
+
+- Put a note straight into `Projects/…`, `Areas/…` or `Resources/` and the next
+  run adds its missing frontmatter and links **in place** (no move, no
+  reformatting). Opt a note out with `llm: skip` in its frontmatter.
+- When a domain reaches 5 notes (`VAULT_MOC_MIN_NOTES`) without a MOC, one is
+  created in `Atlas/` from `Templates/moc.md`. Delete it and it stays deleted.
 
 ---
 
