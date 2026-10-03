@@ -90,6 +90,7 @@ def _redirect_module_paths(monkeypatch, module, root: Path, index_path: Path):
     monkeypatch.setattr(module, "REPO_ROOT", root)
     monkeypatch.setattr(module, "INBOX_DIR", root / "Inbox")
     monkeypatch.setattr(module, "INDEX_PATH", index_path)
+    monkeypatch.setattr(module, "UNFILEABLE_STATE_PATH", root / "unfileable.json")
     monkeypatch.setattr(module, "SYSTEM_PROMPT_PATH", root / "prompts" / "system.md")
 
 

@@ -196,6 +196,8 @@ def test_inconsistent_override_projects_without_project_is_rejected(vault):
     index = vault.read_index()
 
     outcome = vault.module.apply_filed(note, decision, index, "2026-06-10")
-    assert outcome is None
+    assert outcome["status"] == "unfileable"
+    # The specific rejection cause reaches the commit message.
+    assert outcome["reason"].startswith("rejected: inconsistent placement")
     assert note.exists()  # left untouched in the Inbox
     assert index["notes"] == []

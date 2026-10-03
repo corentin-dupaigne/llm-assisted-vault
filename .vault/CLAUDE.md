@@ -44,6 +44,7 @@ hidden `.vault/` directory so the vault stays clean and tool-portable.
 | `.vault/scripts/process_inbox.py` | The filing pipeline.                                  |
 | `.vault/tests/`               | End-to-end test suite (see Tests below).                  |
 | `.vault/vault.index.json`     | The vault's source of truth (see schema below).           |
+| `.vault/unfileable.json`      | Content hashes of Inbox notes left unfileable (see below). |
 | `.vault/requirements-dev.txt` | Runtime + test dependencies.                              |
 | `.vault/.env`                 | Local `ANTHROPIC_API_KEY` (gitignored).                   |
 | `.github/workflows/process_inbox.yml` | Triggers the pipeline on push to `main`.          |
@@ -68,7 +69,8 @@ The automation must **never**:
 - Create links from existing notes toward the new note (links only ever flow
   **from** the new note **to** existing ones).
 - Overwrite an already-filed note (immutability — a suffix is added on collision).
-- Make an API call when the Inbox is empty.
+- Make an API call when the Inbox is empty, for an empty note, or for a note
+  unchanged since a previous run found it unfileable.
 
 If classification confidence is insufficient, the note is returned as
 `unfileable` and **left untouched in `Inbox/`** rather than placed approximately.
@@ -199,6 +201,20 @@ project: <project name or null>
 ---
 ```
 
+### Reading notes
+
+Every note is read through `read_note`, which strips a UTF-8 BOM and
+normalises CRLF/CR line endings to LF. Without it, a note written on Windows
+or by some mobile editors would not have its frontmatter detected: a second
+block would be stacked on top and mdformat would turn the original into a
+rule plus a `## key: value` heading.
+
+Existing frontmatter is read with PyYAML (`yaml.safe_load`), so quoted
+values (`domain: "go"`), block lists and multi-line values parse correctly;
+dates are converted to ISO strings for the index. A block that is not valid
+YAML falls back to a lenient line parser. Parsing is read-only — the
+original lines are always re-emitted verbatim.
+
 ### Merging with existing frontmatter
 
 A captured note may already carry its own frontmatter (e.g. an Obsidian/Dataview
@@ -274,6 +290,29 @@ All automated commits use the prefix **`chore(llm):`**.
 - Single filed note: `chore(llm): organize <filename> → <target_path>`
 - Single unfileable note: `chore(llm): unfileable <filename> — <reason>`
 - Multiple notes: one commit summarizing all outcomes.
+- A decision refused by the code-side checks is reported as
+  `unfileable <filename> — rejected: <specific cause>` (e.g. `model omitted
+  domain`, `inconsistent placement (...)`).
+- A note whose API call failed: `error <filename> — API error: ...`.
+
+## Skipping and failure handling
+
+- **Empty notes** (nothing but whitespace after the frontmatter) are skipped
+  with no API call and stay in the Inbox.
+- **Unfileable notes are not re-sent.** When a note is unfileable (by the
+  model or rejected by the checks), its SHA-256 is stored in
+  `.vault/unfileable.json`. Later runs skip it while its content is unchanged;
+  editing the note makes it eligible again. Entries for notes that left the
+  Inbox are pruned at the start of every run. This file is separate from the
+  index, so it is never sent to the model.
+- **API errors are isolated per note.** An `anthropic.APIError` on one note
+  records an `error` outcome (never cached, so the next push retries it) and
+  the run continues. The successful work is committed and pushed, then the
+  job exits 1 so the failure is visible.
+- **A rejected push is retried once.** If the push is refused (typically
+  because the user pushed during the run), the run's commit is rebased onto
+  the remote with `git pull --rebase` and pushed again. If that fails too,
+  the job exits 1 instead of reporting a green run whose work was lost.
 
 ## Languages
 

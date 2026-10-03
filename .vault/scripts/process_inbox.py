@@ -14,16 +14,18 @@ Invariants (see CLAUDE.md):
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
 import sys
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 import git
 import mdformat
-from anthropic import Anthropic
+import yaml
+from anthropic import Anthropic, APIError
 
 # --- Paths and constants -----------------------------------------------------
 
@@ -34,6 +36,9 @@ REPO_ROOT = VAULT_DIR.parent
 INBOX_DIR = REPO_ROOT / "Inbox"
 PROJECTS_DIR = REPO_ROOT / "Projects"
 INDEX_PATH = VAULT_DIR / "vault.index.json"
+# Content hashes of Inbox notes the last run could not file, so an unchanged
+# unfileable note is not re-sent to the API on every push (controlled cost).
+UNFILEABLE_STATE_PATH = VAULT_DIR / "unfileable.json"
 SYSTEM_PROMPT_PATH = VAULT_DIR / "prompts" / "system.md"
 
 MODEL = "claude-sonnet-4-6"
@@ -106,6 +111,39 @@ def save_index(index: dict) -> None:
         fh.write("\n")
 
 
+# --- Unfileable state --------------------------------------------------------
+
+def load_unfileable_state() -> dict:
+    """``{inbox filename: {"sha256", "reason", "date"}}`` for notes left in the
+    Inbox by a previous run. Missing file means no state yet."""
+    if not UNFILEABLE_STATE_PATH.is_file():
+        return {}
+    with UNFILEABLE_STATE_PATH.open(encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def save_unfileable_state(state: dict) -> None:
+    with UNFILEABLE_STATE_PATH.open("w", encoding="utf-8") as fh:
+        json.dump(state, fh, indent=2, ensure_ascii=False, sort_keys=True)
+        fh.write("\n")
+
+
+def prune_unfileable_state() -> bool:
+    """Drop state for notes no longer in the Inbox (filed, renamed or deleted
+    by hand). Returns ``True`` if the state file changed."""
+    state = load_unfileable_state()
+    kept = {name: entry for name, entry in state.items()
+            if (INBOX_DIR / name).is_file()}
+    if kept == state:
+        return False
+    save_unfileable_state(kept)
+    return True
+
+
+def content_hash(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 # --- Project detection -------------------------------------------------------
 
 def detect_projects() -> list[str]:
@@ -135,6 +173,17 @@ def sync_projects(index: dict) -> bool:
 
 
 # --- Note helpers ------------------------------------------------------------
+
+def read_note(path: Path) -> str:
+    """Read a note normalised to LF line endings, without a UTF-8 BOM.
+
+    Notes written on Windows or by some mobile editors use CRLF; the frontmatter
+    regex only matches ``---\\n``, so an un-normalised note would get a second
+    frontmatter block stacked on top and its own turned into body text.
+    """
+    text = path.read_text(encoding="utf-8-sig")
+    return text.replace("\r\n", "\n").replace("\r", "\n")
+
 
 def title_from_stem(stem: str) -> str:
     """A filed note's title is its filename stem — the human-readable name the
@@ -189,12 +238,52 @@ def split_frontmatter(text: str) -> tuple[str | None, str]:
     return match.group(1), text[match.end():]
 
 
+def _plain_value(value):
+    """Map a YAML-loaded value onto the JSON-friendly shapes the index stores:
+    dates become ISO strings, list items and other scalars become strings."""
+    if value is None or isinstance(value, str):
+        return value
+    if isinstance(value, (date, datetime)):
+        return value.isoformat()
+    if isinstance(value, list):
+        return [_plain_value(v) for v in value if v is not None]
+    if isinstance(value, dict):
+        return value
+    return str(value)
+
+
 def parse_frontmatter(inner: str) -> tuple[list[str], dict]:
     """Parse a frontmatter block into ``(ordered_keys, values)``.
 
+    Uses a real YAML parser so quoted values (``domain: "go"``), nested and
+    multi-line values read correctly. Falls back to a lenient line parser when
+    the block is not valid YAML (hand-written notes often are not). Used only to
+    read existing values; the original lines are preserved verbatim when
+    re-emitting.
+    """
+    try:
+        data = yaml.safe_load(inner)
+    except yaml.YAMLError:
+        data = None
+    if isinstance(data, dict):
+        keys = [str(k) for k in data]
+        return keys, {str(k): _plain_value(v) for k, v in data.items()}
+    return _parse_frontmatter_lenient(inner)
+
+
+def _unquote(raw: str) -> str:
+    """Strip whitespace and one pair of matching surrounding quotes."""
+    raw = raw.strip()
+    if len(raw) >= 2 and raw[0] == raw[-1] and raw[0] in "\"'":
+        return raw[1:-1]
+    return raw
+
+
+def _parse_frontmatter_lenient(inner: str) -> tuple[list[str], dict]:
+    """Line-based fallback for frontmatter that is not valid YAML.
+
     Supports the scalar, flow-list (`[a, b]`) and block-list (`- a`) forms that
-    appear in hand-written and templated notes. Used only to read existing
-    values; the original lines are preserved verbatim when re-emitting.
+    appear in hand-written and templated notes.
     """
     keys: list[str] = []
     values: dict = {}
@@ -210,7 +299,7 @@ def parse_frontmatter(inner: str) -> tuple[list[str], dict]:
         if raw == "":
             items, j = [], i + 1
             while j < len(lines) and _FM_LIST_ITEM_RE.match(lines[j]):
-                items.append(_FM_LIST_ITEM_RE.match(lines[j]).group(1).strip())
+                items.append(_unquote(_FM_LIST_ITEM_RE.match(lines[j]).group(1)))
                 j += 1
             if items:
                 values[key] = items
@@ -219,11 +308,11 @@ def parse_frontmatter(inner: str) -> tuple[list[str], dict]:
             values[key] = None
         elif raw.startswith("[") and raw.endswith("]"):
             body = raw[1:-1].strip()
-            values[key] = [t.strip() for t in body.split(",") if t.strip()] if body else []
+            values[key] = [_unquote(t) for t in body.split(",") if t.strip()] if body else []
         elif raw in ("null", "~"):
             values[key] = None
         else:
-            values[key] = raw
+            values[key] = _unquote(raw)
         i += 1
     return keys, values
 
@@ -357,7 +446,7 @@ def entry_from_file(rel_path: str, path: Path, existing: dict | None) -> dict:
     its filename. A missing ``date`` falls back to the note's existing index
     entry, so a hand-written note without one does not churn the index.
     """
-    text = path.read_text(encoding="utf-8")
+    text = read_note(path)
     inner, _ = split_frontmatter(text)
     values = parse_frontmatter(inner)[1] if inner else {}
 
@@ -573,21 +662,36 @@ def classify_note(client: Anthropic, system_prompt: str, content: str,
 
 # --- Filing ------------------------------------------------------------------
 
+def _rejected(md_file: Path, reason: str) -> dict:
+    """Outcome for a filing decision refused by the code-side checks. The note
+    stays in the Inbox and the specific reason reaches the commit message."""
+    print(f"  ! Rejected {md_file.name}: {reason}. Left in Inbox.")
+    return {
+        "status": "unfileable",
+        "filename": md_file.name,
+        "reason": f"rejected: {reason}",
+    }
+
+
 def apply_filed(md_file: Path, decision: dict, index: dict,
-                processing_date: str) -> dict | None:
+                processing_date: str) -> dict:
     """Enrich and move a filed note; update the index in place.
 
-    Returns an outcome dict for the commit message, or ``None`` if the decision
-    had to be rejected (in which case the note is left in the Inbox).
+    Returns the outcome dict for the commit message: ``status == "filed"`` on
+    success, or ``"unfileable"`` with the rejection reason when the decision
+    fails a safety check (in which case the note is left in the Inbox and the
+    index is untouched).
     """
     domain = decision.get("domain")
     para = decision.get("para")
     target_path = decision.get("target_path")
 
-    if not domain or para not in ALLOWED_PARA_ROOTS or not target_path:
-        print(f"  ! Rejected decision for {md_file.name}: incomplete or invalid "
-              f"fields. Left in Inbox.")
-        return None
+    missing = [name for name, value in (("domain", domain),
+                                        ("target_path", target_path)) if not value]
+    if missing:
+        return _rejected(md_file, f"model omitted {', '.join(missing)}")
+    if para not in ALLOWED_PARA_ROOTS:
+        return _rejected(md_file, f"invalid para {para!r} from model")
 
     tags = decision.get("tags") or []
     project = decision.get("project")
@@ -595,7 +699,7 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
     # resolvable [[Title]] wikilinks (the filename is the readable title now).
     wikilinks = resolve_wikilinks(decision.get("wikilinks") or [], index)
 
-    original = md_file.read_text(encoding="utf-8")
+    original = read_note(md_file)
 
     # The note's human-readable name is its Inbox filename. The destination
     # filename is derived from it — kept readable and Obsidian-safe rather than
@@ -615,14 +719,12 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
 
     placement = build_target_path(para, project, filename)
     if placement is None:
-        print(f"  ! Rejected {md_file.name}: inconsistent placement override "
-              f"(para={para!r}, project={project!r}). Left in Inbox.")
-        return None
+        return _rejected(md_file, f"inconsistent placement (para={para!r}, "
+                                  f"project={project!r})")
     dest = resolve_safe_target(placement)
     if dest is None:
-        print(f"  ! Rejected placement '{placement}' for {md_file.name}: outside "
-              f"allowed PARA roots. Left in Inbox.")
-        return None
+        return _rejected(md_file, f"placement {placement!r} is outside the "
+                                  f"allowed PARA roots")
 
     # Merge the mandatory metadata into any frontmatter the note already carries
     # (templated notes bring their own); existing fields are kept verbatim, only
@@ -687,6 +789,8 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
 def format_outcome_line(outcome: dict) -> str:
     if outcome["status"] == "filed":
         return f"organize {outcome['filename']} → {outcome['target_path']}"
+    if outcome["status"] == "error":
+        return f"error {outcome['filename']} — {outcome['reason']}"
     return f"unfileable {outcome['filename']} — {outcome['reason']}"
 
 
@@ -701,17 +805,43 @@ def build_commit_message(outcomes: list[dict]) -> str:
 
 # --- Git ---------------------------------------------------------------------
 
-def commit_and_push(repo: git.Repo, message: str) -> None:
+def commit_and_push(repo: git.Repo, message: str) -> bool:
+    """Commit the run and push it. Returns ``False`` if the push never landed.
+
+    A push is typically rejected because the user pushed while the run was in
+    progress; the run's commit is then rebased onto the new remote head and
+    pushed once more. If that fails too, the caller must fail the job — a green
+    run whose work never reached the remote would be silently lost.
+    """
     repo.git.add(A=True)
     if not repo.git.diff("--cached", "--name-only").strip():
         print("No changes to commit.")
-        return
+        return True
     repo.git.commit("-m", message)
     try:
         repo.git.push()
         print("Pushed changes to remote.")
+        return True
     except git.GitCommandError as exc:
-        print(f"! Push failed: {exc}", file=sys.stderr)
+        print(f"! Push rejected, rebasing onto the remote and retrying: {exc}",
+              file=sys.stderr)
+
+    try:
+        repo.git.pull("--rebase")
+    except git.GitCommandError as exc:
+        print(f"! Rebase onto the remote failed: {exc}", file=sys.stderr)
+        try:
+            repo.git.rebase("--abort")
+        except git.GitCommandError:
+            pass  # no rebase in progress (e.g. the fetch itself failed)
+        return False
+    try:
+        repo.git.push()
+        print("Pushed changes to remote (after rebase).")
+        return True
+    except git.GitCommandError as exc:
+        print(f"! Push failed after rebase: {exc}", file=sys.stderr)
+        return False
 
 
 # --- Main --------------------------------------------------------------------
@@ -722,41 +852,59 @@ def process_notes(client: Anthropic, system_prompt: str,
 
     This is the pure pipeline (Steps 1–2): no git side effects, so it can be
     driven directly by tests against an isolated vault.
+
+    Notes are skipped without an API call when they are empty or when they are
+    byte-for-byte what a previous run already found unfileable; editing such a
+    note makes it eligible again. An API failure on one note is recorded as an
+    ``error`` outcome (not cached) so the rest of the run still lands.
     """
     outcomes: list[dict] = []
+    state = load_unfileable_state()
+    state_before = dict(state)
 
     for md_file in inbox_notes:
         print(f"- {md_file.name}")
-        content = md_file.read_text(encoding="utf-8")
+        content = read_note(md_file)
+
+        if not split_frontmatter(content)[1].strip():
+            print("  · Skipped: empty note (no API call).")
+            continue
+        digest = content_hash(content)
+        if state.get(md_file.name, {}).get("sha256") == digest:
+            print("  · Skipped: unchanged since it was found unfileable "
+                  "(edit the note to retry).")
+            continue
+
         index = load_index()
+        try:
+            decision = classify_note(client, system_prompt, content, index)
+        except APIError as exc:
+            reason = f"API error: {type(exc).__name__}: {exc}"[:200]
+            print(f"  ! {reason}", file=sys.stderr)
+            outcomes.append({"status": "error", "filename": md_file.name,
+                             "reason": reason})
+            continue
 
-        decision = classify_note(client, system_prompt, content, index)
-        status = decision.get("status")
-
-        if status == "filed":
+        if decision.get("status") == "filed":
             outcome = apply_filed(md_file, decision, index, processing_date)
-            if outcome is not None:
+            if outcome["status"] == "filed":
                 save_index(index)
-                outcomes.append(outcome)
-            else:
-                # Decision rejected for safety; record as unfileable, keep file.
-                reason = "Filing decision rejected by safety checks."
-                print(f"  · Unfileable: {reason}")
-                outcomes.append({
-                    "status": "unfileable",
-                    "filename": md_file.name,
-                    "reason": reason,
-                })
         else:
             # Step 2 (unfileable) — leave the note in Inbox, print the reason.
             reason = decision.get("reason", "No reason provided.")
             print(f"  · Unfileable: {reason}")
-            outcomes.append({
-                "status": "unfileable",
-                "filename": md_file.name,
-                "reason": reason,
-            })
+            outcome = {"status": "unfileable", "filename": md_file.name,
+                       "reason": reason}
 
+        if outcome["status"] == "unfileable":
+            state[md_file.name] = {"sha256": digest, "reason": outcome["reason"],
+                                   "date": processing_date}
+        else:
+            state.pop(md_file.name, None)
+        outcomes.append(outcome)
+
+    if state != state_before:
+        save_unfileable_state(state)
     return outcomes
 
 
@@ -774,6 +922,8 @@ def main(commit: bool = True) -> int:
     if index_changed:
         save_index(index)
         print("Index verified and updated to match the vault's on-disk state.")
+    if prune_unfileable_state():
+        print("Dropped unfileable state for notes no longer in the Inbox.")
 
     # Step 1–2 — File the Inbox. Guarded: an empty Inbox means no work and no API
     # call (controlled cost), but the reconciliation above still ran.
@@ -794,7 +944,13 @@ def main(commit: bool = True) -> int:
         repo = git.Repo(REPO_ROOT)
         message = (build_commit_message(outcomes) if outcomes
                    else "chore(llm): reconcile vault index")
-        commit_and_push(repo, message)
+        if not commit_and_push(repo, message):
+            return 1
+
+    # Fail the job (after committing what did succeed) when a note hit an API
+    # error, so the failure is visible; the note stays in the Inbox for a retry.
+    if any(o["status"] == "error" for o in outcomes):
+        return 1
     return 0
 
 

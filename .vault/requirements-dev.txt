@@ -3,6 +3,7 @@ anthropic
 gitpython
 mdformat
 mdformat-wikilink
+pyyaml
 
 # Test-only deps
 pytest

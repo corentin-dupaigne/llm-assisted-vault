@@ -31,6 +31,8 @@ and portable in Obsidian, Logseq, a plain editor, or anything else.
 ```
 
 If the Inbox is empty, **no API call is made** — empty pushes cost nothing.
+Empty notes, and notes unchanged since they were last found unfileable, are
+skipped too; edit an unfileable note to have it retried.
 
 ### The PARA decision
 
@@ -151,7 +153,10 @@ in `.vault/vault.index.json` so the LLM can file work into `Projects/<name>/`:
 - **Full traceability** — every automated run is a distinct `chore(llm):` commit,
   so it is auditable and reversible.
 - **Portability** — plain Markdown + YAML, no proprietary lock-in.
-- **Controlled cost** — no Inbox notes means no API call.
+- **Controlled cost** — no Inbox notes means no API call; empty or unchanged
+  unfileable notes are never re-sent.
+- **Visible failures** — an API error or a push that cannot land fails the
+  workflow run instead of passing silently.
 
 The automation **never** touches anything outside `Inbox/`, never modifies
 `Atlas/` / `Templates/` / `Attachments/`, never deletes a file, and never links
