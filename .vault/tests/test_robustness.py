@@ -191,3 +191,53 @@ def test_unreachable_remote_reports_failure(git_vault, tmp_path):
     (gv.root / "Resources" / "idea.md").write_text("Idea.\n", encoding="utf-8")
 
     assert gv.module.commit_and_push(gv.repo, "chore(llm): organize idea") is False
+
+
+# --- Model output shapes -----------------------------------------------------------
+
+def test_string_tags_are_not_split_into_characters(vault):
+    note = vault.drop_note("TCP.md", "Handshake.\n")
+    decision = vault.module.normalize_decision(
+        dict(RESOURCE_DECISION, tags="devops, Networking ", wikilinks="[[A]]"))
+
+    assert decision["tags"] == ["devops", "networking"]
+    assert decision["wikilinks"] == ["A"]  # resolve_wikilinks accepts bare titles
+    outcome = vault.module.apply_filed(note, decision, vault.read_index(), "2026-10-03")
+    written = (vault.root / outcome["target_path"]).read_text(encoding="utf-8")
+    assert "tags: [devops, networking]" in written
+
+
+def test_classify_note_normalizes_the_decision(vault):
+    client = FakeClient(dict(RESOURCE_DECISION, tags="devops"))
+    decision = vault.module.classify_note(client, "system", "Body.", vault.read_index())
+    assert decision["tags"] == ["devops"]
+
+
+def test_model_labels_follow_the_naming_convention(vault):
+    decision = vault.module.normalize_decision(
+        dict(RESOURCE_DECISION, domain="Machine Learning",
+             tags=["Personal_Finance", "stimulants]", "devops", "DevOps", "]"]))
+    assert decision["domain"] == "machine-learning"
+    assert decision["tags"] == ["personal-finance", "stimulants", "devops"]
+
+
+def test_model_cannot_invent_a_project(vault):
+    vault.seed_index(projects=["cka"])
+    note = vault.drop_note("Proba.md", "Revision plan.\n")
+    decision = dict(RESOURCE_DECISION, para="Projects", project="exam-prep",
+                    target_path="Projects/exam-prep/Proba.md")
+
+    outcome = vault.module.apply_filed(note, decision, vault.read_index(), "2026-10-03")
+
+    assert outcome["reason"] == "rejected: model chose unknown project 'exam-prep'"
+    assert note.exists() and not (vault.root / "Projects" / "exam-prep").exists()
+
+
+def test_user_declared_project_is_allowed(vault):
+    note = vault.drop_note("Plan.md", "---\nproject: new-thing\n---\nPlan.\n")
+    decision = dict(RESOURCE_DECISION, para="Projects", project="new-thing",
+                    target_path="Projects/new-thing/Plan.md")
+
+    outcome = vault.module.apply_filed(note, decision, vault.read_index(), "2026-10-03")
+
+    assert outcome["target_path"] == "Projects/new-thing/Plan.md"

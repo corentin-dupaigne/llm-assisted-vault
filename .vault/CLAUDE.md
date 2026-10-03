@@ -88,7 +88,10 @@ Active projects are **auto-detected** at the start of each run by listing the
 immediate subfolders of `Projects/`; the result replaces the `projects` array in
 the index (the folder listing is authoritative). The user creates a project
 simply by making a folder under `Projects/`. The LLM only files into a project
-that already exists in the index.
+that already exists in the index; this is enforced in code
+(`unknown_model_project`): a project name the model made up is rejected and
+the note stays in the Inbox. A project the user declares in the note's own
+frontmatter is always allowed.
 
 ### Capture-time placement override (deterministic escape hatch)
 
@@ -325,9 +328,58 @@ tags are always emitted in English.
 `input_schema` is supplied and `tool_choice` requires it. The model returns a
 `tool_use` block whose `input` is already a parsed dict conforming to the schema
 — no prose, no ```json fence, and nothing to `json.loads` (so it cannot fail to
-parse). This is model-agnostic; in particular it works on models that reject
-assistant-message prefill (e.g. `claude-sonnet-4-6`). If no tool call comes back
+parse). It works on models that reject assistant-message prefill (e.g.
+`claude-sonnet-4-6`) and on `claude-haiku-4-5`. Note that newer models
+(Sonnet 5.5, Opus 5.5) reject forced `tool_choice` with a 400, so moving to
+them needs `tool_choice: auto` plus `strict: true`. If no tool call comes back
 at all, the note is treated as `unfileable`.
+
+The schema is not strictly enforced, so `normalize_decision` coerces the
+answer before it is used: `tags`/`wikilinks` given as a string become lists
+(otherwise `"devops"` would be written as `tags: [d, e, v, o, p, s]`), and the
+model's `domain` and tags are forced into the naming convention (lowercase,
+hyphenated, `[a-z0-9-]` only). Values from the note's own frontmatter are
+never touched.
+
+## What the model sees
+
+`render_index_for_prompt` sends a compact text form of the index rather than
+the JSON file. The model uses the index for two things only — the
+project/domain/tag vocabulary and the existing titles to link to — so per-note
+`path`, `date`, `para` and the repeated JSON keys are dropped and titles are
+grouped by domain and location:
+
+```
+Active projects: cka, cni, neetcode-150
+Domains in use: leetcode, golang, kubernetes, ...
+Tags in use: hashmap, linked-list, ...
+
+Existing notes as `domain @ location: title | title | ...`:
+leetcode @ Projects/neetcode-150: Two Sum | Valid Anagram | ...
+golang @ Resources: golang-maps | Go Package Naming Conventions | ...
+```
+
+The location keeps the placement precedent. On the vault's history this is
+37% fewer input tokens per call (53% at 68 notes), and the saving grows with
+the vault. The model is `claude-sonnet-4-6` by default and can be overridden
+with the `VAULT_MODEL` environment variable.
+
+## Evaluating a model or prompt change
+
+`.vault/scripts/eval.py` replays every past `organize` decision in the git
+history through a model, with the note and index as the pipeline saw them at
+the time, and scores the result against where each note lives today
+(placement, domain, tags, links). Run it before changing the model, the
+prompt or the index format:
+
+```bash
+.venv/bin/python .vault/scripts/eval.py --model claude-haiku-4-5 --rev my-notes
+.venv/bin/python .vault/scripts/eval.py --rescore .e2e-output/eval/<run>  # re-score, no API
+```
+
+Link scores measure agreement with the links the vault kept (picked by the
+previous model), not absolute correctness; compare a candidate against a
+control run of the current model rather than against 100%.
 
 ## Tests
 

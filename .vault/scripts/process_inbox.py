@@ -41,7 +41,9 @@ INDEX_PATH = VAULT_DIR / "vault.index.json"
 UNFILEABLE_STATE_PATH = VAULT_DIR / "unfileable.json"
 SYSTEM_PROMPT_PATH = VAULT_DIR / "prompts" / "system.md"
 
-MODEL = "claude-sonnet-4-6"
+# Overridable for experiments (e.g. `VAULT_MODEL=claude-haiku-4-5`); see
+# `.vault/scripts/eval.py` to measure a model against the vault history first.
+MODEL = os.environ.get("VAULT_MODEL") or "claude-sonnet-4-6"
 MAX_TOKENS = 1024
 
 # Structured output is forced via tool use: the model must call `file_note`, and
@@ -625,30 +627,64 @@ def unique_destination(dest: Path) -> Path:
 
 # --- LLM call ----------------------------------------------------------------
 
-def classify_note(client: Anthropic, system_prompt: str, content: str,
-                  index: dict) -> dict:
-    """Call Claude with forced tool use and return the decision dict.
+def render_index_for_prompt(index: dict) -> str:
+    """Render the index as the compact text the model actually needs.
 
-    The model is required to call `file_note`; its already-parsed `input` is the
-    decision. If, exceptionally, no tool call comes back, the note is treated as
-    unfileable.
+    The model uses the index for two things only: the project/domain/tag
+    vocabulary (to classify) and the existing note titles (to pick wikilinks).
+    Per-note `path`, `date`, `para` and the repeated JSON keys carry nothing the
+    model uses — the code rebuilds the path and resolves links from titles — so
+    notes are listed as titles grouped by domain and location, e.g.::
+
+        leetcode @ Projects/neetcode-150: Two Sum | Valid Anagram
+
+    The location keeps the placement precedent ("notes like this went to that
+    project") for a few characters per group.
     """
+    projects = [p["name"] if isinstance(p, dict) else p
+                for p in index.get("projects") or []]
+    groups: dict[tuple[str, str], list[str]] = {}
+    for note in index.get("notes", []):
+        project = note.get("project")
+        location = f"Projects/{project}" if project else (note.get("para") or "?")
+        key = (note.get("domain") or "(no domain)", location)
+        groups.setdefault(key, []).append(note.get("title") or "")
+
+    lines = [
+        "Active projects: " + (", ".join(projects) or "(none)"),
+        "Domains in use: " + (", ".join(index.get("domains") or []) or "(none)"),
+        "Tags in use: " + (", ".join(index.get("tags") or []) or "(none)"),
+        "",
+        "Existing notes as `domain @ location: title | title | ...`:",
+    ]
+    lines += [f"{domain} @ {location}: " + " | ".join(titles)
+              for (domain, location), titles in groups.items()]
+    if not groups:
+        lines.append("(no notes yet)")
+    return "\n".join(lines)
+
+
+def build_classification_request(system_prompt: str, content: str, index: dict,
+                                 model: str = MODEL) -> dict:
+    """The `messages.create` arguments for classifying one note."""
     user_message = (
         "## Note content\n\n"
         f"{content}\n\n"
         "## Vault index\n\n"
-        f"{json.dumps(index, ensure_ascii=False)}"
+        f"{render_index_for_prompt(index)}"
     )
+    return {
+        "model": model,
+        "max_tokens": MAX_TOKENS,
+        "system": system_prompt,
+        "tools": [CLASSIFY_TOOL],
+        "tool_choice": {"type": "tool", "name": CLASSIFY_TOOL["name"]},
+        "messages": [{"role": "user", "content": user_message}],
+    }
 
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=MAX_TOKENS,
-        system=system_prompt,
-        tools=[CLASSIFY_TOOL],
-        tool_choice={"type": "tool", "name": CLASSIFY_TOOL["name"]},
-        messages=[{"role": "user", "content": user_message}],
-    )
 
+def decision_from_response(response) -> dict:
+    """Extract the `file_note` decision; a missing tool call means unfileable."""
     for block in response.content:
         if getattr(block, "type", None) == "tool_use" and block.name == CLASSIFY_TOOL["name"]:
             return dict(block.input)
@@ -658,6 +694,72 @@ def classify_note(client: Anthropic, system_prompt: str, content: str,
         "status": "unfileable",
         "reason": "Model did not return a structured classification decision.",
     }
+
+
+def _as_str_list(value) -> list[str]:
+    """Coerce a model-supplied list field to a list of non-empty strings. The
+    tool schema is not strictly enforced, and a model may answer ``"devops"``
+    or ``"[a, b]"`` where a list is expected — which would otherwise be iterated
+    character by character (``tags: [d, e, v, o, p, s]``)."""
+    if isinstance(value, str):
+        value = value.strip().strip("[]").split(",")
+    if not isinstance(value, list):
+        return []
+    return [item.strip() for item in value if isinstance(item, str) and item.strip()]
+
+
+def _label(value: str) -> str:
+    """Force a domain/tag into the naming convention: lowercase, hyphen-separated,
+    ``[a-z0-9-]`` only (drops stray brackets/quotes a model may leave)."""
+    value = re.sub(r"[\s_]+", "-", value.strip().lower())
+    value = re.sub(r"[^a-z0-9-]", "", value)
+    return re.sub(r"-{2,}", "-", value).strip("-")
+
+
+def normalize_decision(decision: dict) -> dict:
+    """Return the decision with its fields coerced to the expected shapes:
+    list fields as lists of strings, domain and tags as convention labels."""
+    decision = dict(decision)
+    if "wikilinks" in decision:
+        decision["wikilinks"] = _as_str_list(decision["wikilinks"])
+    if "tags" in decision:
+        tags = [_label(t) for t in _as_str_list(decision["tags"])]
+        decision["tags"] = list(dict.fromkeys(t for t in tags if t))
+    if isinstance(decision.get("domain"), str):
+        decision["domain"] = _label(decision["domain"]) or None
+    return decision
+
+
+def known_projects(index: dict) -> set[str]:
+    return {p["name"] if isinstance(p, dict) else p for p in index.get("projects") or []}
+
+
+def unknown_model_project(original: str, para: str, project: str | None,
+                          index: dict) -> bool:
+    """True when the note would go to a project the model made up.
+
+    The model may only file into an existing project (one folder under
+    ``Projects/``); without this check an invented name would silently create a
+    new project folder. A project the user declared in the note's own
+    frontmatter is their decision and is always allowed.
+    """
+    if para != "Projects" or not project or project in known_projects(index):
+        return False
+    inner, _ = split_frontmatter(original)
+    declared = parse_frontmatter(inner)[1].get("project") if inner else None
+    return project != declared
+
+
+def classify_note(client: Anthropic, system_prompt: str, content: str,
+                  index: dict) -> dict:
+    """Call Claude with forced tool use and return the decision dict.
+
+    The model is required to call `file_note`; its already-parsed `input` is the
+    decision. If, exceptionally, no tool call comes back, the note is treated as
+    unfileable.
+    """
+    request = build_classification_request(system_prompt, content, index)
+    return normalize_decision(decision_from_response(client.messages.create(**request)))
 
 
 # --- Filing ------------------------------------------------------------------
@@ -717,6 +819,8 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
     # root carries none); and `Projects` without a project is incoherent → below.
     para, project = reconcile_placement(original, para, project)
 
+    if unknown_model_project(original, para, project, index):
+        return _rejected(md_file, f"model chose unknown project {project!r}")
     placement = build_target_path(para, project, filename)
     if placement is None:
         return _rejected(md_file, f"inconsistent placement (para={para!r}, "

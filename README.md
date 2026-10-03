@@ -181,7 +181,12 @@ the notes the model produces.
 
 ## Implementation notes
 
-- **Model:** `claude-sonnet-4-6`.
+- **Model:** `claude-sonnet-4-6` by default; override with `VAULT_MODEL`.
+  Measure a candidate first with `.vault/scripts/eval.py`, which replays the
+  vault's filing history through it (see `.vault/CLAUDE.md`).
+- **Compact index:** the model gets the projects, the domain/tag vocabulary
+  and the note titles grouped by domain, not the full JSON index (about 37%
+  fewer input tokens per call, growing with the vault).
 - **Structured output** is guaranteed via **forced tool use** (a `file_note` tool
   with a strict schema), so responses are always valid structured data — no JSON
   parsing failures, no markdown fences.
