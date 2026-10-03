@@ -33,7 +33,7 @@ hidden `.vault/` directory so the vault stays clean and tool-portable.
 |-------------------------------|-----------------------------------------------------------|
 | `Inbox/`                      | Drop zone — the single entry point for new notes.         |
 | `Projects/`                   | Active work; one subfolder per active project at runtime. |
-| `Areas/`                      | Ongoing responsibilities without a deadline (flat).       |
+| `Areas/`                      | Ongoing responsibilities; optionally one subfolder per area. |
 | `Resources/`                  | Reference material and general knowledge (flat).          |
 | `Archive/`                    | Inactive or completed items (flat).                       |
 | `Atlas/`                      | Maps of Content (MOCs); maintained manually by the user.  |
@@ -56,8 +56,9 @@ govern the whole tree. The script derives both roots from its own location —
 `VAULT_DIR` (`.vault/`) for the machinery and index, `REPO_ROOT` (its parent)
 for the PARA folders and `.git` — so the two never get confused.
 
-`Projects/`, `Areas/`, `Resources/`, and `Archive/` have no subfolders, except
-`Projects/`, which gets one subfolder per active project. Empty folders are kept
+`Resources/` and `Archive/` are flat. `Projects/` gets one subfolder per active
+project, and `Areas/` may get one subfolder per area of responsibility
+(`Areas/health/`, `Areas/finances/`); notes that fit no area sit at its root. Empty folders are kept
 in git with a `.gitkeep` file.
 
 ## Absolute rules
@@ -90,9 +91,17 @@ immediate subfolders of `Projects/`; the result replaces the `projects` array in
 the index (the folder listing is authoritative). The user creates a project
 simply by making a folder under `Projects/`. The LLM only files into a project
 that already exists in the index; this is enforced in code
-(`unknown_model_project`): a project name the model made up is rejected and
+(`invented_folder`): a project name the model made up is rejected and
 the note stays in the Inbox. A project the user declares in the note's own
 frontmatter is always allowed.
+
+**Areas work the same way.** The subfolders of `Areas/` are detected into the
+index's `areas` list (written only once an area folder exists). The user
+creates an area by making a folder (with a `.gitkeep` until it holds a note).
+For an `Areas` note the model sets `area` to a listed area, which files it
+under `Areas/<area>/` and adds `area: <name>` to its frontmatter, or leaves it
+`null` to file at the `Areas/` root. An area the model invents is rejected; an
+`area:` the user declares in the note is always allowed.
 
 ### Capture-time placement override (deterministic escape hatch)
 
@@ -118,8 +127,8 @@ index entry** — all three stay consistent. Rules:
 
 - An explicit, valid `para` in the note overrides the model's.
 - Rerouting to a *different* root than the model picked **drops** the model's
-  project association — a flat root (Areas/Resources/Archive) never carries a
-  project. An explicit `project` in the note also wins.
+  project and area association — only `Projects` carries a project and only
+  `Areas` an area. An explicit `project` or `area` in the note also wins.
 - `para: Projects` with no resolvable project is incoherent → the note is
   **rejected and left in the Inbox** rather than filed approximately.
 
@@ -145,6 +154,9 @@ The index is the LLM's **only** source of truth about the vault's contents.
 
 - `projects` — active projects, **auto-detected** from the subfolders of
   `Projects/` at the start of every run (the folder listing is authoritative).
+- `areas` — areas of responsibility, auto-detected the same way from the
+  subfolders of `Areas/` (absent while there are none). Index entries of notes
+  in an area subfolder carry an `area` field.
 - `domains` — canonical list of all domains in use.
 - `tags` — canonical list of all tags in use.
 - `notes` — one entry per filed note:
@@ -204,6 +216,9 @@ para: <Projects | Areas | Resources | Archive>
 project: <project name or null>
 ---
 ```
+
+A note filed into an area subfolder also gets `area: <area name>`; no other
+note carries the field.
 
 ### Reading notes
 

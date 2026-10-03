@@ -35,6 +35,7 @@ VAULT_DIR = Path(__file__).resolve().parent.parent
 REPO_ROOT = VAULT_DIR.parent
 INBOX_DIR = REPO_ROOT / "Inbox"
 PROJECTS_DIR = REPO_ROOT / "Projects"
+AREAS_DIR = REPO_ROOT / "Areas"
 INDEX_PATH = VAULT_DIR / "vault.index.json"
 # Content hashes of Inbox notes the last run could not file, so an unchanged
 # unfileable note is not re-sent to the API on every push (controlled cost).
@@ -83,6 +84,11 @@ CLASSIFY_TOOL = {
             "project": {
                 "type": ["string", "null"],
                 "description": "Project name when para is 'Projects', otherwise null.",
+            },
+            "area": {
+                "type": ["string", "null"],
+                "description": "Area name when para is 'Areas' and one of the listed "
+                               "areas fits, otherwise null.",
             },
             "wikilinks": {
                 "type": "array",
@@ -162,32 +168,48 @@ def content_hash(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-# --- Project detection -------------------------------------------------------
+# --- Project and area detection ---------------------------------------------
+
+def detect_folders(root: Path) -> list[str]:
+    """Immediate subfolders of ``root``, sorted for a stable, diff-friendly index.
+
+    One subfolder per active project (``Projects/``) or area of responsibility
+    (``Areas/``) is the on-disk convention (see CLAUDE.md), so the folder listing
+    is the source of truth.
+    """
+    if not root.is_dir():
+        return []
+    return sorted(p.name for p in root.iterdir() if p.is_dir())
+
 
 def detect_projects() -> list[str]:
-    """Active project names = the immediate subfolders of ``Projects/``.
+    """Active project names = the immediate subfolders of ``Projects/``."""
+    return detect_folders(PROJECTS_DIR)
 
-    One subfolder per active project is the on-disk convention (see CLAUDE.md),
-    so the folder listing is the source of truth. Returned sorted for a stable,
-    diff-friendly index.
-    """
-    if not PROJECTS_DIR.is_dir():
-        return []
-    return sorted(p.name for p in PROJECTS_DIR.iterdir() if p.is_dir())
+
+def detect_areas() -> list[str]:
+    """Area names = the immediate subfolders of ``Areas/``."""
+    return detect_folders(AREAS_DIR)
 
 
 def sync_projects(index: dict) -> bool:
-    """Refresh ``index['projects']`` from the ``Projects/`` folder listing.
+    """Refresh ``index['projects']`` and ``index['areas']`` from the folders.
 
     Returns ``True`` if the index changed, so the caller can decide whether to
-    persist it. The folder listing is authoritative: projects whose folder no
-    longer exists are dropped, newly created folders are added.
+    persist it. The folder listing is authoritative: entries whose folder no
+    longer exists are dropped, newly created folders are added. ``areas`` is only
+    written once an area folder exists, so a vault without areas keeps its index.
     """
+    changed = False
     detected = detect_projects()
     if index.get("projects") != detected:
         index["projects"] = detected
-        return True
-    return False
+        changed = True
+    areas = detect_areas()
+    if areas != (index.get("areas") or []):
+        index["areas"] = areas
+        changed = True
+    return changed
 
 
 # --- Note helpers ------------------------------------------------------------
@@ -345,13 +367,15 @@ def render_field(key: str, value) -> str:
 
 
 def merge_frontmatter(original: str, *, domain: str, tags: list[str], date: str,
-                      para: str, project: str | None) -> tuple[str, str, dict]:
+                      para: str, project: str | None,
+                      area: str | None = None) -> tuple[str, str, dict]:
     """Merge the mandatory metadata into a note's existing frontmatter.
 
     Captured notes may already carry frontmatter (e.g. Obsidian/Dataview
     templates). Existing fields — mandatory or not — are kept **verbatim** and
     never overridden; only the mandatory fields that are *missing* are appended,
-    so the result is always a single frontmatter block. Returns
+    so the result is always a single frontmatter block. ``area`` is not
+    mandatory: it is only added for a note filed into an area subfolder. Returns
     ``(frontmatter, body, effective)`` where ``effective`` holds the
     authoritative mandatory values (existing wins) for the index.
     """
@@ -369,6 +393,8 @@ def merge_frontmatter(original: str, *, domain: str, tags: list[str], date: str,
     for key in MANDATORY_FIELDS:
         if key not in existing_keys:
             lines.append(render_field(key, computed[key]))
+    if area and "area" not in existing_keys:
+        lines.append(f"area: {area}")
 
     frontmatter = "---\n" + "\n".join(lines) + "\n---\n"
 
@@ -376,6 +402,7 @@ def merge_frontmatter(original: str, *, domain: str, tags: list[str], date: str,
         key: existing_values[key] if key in existing_keys else computed[key]
         for key in MANDATORY_FIELDS
     }
+    effective["area"] = existing_values.get("area") or area
     return frontmatter, body, effective
 
 
@@ -471,12 +498,13 @@ def entry_from_file(rel_path: str, path: Path, existing: dict | None) -> dict:
     parts = Path(rel_path).parts
     para = parts[0]
     project = parts[1] if para == "Projects" and len(parts) > 2 else None
+    area = parts[1] if para == "Areas" and len(parts) > 2 else None
 
     tags = values.get("tags")
     if not isinstance(tags, list):
         tags = [tags] if tags else []
 
-    return {
+    entry = {
         "title": title_from_stem(path.stem),
         "path": rel_path,
         "domain": values.get("domain"),
@@ -485,6 +513,9 @@ def entry_from_file(rel_path: str, path: Path, existing: dict | None) -> dict:
         "project": project,
         "date": values.get("date") or (existing or {}).get("date"),
     }
+    if area:  # only for notes in an area subfolder, so older entries don't churn
+        entry["area"] = area
+    return entry
 
 
 def collect_canonical(existing: list[str], in_use: list[str]) -> list[str]:
@@ -576,11 +607,14 @@ def resolve_safe_target(target_path: str) -> Path | None:
     return candidate
 
 
-def build_target_path(para: str, project: str | None, filename: str) -> str | None:
+def build_target_path(para: str, project: str | None, filename: str,
+                      area: str | None = None) -> str | None:
     """Compose a repo-relative target path from placement fields + filename.
 
     ``Projects`` notes live one subfolder deep (``Projects/<project>/file.md``);
-    the other PARA roots are flat. Returns a POSIX path string, or ``None`` when
+    ``Areas`` notes in their area's subfolder when they have one
+    (``Areas/<area>/file.md``), else at the ``Areas/`` root; the other PARA
+    roots are flat. Returns a POSIX path string, or ``None`` when
     the inputs are inconsistent (an unknown root, a missing filename, or
     ``para == "Projects"`` with no project). Path *safety* — escapes, forbidden
     roots — is still enforced afterwards by ``resolve_safe_target``.
@@ -591,41 +625,50 @@ def build_target_path(para: str, project: str | None, filename: str) -> str | No
         if not project:
             return None
         return f"Projects/{project}/{filename}"
+    if para == "Areas" and area:
+        return f"Areas/{area}/{filename}"
     return f"{para}/{filename}"
 
 
 def reconcile_placement(original: str, model_para: str,
-                        model_project: str | None) -> tuple[str, str | None]:
+                        model_project: str | None,
+                        model_area: str | None = None
+                        ) -> tuple[str, str | None, str | None]:
     """Let a note's own frontmatter override the model's placement.
 
-    Returns the ``(para, project)`` that win. A note captured with an explicit
-    ``para`` (and optionally ``project``) is filed where it says, not where the
-    model guessed — this is the deterministic, opt-in escape hatch for the cases
-    where the human disagrees with the classifier (e.g. durable reference that
-    relates to an active project but belongs in ``Resources``). Rules:
+    Returns the ``(para, project, area)`` that win. A note captured with an
+    explicit ``para`` (and optionally ``project``/``area``) is filed where it
+    says, not where the model guessed — this is the deterministic, opt-in escape
+    hatch for the cases where the human disagrees with the classifier (e.g.
+    durable reference that relates to an active project but belongs in
+    ``Resources``). Rules:
 
     - an explicit valid ``para`` in the note wins;
     - rerouting to a *different* root than the model chose drops the model's
-      project association — a flat root (Areas/Resources/Archive) carries none;
-    - an explicit ``project`` in the note wins over the model's.
+      project and area association;
+    - an explicit ``project``/``area`` in the note wins over the model's.
 
-    A non-``Projects`` root is forced to ``project = None``; the caller rejects
-    the incoherent ``Projects``-without-a-project case.
+    Only ``Projects`` carries a project and only ``Areas`` an area; the caller
+    rejects the incoherent ``Projects``-without-a-project case.
     """
     inner, _ = split_frontmatter(original)
     user_fm = parse_frontmatter(inner)[1] if inner else {}
 
-    para, project = model_para, model_project
+    para, project, area = model_para, model_project, model_area
     user_para = user_fm.get("para")
     if user_para in ALLOWED_PARA_ROOTS:
         para = user_para
         if user_para != model_para:
-            project = None
+            project = area = None
     if "project" in user_fm:
         project = user_fm["project"] or None
+    if "area" in user_fm:
+        area = user_fm["area"] or None
     if para != "Projects":
         project = None
-    return para, project
+    if para != "Areas":
+        area = None
+    return para, project, area
 
 
 def unique_destination(dest: Path) -> Path:
@@ -659,15 +702,18 @@ def render_index_for_prompt(index: dict) -> str:
     """
     projects = [p["name"] if isinstance(p, dict) else p
                 for p in index.get("projects") or []]
+    areas = index.get("areas") or []
     groups: dict[tuple[str, str], list[str]] = {}
     for note in index.get("notes", []):
-        project = note.get("project")
-        location = f"Projects/{project}" if project else (note.get("para") or "?")
+        project, area = note.get("project"), note.get("area")
+        location = (f"Projects/{project}" if project
+                    else f"Areas/{area}" if area else (note.get("para") or "?"))
         key = (note.get("domain") or "(no domain)", location)
         groups.setdefault(key, []).append(note.get("title") or "")
 
     lines = [
         "Active projects: " + (", ".join(projects) or "(none)"),
+        "Areas: " + (", ".join(areas) or "(none — Areas notes go to the Areas/ root)"),
         "Domains in use: " + (", ".join(index.get("domains") or []) or "(none)"),
         "Tags in use: " + (", ".join(index.get("tags") or []) or "(none)"),
         "",
@@ -842,20 +888,24 @@ def known_projects(index: dict) -> set[str]:
     return {p["name"] if isinstance(p, dict) else p for p in index.get("projects") or []}
 
 
-def unknown_model_project(original: str, para: str, project: str | None,
-                          index: dict) -> bool:
-    """True when the note would go to a project the model made up.
+def invented_folder(original: str, para: str, project: str | None,
+                    area: str | None, index: dict) -> str | None:
+    """Why the note would go to a project or area the model made up, else ``None``.
 
-    The model may only file into an existing project (one folder under
-    ``Projects/``); without this check an invented name would silently create a
-    new project folder. A project the user declared in the note's own
-    frontmatter is their decision and is always allowed.
+    The model may only file into an existing project or area (one folder under
+    ``Projects/`` or ``Areas/``); without this check an invented name would
+    silently create a new folder. A project or area the user declared in the
+    note's own frontmatter is their decision and is always allowed.
     """
-    if para != "Projects" or not project or project in known_projects(index):
-        return False
     inner, _ = split_frontmatter(original)
-    declared = parse_frontmatter(inner)[1].get("project") if inner else None
-    return project != declared
+    declared = parse_frontmatter(inner)[1] if inner else {}
+    if (para == "Projects" and project and project not in known_projects(index)
+            and project != declared.get("project")):
+        return f"model chose unknown project {project!r}"
+    if (para == "Areas" and area and area not in (index.get("areas") or [])
+            and area != declared.get("area")):
+        return f"model chose unknown area {area!r}"
+    return None
 
 
 def classify_note(client: Anthropic, system_prompt: str, content: str,
@@ -906,6 +956,7 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
 
     tags = decision.get("tags") or []
     project = decision.get("project")
+    area = decision.get("area")
     # Validate the model's links against the index and reduce them to bare,
     # resolvable [[Title]] wikilinks (the filename is the readable title now).
     wikilinks = resolve_wikilinks(decision.get("wikilinks") or [], index)
@@ -926,11 +977,12 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
     # all agree. Rules: an explicit `para`/`project` in the note overrides the
     # model's; a reroute to a *different* root drops the model's project (a flat
     # root carries none); and `Projects` without a project is incoherent → below.
-    para, project = reconcile_placement(original, para, project)
+    para, project, area = reconcile_placement(original, para, project, area)
 
-    if unknown_model_project(original, para, project, index):
-        return _rejected(md_file, f"model chose unknown project {project!r}")
-    placement = build_target_path(para, project, filename)
+    invented = invented_folder(original, para, project, area, index)
+    if invented:
+        return _rejected(md_file, invented)
+    placement = build_target_path(para, project, filename, area)
     if placement is None:
         return _rejected(md_file, f"inconsistent placement (para={para!r}, "
                                   f"project={project!r})")
@@ -946,7 +998,7 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
     # coherent with the chosen root.
     frontmatter, note_body, effective = merge_frontmatter(
         original, domain=domain, tags=tags, date=processing_date,
-        para=para, project=project,
+        para=para, project=project, area=area,
     )
 
     # Format the Markdown body (captured content + generated Links section) but
@@ -978,6 +1030,7 @@ def apply_filed(md_file: Path, decision: dict, index: dict,
         "para": effective["para"],
         "project": effective["project"],
         "date": effective["date"],
+        **({"area": effective["area"]} if effective["area"] else {}),
     })
 
     domains = index.setdefault("domains", [])

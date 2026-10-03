@@ -16,7 +16,7 @@ Your job is to produce a single classification and enrichment decision for the n
 Classify the note by applying this **strict decision hierarchy, in order**. Stop at the first rule that matches.
 
 1. **Projects** — Is the note tied to an identified **active project** that is listed under `Active projects` in the index? If yes, file it under `Projects/<project-name>/`. Only match a project that actually exists in the index. Do not invent a project.
-2. **Areas** — Is the note an ongoing responsibility or standard to maintain over time, **without a deadline or defined end state**? If yes, file it under `Areas/`.
+2. **Areas** — Is the note an ongoing responsibility or standard to maintain over time, **without a deadline or defined end state**? If yes, file it under `Areas/`. If the index lists `Areas`, set `area` to the one the note belongs to and file it under `Areas/<area-name>/`; if none fits (or none is listed), leave `area` null and file it at the `Areas/` root. Only use an area that is listed in the index. Do not invent an area.
 3. **Resources** — Is the note reference material, general knowledge, or a topic of interest with no immediate actionability? If yes, file it under `Resources/`.
 4. **Archive** — Is the note about something **inactive, completed, or no longer relevant**? If yes, file it under `Archive/`.
 
@@ -59,6 +59,7 @@ Call `file_note` with arguments of this shape (shown as JSON):
   "tags": ["k3s", "devops"],
   "para": "Resources",
   "project": null,
+  "area": null,
   "wikilinks": ["[[Existing Note Title]]"]
 }
 ```
@@ -72,6 +73,7 @@ Field rules:
 - `tags`: a list of lowercase hyphen-separated strings; may be empty.
 - `para`: one of `"Projects"`, `"Areas"`, `"Resources"`, `"Archive"` — must be consistent with `target_path`.
 - `project`: the project name string when `para` is `"Projects"`, otherwise `null`.
+- `area`: the area name string when `para` is `"Areas"` and a listed area fits, otherwise `null`.
 - `wikilinks`: a list of bare `[[Note Title]]` strings built from each target note's title; may be empty.
 
 ---

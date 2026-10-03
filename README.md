@@ -39,7 +39,7 @@ skipped too; edit an unfileable note to have it retried.
 Each note is filed by a strict hierarchy (first match wins):
 
 1. Tied to an **active project** in the index → `Projects/<project-name>/`
-2. **Ongoing responsibility** without a deadline → `Areas/`
+2. **Ongoing responsibility** without a deadline → `Areas/<area>/` (or `Areas/`)
 3. **Reference** material or general knowledge → `Resources/`
 4. **Inactive or completed** → `Archive/`
 
@@ -57,7 +57,7 @@ The vault **root** holds only your PARA folders; all machinery lives in a hidden
 |------|------|
 | `Inbox/` | Drop zone — the single entry point for new notes. |
 | `Projects/` | Active work; one subfolder per active project. |
-| `Areas/` | Ongoing responsibilities without a deadline. |
+| `Areas/` | Ongoing responsibilities; one optional subfolder per area (`Areas/health/`). |
 | `Resources/` | Reference material and general knowledge. |
 | `Archive/` | Inactive or completed items. |
 | `Atlas/` | Maps of Content (MOCs), maintained by you. |

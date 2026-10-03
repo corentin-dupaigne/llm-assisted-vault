@@ -77,9 +77,9 @@ def index_at(repo: git.Repo, rev: str) -> dict | None:
     return None
 
 
-def projects_at(commit: git.Commit) -> list[str]:
+def folders_at(commit: git.Commit, root: str) -> list[str]:
     try:
-        return sorted(t.name for t in (commit.tree / "Projects").trees)
+        return sorted(t.name for t in (commit.tree / root).trees)
     except KeyError:
         return []
 
@@ -134,7 +134,8 @@ def build_cases(repo: git.Repo, rev: str) -> tuple[list[dict], list[str]]:
             earlier = [by_path[t] for t in run_targets[:k] if t in by_path]
             notes = base + earlier
             index = {
-                "projects": projects_at(parent),
+                "projects": folders_at(parent, "Projects"),
+                "areas": folders_at(parent, "Areas"),
                 "domains": pi.collect_canonical(post.get("domains", []),
                                                 [n["domain"] for n in notes if n.get("domain")]),
                 "tags": pi.collect_canonical(post.get("tags", []),
@@ -157,6 +158,7 @@ def build_cases(repo: git.Repo, rev: str) -> tuple[list[dict], list[str]]:
                     "path": final,
                     "para": parts[0],
                     "project": parts[1] if parts[0] == "Projects" and len(parts) > 2 else None,
+                    "area": parts[1] if parts[0] == "Areas" and len(parts) > 2 else None,
                     "domain": final_fm.get("domain"),
                     "tags": sorted(final_fm.get("tags") or []),
                     "links": links_in(final_text),
@@ -204,16 +206,17 @@ def score_case(case: dict, raw_decision: dict, meta: dict) -> dict:
     if decision.get("status") != "filed":
         return result
 
-    para, project = pi.reconcile_placement(content, decision.get("para"),
-                                           decision.get("project"))
-    placement = pi.build_target_path(para, project, "x.md")
-    if pi.unknown_model_project(content, para, project, index):
+    para, project, area = pi.reconcile_placement(
+        content, decision.get("para"), decision.get("project"), decision.get("area"))
+    placement = pi.build_target_path(para, project, "x.md", area)
+    if pi.invented_folder(content, para, project, area, index):
         placement = None
     preset_tags = preset.get("tags") if isinstance(preset.get("tags"), list) else []
     result["got"] = {
         "valid": bool(decision.get("domain")) and placement is not None,
         "para": para,
         "project": project,
+        "area": area,
         "domain": preset.get("domain") or decision.get("domain"),
         "tags": sorted(preset_tags if "tags" in preset else decision.get("tags") or []),
         "links": sorted(link.strip("[]") for link in
@@ -229,6 +232,11 @@ def jaccard(a: list[str], b: list[str]) -> float:
     return 1.0 if not sa and not sb else len(sa & sb) / len(sa | sb)
 
 
+def place(p: dict) -> str:
+    """``para/subfolder`` of a placement (runs saved before areas have none)."""
+    return f"{p['para']}/{p.get('project') or p.get('area') or ''}"
+
+
 def summarize(model: str, results: list[dict], skipped: list[str]) -> dict:
     ok = [r for r in results if "error" not in r]
     filed = [r for r in ok if r["got"]]
@@ -239,8 +247,7 @@ def summarize(model: str, results: list[dict], skipped: list[str]) -> dict:
                 "rate": round(hits / total, 3) if total else None}
 
     placement = [r for r in valid
-                 if (r["got"]["para"], r["got"]["project"])
-                 == (r["expected"]["para"], r["expected"]["project"])]
+                 if place(r["got"]) == place(r["expected"])]
     dom_cases = [r for r in valid if not r["domain_preset"]]
     tag_cases = [r for r in valid if not r["tags_preset"]]
     link_tp = sum(len(set(r["got"]["links"]) & set(r["expected"]["links"])) for r in valid)
@@ -261,8 +268,7 @@ def summarize(model: str, results: list[dict], skipped: list[str]) -> dict:
         "unfileable_or_rejected": [r["id"] for r in ok if r not in valid],
         "placement_exact": rate(len(placement), len(valid)),
         "placement_misses": [
-            {"id": r["id"], "expected": f"{r['expected']['para']}/{r['expected']['project'] or ''}",
-             "got": f"{r['got']['para']}/{r['got']['project'] or ''}"}
+            {"id": r["id"], "expected": place(r["expected"]), "got": place(r["got"])}
             for r in valid if r not in placement],
         "domain_exact_model_decided": rate(
             sum(r["got"]["domain"] == r["expected"]["domain"] for r in dom_cases), len(dom_cases)),
