@@ -5,6 +5,9 @@ struggled: false
 project: neetcode-150
 date_solved: 2026-07-07
 tags: [leetcode, neetcode-150, linked-list]
+domain: leetcode
+date: 2026-10-03
+para: Projects
 ---
 ## Initial Intuition
 
@@ -68,3 +71,11 @@ func mergeTwoLists(list1 *ListNode, list2 *ListNode) *ListNode {
 ## Review Log
 
 - 2026-07-07 — first solve
+
+## Links
+
+- [[Merge two linked lists]]
+- [[Dummy Head Pattern]]
+- [[Linked List cycle Definition]]
+- [[Copy Linked List With Random Pointer]]
+- [[Add Two Numbers]]

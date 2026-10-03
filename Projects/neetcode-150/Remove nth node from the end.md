@@ -5,6 +5,9 @@ struggled: false
 project: neetcode-150
 date_solved: 2026-07-07
 tags: [leetcode, neetcode-150, linked-list]
+domain: leetcode
+date: 2026-10-03
+para: Projects
 ---
 ## Initial Intuition
 
@@ -34,3 +37,12 @@ Mon intuition initiale est que je peux utiliser un slow et fast pointer. Je stor
 ## Review Log
 
 - 2026-07-07 — first solve
+
+## Links
+
+- [[Floyd's Tortoise and Hare]]
+- [[Dummy Head Pattern]]
+- [[Linked List cycle Definition]]
+- [[Merge two linked lists]]
+- [[Add Two Numbers]]
+- [[Copy Linked List With Random Pointer]]

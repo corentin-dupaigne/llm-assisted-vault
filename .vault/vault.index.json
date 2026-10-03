@@ -687,7 +687,7 @@
     {
       "title": "Merge two Linked lists 1",
       "path": "Projects/neetcode-150/Merge two Linked lists 1.md",
-      "domain": null,
+      "domain": "leetcode",
       "tags": [
         "leetcode",
         "neetcode-150",
@@ -695,12 +695,12 @@
       ],
       "para": "Projects",
       "project": "neetcode-150",
-      "date": null
+      "date": "2026-10-03"
     },
     {
       "title": "Remove nth node from the end",
       "path": "Projects/neetcode-150/Remove nth node from the end.md",
-      "domain": null,
+      "domain": "leetcode",
       "tags": [
         "leetcode",
         "neetcode-150",
@@ -708,7 +708,7 @@
       ],
       "para": "Projects",
       "project": "neetcode-150",
-      "date": null
+      "date": "2026-10-03"
     },
     {
       "title": "Go Project Structure — Rules & Conventions",
