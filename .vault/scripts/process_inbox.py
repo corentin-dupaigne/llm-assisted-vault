@@ -92,8 +92,22 @@ CLASSIFY_TOOL = {
             },
         },
         "required": ["status", "reason"],
+        "additionalProperties": False,
     },
 }
+
+# Models that reject a forced tool call (`tool_choice` `tool`/`any` is a 400).
+# For them `file_note` is offered with `tool_choice: auto` and a strict schema,
+# the prompt asks for the call, and a reply without one is retried once. They
+# think by default, so they run at `low` effort with room for that thinking, and
+# opt into server-side fallback on a policy decline.
+AUTO_TOOL_MODELS = ("claude-sonnet-5-5", "claude-opus-5-5", "claude-fable-5-1")
+AUTO_TOOL_MAX_TOKENS = 8000
+FALLBACK_BETA = "server-side-fallback-2026-07-01"
+
+
+def forces_tool_call(model: str) -> bool:
+    return not model.startswith(AUTO_TOOL_MODELS)
 
 # Destinations the LLM is allowed to file into. Atlas/Templates/Attachments and
 # Inbox itself are deliberately excluded — filing there is forbidden.
@@ -673,7 +687,7 @@ def build_classification_request(system_prompt: str, content: str, index: dict,
         "## Vault index\n\n"
         f"{render_index_for_prompt(index)}"
     )
-    return {
+    request = {
         "model": model,
         "max_tokens": MAX_TOKENS,
         "system": system_prompt,
@@ -681,19 +695,60 @@ def build_classification_request(system_prompt: str, content: str, index: dict,
         "tool_choice": {"type": "tool", "name": CLASSIFY_TOOL["name"]},
         "messages": [{"role": "user", "content": user_message}],
     }
+    if not forces_tool_call(model):
+        request.update(
+            max_tokens=AUTO_TOOL_MAX_TOKENS,
+            tools=[{**CLASSIFY_TOOL, "strict": True}],
+            tool_choice={"type": "auto"},
+            output_config={"effort": "low"},
+            betas=[FALLBACK_BETA],
+            extra_body={"fallbacks": "default"},
+        )
+    return request
 
 
-def decision_from_response(response) -> dict:
-    """Extract the `file_note` decision; a missing tool call means unfileable."""
+def send_request(client: Anthropic, request: dict):
+    """Send through the beta endpoint when the request carries beta flags."""
+    if "betas" in request:
+        return client.beta.messages.create(**request)
+    return client.messages.create(**request)
+
+
+def tool_call_input(response) -> dict | None:
+    """The `file_note` input of a response, or ``None`` if it made no call.
+    Blocks are matched by type, so leading `thinking` blocks are skipped."""
     for block in response.content:
         if getattr(block, "type", None) == "tool_use" and block.name == CLASSIFY_TOOL["name"]:
             return dict(block.input)
+    return None
+
+
+def run_classification(client: Anthropic, request: dict) -> tuple[dict, list]:
+    """Send the request and return ``(raw decision, responses)``.
+
+    A policy decline (`stop_reason == "refusal"`) leaves the note unfileable
+    with the category as reason. In `auto` tool mode a reply without the tool
+    call is retried once. All responses are returned so callers can account
+    for usage.
+    """
+    responses = []
+    attempts = 1 if request["tool_choice"]["type"] == "tool" else 2
+    for _ in range(attempts):
+        response = send_request(client, request)
+        responses.append(response)
+        if getattr(response, "stop_reason", None) == "refusal":
+            details = getattr(response, "stop_details", None)
+            category = getattr(details, "category", None) or "unspecified"
+            return ({"status": "unfileable",
+                     "reason": f"model declined the note (refusal: {category})"}, responses)
+        decision = tool_call_input(response)
+        if decision is not None:
+            return decision, responses
 
     print("  ! Model returned no tool_use decision.", file=sys.stderr)
-    return {
-        "status": "unfileable",
-        "reason": "Model did not return a structured classification decision.",
-    }
+    return ({"status": "unfileable",
+             "reason": "Model did not return a structured classification decision."},
+            responses)
 
 
 def _as_str_list(value) -> list[str]:
@@ -752,14 +807,15 @@ def unknown_model_project(original: str, para: str, project: str | None,
 
 def classify_note(client: Anthropic, system_prompt: str, content: str,
                   index: dict) -> dict:
-    """Call Claude with forced tool use and return the decision dict.
+    """Call Claude and return the normalized decision dict.
 
-    The model is required to call `file_note`; its already-parsed `input` is the
-    decision. If, exceptionally, no tool call comes back, the note is treated as
-    unfileable.
+    The model is made (forced tool use) or asked (`auto` on models that reject
+    forcing) to call `file_note`; its already-parsed `input` is the decision. If
+    no tool call comes back, or the model declines, the note is unfileable.
     """
     request = build_classification_request(system_prompt, content, index)
-    return normalize_decision(decision_from_response(client.messages.create(**request)))
+    decision, _ = run_classification(client, request)
+    return normalize_decision(decision)
 
 
 # --- Filing ------------------------------------------------------------------

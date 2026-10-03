@@ -7,7 +7,7 @@ You receive two things:
 
 Notes may be written in **French or English**. Handle both languages transparently. Domains and tags are always emitted in English, lowercase, hyphen-separated.
 
-Your job is to produce a single classification and enrichment decision for the note.
+Your job is to produce a single classification and enrichment decision for the note, and to record it by calling the `file_note` tool exactly once.
 
 ---
 
@@ -46,9 +46,9 @@ If, after applying this hierarchy, you cannot confidently place the note, return
 
 ---
 
-## 4. Output format (filed)
+## 4. The `file_note` call (filed)
 
-Respond with **strict JSON only**. No prose, no explanation, no markdown code fences. The response must be exactly one JSON object matching this shape:
+Call `file_note` with arguments of this shape (shown as JSON):
 
 ```json
 {
@@ -76,9 +76,9 @@ Field rules:
 
 ---
 
-## 5. Output format (unfileable)
+## 5. The `file_note` call (unfileable)
 
-If classification confidence is insufficient, do **not** guess. Return only these two fields:
+If classification confidence is insufficient, do **not** guess. Call `file_note` with only these two fields:
 
 ```json
 {
@@ -89,4 +89,4 @@ If classification confidence is insufficient, do **not** guess. Return only thes
 
 ---
 
-Respond with the JSON object and nothing else.
+Always finish by calling `file_note` — a reply without that call is discarded. Do not write the decision as text.

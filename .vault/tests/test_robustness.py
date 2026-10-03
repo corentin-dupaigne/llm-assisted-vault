@@ -27,15 +27,29 @@ class FakeClient:
     def __init__(self, *results):
         self.results = list(results)
         self.calls = 0
+        self.requests = []
         self.messages = SimpleNamespace(create=self._create)
+        self.beta = SimpleNamespace(messages=SimpleNamespace(create=self._create))
 
-    def _create(self, **_kwargs):
+    def _create(self, **kwargs):
         self.calls += 1
+        self.requests.append(kwargs)
         result = self.results.pop(0)
         if isinstance(result, Exception):
             raise result
+        if result is NO_TOOL_CALL:
+            text = SimpleNamespace(type="text", text='{"status": "filed"}')
+            return SimpleNamespace(content=[text], stop_reason="end_turn")
+        if result is REFUSAL:
+            return SimpleNamespace(content=[], stop_reason="refusal",
+                                   stop_details=SimpleNamespace(category="general_harms"))
+        thinking = SimpleNamespace(type="thinking", thinking="")
         block = SimpleNamespace(type="tool_use", name="file_note", input=result)
-        return SimpleNamespace(content=[block])
+        return SimpleNamespace(content=[thinking, block], stop_reason="tool_use")
+
+
+NO_TOOL_CALL = object()
+REFUSAL = object()
 
 
 def _api_error():
@@ -241,3 +255,54 @@ def test_user_declared_project_is_allowed(vault):
     outcome = vault.module.apply_filed(note, decision, vault.read_index(), "2026-10-03")
 
     assert outcome["target_path"] == "Projects/new-thing/Plan.md"
+
+
+# --- Models that reject forced tool use ---------------------------------------------
+
+def test_forced_tool_models_keep_the_forced_request(vault):
+    request = vault.module.build_classification_request(
+        "system", "Body.", {}, model="claude-sonnet-4-6")
+    assert request["tool_choice"] == {"type": "tool", "name": "file_note"}
+    assert "betas" not in request and "output_config" not in request
+
+
+def test_auto_tool_models_get_auto_strict_request(vault):
+    request = vault.module.build_classification_request(
+        "system", "Body.", {}, model="claude-sonnet-5-5")
+    assert request["tool_choice"] == {"type": "auto"}
+    assert request["tools"][0]["strict"] is True
+    assert request["tools"][0]["input_schema"]["additionalProperties"] is False
+    assert request["output_config"] == {"effort": "low"}
+    assert request["extra_body"] == {"fallbacks": "default"}
+
+
+def test_auto_mode_retries_once_without_tool_call(vault):
+    client = FakeClient(NO_TOOL_CALL, dict(RESOURCE_DECISION))
+    request = vault.module.build_classification_request(
+        "system", "Body.", {}, model="claude-sonnet-5-5")
+
+    decision, responses = vault.module.run_classification(client, request)
+
+    assert decision["status"] == "filed" and len(responses) == 2
+
+
+def test_auto_mode_gives_up_after_two_replies_without_call(vault):
+    client = FakeClient(NO_TOOL_CALL, NO_TOOL_CALL)
+    request = vault.module.build_classification_request(
+        "system", "Body.", {}, model="claude-sonnet-5-5")
+
+    decision, _ = vault.module.run_classification(client, request)
+
+    assert decision["status"] == "unfileable" and client.calls == 2
+
+
+def test_refusal_leaves_note_unfileable(vault):
+    client = FakeClient(REFUSAL)
+    request = vault.module.build_classification_request(
+        "system", "Body.", {}, model="claude-sonnet-5-5")
+
+    decision, _ = vault.module.run_classification(client, request)
+
+    assert decision == {"status": "unfileable",
+                        "reason": "model declined the note (refusal: general_harms)"}
+    assert client.calls == 1

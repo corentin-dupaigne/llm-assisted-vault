@@ -329,10 +329,18 @@ tags are always emitted in English.
 `tool_use` block whose `input` is already a parsed dict conforming to the schema
 — no prose, no ```json fence, and nothing to `json.loads` (so it cannot fail to
 parse). It works on models that reject assistant-message prefill (e.g.
-`claude-sonnet-4-6`) and on `claude-haiku-4-5`. Note that newer models
-(Sonnet 5.5, Opus 5.5) reject forced `tool_choice` with a 400, so moving to
-them needs `tool_choice: auto` plus `strict: true`. If no tool call comes back
-at all, the note is treated as `unfileable`.
+`claude-sonnet-4-6`) and on `claude-haiku-4-5`.
+
+Newer models (`AUTO_TOOL_MODELS`: Sonnet 5.5, Opus 5.5, Fable 5.1) reject a
+forced `tool_choice` with a 400. For them the request uses `tool_choice: auto`
+with `strict: true` on the tool (schema-valid arguments), the system prompt asks
+for the `file_note` call, and a reply without the call is retried once
+(`run_classification`). These models think by default, so they run at
+`effort: low` with `max_tokens` sized for thinking, and opt into server-side
+fallback (`fallbacks: "default"`) on a policy decline. A decline that still
+comes back (`stop_reason: "refusal"`) leaves the note unfileable with the
+category as reason. If no tool call comes back at all, the note is treated as
+`unfileable`.
 
 The schema is not strictly enforced, so `normalize_decision` coerces the
 answer before it is used: `tags`/`wikilinks` given as a string become lists

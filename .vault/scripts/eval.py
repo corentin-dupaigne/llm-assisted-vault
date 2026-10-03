@@ -49,6 +49,7 @@ import process_inbox as pi  # noqa: E402
 PRICES = {
     "claude-haiku-4-5": (1.0, 5.0),
     "claude-sonnet-4-6": (3.0, 15.0),
+    "claude-sonnet-5-5": (2.0, 10.0),
 }
 
 _ORGANIZE_RE = re.compile(r"organize (.+?) → (.+)$")
@@ -164,13 +165,14 @@ def replay(client: Anthropic, system_prompt: str, model: str, case: dict) -> dic
                                               case["index"], model=model)
     start = time.monotonic()
     try:
-        response = client.messages.create(**request)
+        decision, responses = pi.run_classification(client, request)
     except APIError as exc:
         return {"id": case["id"], "error": f"{type(exc).__name__}: {exc}"[:300]}
-    return score_case(case, pi.decision_from_response(response), {
+    return score_case(case, decision, {
         "seconds": round(time.monotonic() - start, 2),
-        "input_tokens": response.usage.input_tokens,
-        "output_tokens": response.usage.output_tokens,
+        "calls": len(responses),
+        "input_tokens": sum(r.usage.input_tokens for r in responses),
+        "output_tokens": sum(r.usage.output_tokens for r in responses),
     })
 
 
@@ -266,6 +268,7 @@ def summarize(model: str, results: list[dict], skipped: list[str]) -> dict:
             "precision": round(link_tp / link_got, 3) if link_got else None,
             "recall": round(link_tp / link_exp, 3) if link_exp else None,
         },
+        "retries_without_tool_call": sum(r.get("calls", 1) - 1 for r in ok),
         "tokens": {"input": tokens_in, "output": tokens_out,
                    "input_per_case": round(tokens_in / len(ok)) if ok else None},
         "cost_usd": round(cost, 4) if cost is not None else None,
@@ -307,7 +310,8 @@ def main() -> int:
         model = json.loads((args.rescore / "summary.json").read_text())["model"]
         results = [r if "error" in r else score_case(
                        by_id[r["id"]], r["decision"],
-                       {k: r[k] for k in ("seconds", "input_tokens", "output_tokens")})
+                       {k: r[k] for k in ("seconds", "calls", "input_tokens",
+                                          "output_tokens") if k in r})
                    for r in saved if r["id"] in by_id]
         args.model, out = model, args.rescore
     else:
