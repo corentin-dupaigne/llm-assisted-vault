@@ -1,0 +1,87 @@
+{
+  "model": "claude-haiku-4-5",
+  "cases": 65,
+  "api_errors": 0,
+  "skipped_cases": [
+    "86a1903 pattern linked list.md: note since deleted",
+    "d11c8f6 pattern linked list dummy head node.md: note since deleted",
+    "c19188f pattern linked list dummy head node.md: note since deleted"
+  ],
+  "filed_valid": {
+    "hits": 61,
+    "total": 65,
+    "rate": 0.938
+  },
+  "unfileable_or_rejected": [
+    "a7205b2:merino-wool-sock-material-science-and-recommendations.md",
+    "b0301c3:Date Versailles.md",
+    "fa4cec2:Planning de revisions - Rattrapages Proba Stats.md",
+    "fa4cec2:cours exploration.md"
+  ],
+  "placement_exact": {
+    "hits": 59,
+    "total": 61,
+    "rate": 0.967
+  },
+  "placement_misses": [
+    {
+      "id": "954dc4b:Kubernetes Volumes.md",
+      "expected": "Projects/cka",
+      "got": "Resources/"
+    },
+    {
+      "id": "d11c8f6:Floyd's Tortoise and Hare.md",
+      "expected": "Resources/",
+      "got": "Projects/neetcode-150"
+    }
+  ],
+  "domain_exact_model_decided": {
+    "hits": 49,
+    "total": 53,
+    "rate": 0.925
+  },
+  "domain_misses": [
+    {
+      "id": "a7205b2:caffeine-pharmacology-and-biohacking.md",
+      "expected": "biohacking",
+      "got": "pharmacology"
+    },
+    {
+      "id": "cef12dd:PV, PVC, StorageClass.md",
+      "expected": "kubernetes",
+      "got": "devops"
+    },
+    {
+      "id": "cef12dd:Question-1 MariaDB-Presistent volume.md",
+      "expected": "kubernetes",
+      "got": "devops"
+    },
+    {
+      "id": "33d6866:Understanding TCP-IP addressing and subnetting basics.md",
+      "expected": "kubernetes",
+      "got": "networking"
+    }
+  ],
+  "tags_jaccard_model_decided": 0.548,
+  "links": {
+    "agreed": 54,
+    "proposed": 58,
+    "kept_in_vault": 175,
+    "precision": 0.931,
+    "recall": 0.309
+  },
+  "tokens": {
+    "input": 242633,
+    "output": 13761,
+    "input_per_case": 3733
+  },
+  "cost_usd": 0.3114,
+  "seconds_median": 2.32,
+  "history_placements_corrected_by_hand": [
+    {
+      "id": "d11c8f6:Floyd's Tortoise and Hare.md",
+      "bot": "Projects/neetcode-150/Floyd's Tortoise and Hare.md",
+      "now": "Resources/Floyd's Tortoise and Hare.md"
+    }
+  ]
+}

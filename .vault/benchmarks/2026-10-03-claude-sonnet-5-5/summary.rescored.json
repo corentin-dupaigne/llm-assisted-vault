@@ -1,0 +1,91 @@
+{
+  "model": "claude-sonnet-5-5",
+  "cases": 65,
+  "api_errors": 0,
+  "skipped_cases": [
+    "12690b4 pattern linked list.md: note since deleted",
+    "db946fa pattern linked list dummy head node.md: note since deleted",
+    "6de011e pattern linked list dummy head node.md: note since deleted"
+  ],
+  "filed_valid": {
+    "hits": 63,
+    "total": 65,
+    "rate": 0.969
+  },
+  "unfileable_or_rejected": [
+    "2026-07-06T12:31:13+00:00:Roadmap.md",
+    "2026-09-28T09:49:27+00:00:cours exploration.md"
+  ],
+  "placement_exact": {
+    "hits": 62,
+    "total": 63,
+    "rate": 0.984
+  },
+  "placement_misses": [
+    {
+      "id": "2026-07-02T22:39:02+00:00:Floyd's Tortoise and Hare.md",
+      "expected": "Resources/",
+      "got": "Projects/neetcode-150"
+    }
+  ],
+  "domain_exact_model_decided": {
+    "hits": 49,
+    "total": 55,
+    "rate": 0.891
+  },
+  "domain_misses": [
+    {
+      "id": "2026-06-11T11:39:33+00:00:merino-wool-sock-material-science-and-recommendations.md",
+      "expected": "textile-science",
+      "got": "clothing"
+    },
+    {
+      "id": "2026-06-12T11:23:01+00:00:Question-1 MariaDB-Presistent volume.md",
+      "expected": "kubernetes",
+      "got": "devops"
+    },
+    {
+      "id": "2026-06-12T23:43:13+00:00:Bucket sort algorithm.md",
+      "expected": "leetcode",
+      "got": "algorithms"
+    },
+    {
+      "id": "2026-07-08T18:09:41+00:00:IPAM (IP Address Management).md",
+      "expected": "kubernetes",
+      "got": "networking"
+    },
+    {
+      "id": "2026-07-29T17:44:19+00:00:Understanding TCP-IP addressing and subnetting basics.md",
+      "expected": "kubernetes",
+      "got": "networking"
+    },
+    {
+      "id": "2026-09-28T09:49:27+00:00:Planning de revisions - Rattrapages Proba Stats.md",
+      "expected": "mathematics",
+      "got": "probability-statistics"
+    }
+  ],
+  "tags_jaccard_model_decided": 0.535,
+  "links": {
+    "agreed": 79,
+    "proposed": 86,
+    "kept_in_vault": 173,
+    "precision": 0.919,
+    "recall": 0.457
+  },
+  "retries_without_tool_call": 0,
+  "tokens": {
+    "input": 301239,
+    "output": 20322,
+    "input_per_case": 4634
+  },
+  "cost_usd": 0.8057,
+  "seconds_median": 3.2,
+  "history_placements_corrected_by_hand": [
+    {
+      "id": "2026-07-02T22:39:02+00:00:Floyd's Tortoise and Hare.md",
+      "bot": "Projects/neetcode-150/Floyd's Tortoise and Hare.md",
+      "now": "Resources/Floyd's Tortoise and Hare.md"
+    }
+  ]
+}

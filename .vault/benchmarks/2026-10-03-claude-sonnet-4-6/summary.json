@@ -1,0 +1,94 @@
+{
+  "model": "claude-sonnet-4-6",
+  "cases": 65,
+  "api_errors": 0,
+  "skipped_cases": [
+    "86a1903 pattern linked list.md: note since deleted",
+    "d11c8f6 pattern linked list dummy head node.md: note since deleted",
+    "c19188f pattern linked list dummy head node.md: note since deleted"
+  ],
+  "filed_valid": {
+    "hits": 64,
+    "total": 65,
+    "rate": 0.985
+  },
+  "unfileable_or_rejected": [
+    "c19188f:Roadmap.md"
+  ],
+  "placement_exact": {
+    "hits": 62,
+    "total": 64,
+    "rate": 0.969
+  },
+  "placement_misses": [
+    {
+      "id": "d11c8f6:Floyd's Tortoise and Hare.md",
+      "expected": "Resources/",
+      "got": "Projects/neetcode-150"
+    },
+    {
+      "id": "fa4cec2:Planning de revisions - Rattrapages Proba Stats.md",
+      "expected": "Resources/",
+      "got": "Areas/"
+    }
+  ],
+  "domain_exact_model_decided": {
+    "hits": 50,
+    "total": 56,
+    "rate": 0.893
+  },
+  "domain_misses": [
+    {
+      "id": "a7205b2:caffeine-pharmacology-and-biohacking.md",
+      "expected": "biohacking",
+      "got": "pharmacology"
+    },
+    {
+      "id": "a7205b2:merino-wool-sock-material-science-and-recommendations.md",
+      "expected": "textile-science",
+      "got": "biohacking"
+    },
+    {
+      "id": "cef12dd:PV, PVC, StorageClass.md",
+      "expected": "kubernetes",
+      "got": "devops"
+    },
+    {
+      "id": "cef12dd:Question-1 MariaDB-Presistent volume.md",
+      "expected": "kubernetes",
+      "got": "devops"
+    },
+    {
+      "id": "33d6866:Understanding TCP-IP addressing and subnetting basics.md",
+      "expected": "kubernetes",
+      "got": "networking"
+    },
+    {
+      "id": "fa4cec2:iptables Netfilter and masquerade.md",
+      "expected": "networking",
+      "got": "kubernetes"
+    }
+  ],
+  "tags_jaccard_model_decided": 0.716,
+  "links": {
+    "agreed": 124,
+    "proposed": 141,
+    "kept_in_vault": 173,
+    "precision": 0.879,
+    "recall": 0.717
+  },
+  "tokens": {
+    "input": 242698,
+    "output": 14809,
+    "input_per_case": 3734
+  },
+  "cost_usd": 0.9502,
+  "seconds_median": 4.06,
+  "history_placements_corrected_by_hand": [
+    {
+      "id": "d11c8f6:Floyd's Tortoise and Hare.md",
+      "bot": "Projects/neetcode-150/Floyd's Tortoise and Hare.md",
+      "now": "Resources/Floyd's Tortoise and Hare.md"
+    }
+  ]
+}
