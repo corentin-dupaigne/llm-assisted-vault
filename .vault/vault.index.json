@@ -1,8 +1,11 @@
 {
   "projects": [
+    "android-advanced",
     "cka",
     "cni",
-    "neetcode-150"
+    "neetcode-150",
+    "projet-recherche",
+    "rse"
   ],
   "domains": [
     "biohacking",
@@ -14,7 +17,10 @@
     "travel",
     "mathematics",
     "computer-vision",
-    "networking"
+    "networking",
+    "board-games",
+    "sustainability",
+    "personal-finance"
   ],
   "tags": [
     "pharmacology",
@@ -53,7 +59,11 @@
     "study-plan",
     "flashcards",
     "robotics",
-    "3d-reconstruction"
+    "3d-reconstruction",
+    "game-rules",
+    "mathematics",
+    "web-design",
+    "accessibility"
   ],
   "notes": [
     {
@@ -785,19 +795,6 @@
       "date": "2026-07-29"
     },
     {
-      "title": "CNI Conformance Test Suite — Requirements & Coverage",
-      "path": "Projects/cni/CNI Conformance Test Suite — Requirements & Coverage.md",
-      "domain": "kubernetes",
-      "tags": [
-        "devops",
-        "golang",
-        "pods"
-      ],
-      "para": "Projects",
-      "project": "cni",
-      "date": "2026-09-07"
-    },
-    {
       "title": "Adrs to write",
       "path": "Projects/cni/Adrs to write.md",
       "domain": "kubernetes",
@@ -898,6 +895,166 @@
       "para": "Resources",
       "project": null,
       "date": "2026-09-28"
+    },
+    {
+      "title": "Q3",
+      "path": "Areas/q-reviews/Q3.md",
+      "domain": "personal-finance",
+      "tags": [
+        "nutrition",
+        "study-plan",
+        "performance"
+      ],
+      "para": "Areas",
+      "project": null,
+      "date": "2026-10-03",
+      "area": "q-reviews"
+    },
+    {
+      "title": "Regles de base",
+      "path": "Projects/android-advanced/Regles de base.md",
+      "domain": "board-games",
+      "tags": [
+        "game-rules"
+      ],
+      "para": "Projects",
+      "project": "android-advanced",
+      "date": "2026-10-03"
+    },
+    {
+      "title": "Rules",
+      "path": "Projects/android-advanced/Rules.md",
+      "domain": "board-games",
+      "tags": [
+        "game-rules"
+      ],
+      "para": "Projects",
+      "project": "android-advanced",
+      "date": "2026-10-03"
+    },
+    {
+      "title": "Issues",
+      "path": "Projects/projet-recherche/Issues.md",
+      "domain": "computer-vision",
+      "tags": [
+        "3d-reconstruction",
+        "robotics",
+        "devops"
+      ],
+      "para": "Projects",
+      "project": "projet-recherche",
+      "date": "2026-10-03"
+    },
+    {
+      "title": "Pipeline",
+      "path": "Projects/projet-recherche/Pipeline.md",
+      "domain": "computer-vision",
+      "tags": [
+        "3d-reconstruction",
+        "robotics"
+      ],
+      "para": "Projects",
+      "project": "projet-recherche",
+      "date": "2026-10-03"
+    },
+    {
+      "title": "notes",
+      "path": "Projects/projet-recherche/notes.md",
+      "domain": "computer-vision",
+      "tags": [
+        "3d-reconstruction",
+        "robotics"
+      ],
+      "para": "Projects",
+      "project": "projet-recherche",
+      "date": "2026-10-03"
+    },
+    {
+      "title": "overview",
+      "path": "Projects/projet-recherche/overview.md",
+      "domain": "computer-vision",
+      "tags": [
+        "3d-reconstruction",
+        "robotics",
+        "mathematics"
+      ],
+      "para": "Projects",
+      "project": "projet-recherche",
+      "date": "2026-10-03"
+    },
+    {
+      "title": "rse bookmarks",
+      "path": "Projects/rse/rse bookmarks.md",
+      "domain": "sustainability",
+      "tags": [
+        "web-design",
+        "accessibility"
+      ],
+      "para": "Projects",
+      "project": "rse",
+      "date": "2026-10-03"
+    },
+    {
+      "title": "rse pres - mbda report",
+      "path": "Projects/rse/rse pres - mbda report.md",
+      "domain": "sustainability",
+      "tags": [
+        "performance"
+      ],
+      "para": "Projects",
+      "project": "rse",
+      "date": "2026-10-03"
+    },
+    {
+      "title": "rse pres",
+      "path": "Projects/rse/rse pres.md",
+      "domain": "sustainability",
+      "tags": [],
+      "para": "Projects",
+      "project": "rse",
+      "date": "2026-10-03"
+    },
+    {
+      "title": "Gaussian Splatting pipeline",
+      "path": "Resources/Gaussian Splatting pipeline.md",
+      "domain": "computer-vision",
+      "tags": [
+        "3d-reconstruction",
+        "robotics"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-10-03"
+    },
+    {
+      "title": "Pose estimation",
+      "path": "Resources/Pose estimation.md",
+      "domain": "computer-vision",
+      "tags": [
+        "3d-reconstruction",
+        "robotics"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-10-03"
+    },
+    {
+      "title": "capture comparaison",
+      "path": "Projects/projet-recherche/capture comparaison.md",
+      "domain": "computer-vision",
+      "tags": [
+        "3d-reconstruction",
+        "robotics"
+      ],
+      "para": "Projects",
+      "project": "projet-recherche",
+      "date": "2026-10-03"
     }
+  ],
+  "areas": [
+    "q-reviews"
+  ],
+  "generated_mocs": [
+    "computer-vision"
   ]
 }

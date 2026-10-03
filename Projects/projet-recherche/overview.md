@@ -1,3 +1,10 @@
+---
+domain: computer-vision
+tags: [3d-reconstruction, robotics, mathematics]
+date: 2026-10-03
+para: Projects
+project: projet-recherche
+---
 For this project—**reconstructing empty operating rooms from video using 3D Gaussian Splatting (3DGS)**—the main knowledge needs are **3D computer vision, graphics, numerical optimization, and experimental evaluation**. Immersive medical training adds a second layer of requirements.
 
 |Knowledge area|What you need to understand|Why it matters|
@@ -28,3 +35,12 @@ For an academic project, you should also establish:
 **A crucial distinction:** a photorealistic Gaussian scene does not automatically provide an accurate, editable surface model or working equipment interactions. Treat geometry, collisions, and training behavior as additional requirements.
 
 To start, prioritize **Python, linear algebra, camera geometry, COLMAP, and the original 3DGS method**. Advanced CUDA programming and extensive medical knowledge can remain optional unless your contribution specifically requires them.
+
+## Links
+
+- [[Gaussian Splatting pipeline]]
+- [[Pipeline]]
+- [[Pose estimation]]
+- [[capture comparaison]]
+- [[Issues]]
+- [[cours exploration]]

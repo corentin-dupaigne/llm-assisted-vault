@@ -1,13 +1,20 @@
+---
+domain: computer-vision
+tags: [3d-reconstruction, robotics]
+date: 2026-10-03
+para: Projects
+project: projet-recherche
+---
 This document defines how to compare capture methods (step 1 of the Gaussian Splatting pipeline) for reconstructing empty operating rooms. The goal is to find out which capture choices matter most for quality, especially on white, textureless walls, before settling on a final setup.
 
 ## 1. What we compare
 
-| Factor        | Options                                                      | Question it answers                                             |
+| Factor | Options | Question it answers |
 | ------------- | ------------------------------------------------------------ | --------------------------------------------------------------- |
-| Camera        | Phone vs. dedicated camera (mirrorless or 360°)              | Is a phone good enough for the client to reuse the setup?       |
-| Movement      | Handheld vs. gimbal vs. tripod robot on a predefined pattern | How much does a controlled path improve coverage and sharpness? |
-| Wall texture  | Bare walls vs. posters or stickers                           | Does added texture fix pose estimation on white walls?          |
-| Depth sensing | Camera only vs. LiDAR (phone LiDAR, professional scanner)    | Is LiDAR worth its cost for this use case?                      |
+| Camera | Phone vs. dedicated camera (mirrorless or 360°) | Is a phone good enough for the client to reuse the setup? |
+| Movement | Handheld vs. gimbal vs. tripod robot on a predefined pattern | How much does a controlled path improve coverage and sharpness? |
+| Wall texture | Bare walls vs. posters or stickers | Does added texture fix pose estimation on white walls? |
+| Depth sensing | Camera only vs. LiDAR (phone LiDAR, professional scanner) | Is LiDAR worth its cost for this use case? |
 
 ## 2. Test room
 
@@ -19,30 +26,30 @@ Record for the report: room dimensions, lighting (natural or artificial, and whe
 
 Only one factor changes per run. Everything else is fixed:
 
-| Element                   | Fixed value                                                                   |
+| Element | Fixed value |
 | ------------------------- | ----------------------------------------------------------------------------- |
-| Room and furniture layout | Identical for every run                                                       |
-| Lighting                  | Artificial light only, same switches, blinds closed                           |
-| Frame extraction          | Same frame rate from video (for example 2 to 3 fps), or a similar image count |
-| Image resolution          | Same for every run (for example 1600 px wide)                                 |
-| Pose estimation           | Same tool and settings (for example GLOMAP)                                   |
-| Trainer                   | Same tool, version and settings (for example Splatfacto, 30,000 iterations)   |
-| Hardware                  | Same GPU for every training run                                               |
-| Camera settings           | Exposure, white balance and focus locked, as far as the device allows         |
+| Room and furniture layout | Identical for every run |
+| Lighting | Artificial light only, same switches, blinds closed |
+| Frame extraction | Same frame rate from video (for example 2 to 3 fps), or a similar image count |
+| Image resolution | Same for every run (for example 1600 px wide) |
+| Pose estimation | Same tool and settings (for example GLOMAP) |
+| Trainer | Same tool, version and settings (for example Splatfacto, 30,000 iterations) |
+| Hardware | Same GPU for every training run |
+| Camera settings | Exposure, white balance and focus locked, as far as the device allows |
 
 ## 4. Runs
 
 The baseline is the simplest, cheapest setup. Each other run changes one factor from the baseline.
 
-| Run | Camera               | Movement     | Walls              | Depth              | Changed factor                                    |
+| Run | Camera | Movement | Walls | Depth | Changed factor |
 | --- | -------------------- | ------------ | ------------------ | ------------------ | ------------------------------------------------- |
-| B   | Phone                | Handheld     | Bare               | Camera only        | None (baseline)                                   |
-| C1  | Dedicated camera     | Handheld     | Bare               | Camera only        | Camera                                            |
-| M1  | Phone                | Gimbal       | Bare               | Camera only        | Movement                                          |
-| M2  | Phone                | Tripod robot | Bare               | Camera only        | Movement                                          |
-| T1  | Phone                | Handheld     | Posters / stickers | Camera only        | Wall texture                                      |
-| D1  | Phone with LiDAR     | Handheld     | Bare               | Phone LiDAR        | Depth sensing                                     |
-| D2  | Professional scanner | Scanner path | Bare               | Professional LiDAR | Depth sensing (reference, if one can be borrowed) |
+| B | Phone | Handheld | Bare | Camera only | None (baseline) |
+| C1 | Dedicated camera | Handheld | Bare | Camera only | Camera |
+| M1 | Phone | Gimbal | Bare | Camera only | Movement |
+| M2 | Phone | Tripod robot | Bare | Camera only | Movement |
+| T1 | Phone | Handheld | Posters / stickers | Camera only | Wall texture |
+| D1 | Phone with LiDAR | Handheld | Bare | Phone LiDAR | Depth sensing |
+| D2 | Professional scanner | Scanner path | Bare | Professional LiDAR | Depth sensing (reference, if one can be borrowed) |
 
 Once the single-factor results are in, combine the factors that helped into one final run (for example dedicated camera + robot + posters) to check that the gains add up.
 
@@ -151,3 +158,8 @@ To fill in after the runs:
 - Which factor had the largest effect on pose estimation success?
 - Final recommended capture setup, with its cost and the expected quality.
 - Limitations of the tests (single room, lighting, equipment available).
+
+## Links
+
+- [[Gaussian Splatting pipeline]]
+- [[Pose estimation]]

@@ -1,3 +1,10 @@
+---
+domain: computer-vision
+tags: [3d-reconstruction, robotics]
+date: 2026-10-03
+para: Resources
+project: null
+---
 This document explains how a 3D Gaussian Splatting (3DGS) scene is produced, from a video of a room to an interactive 3D experience. It is written as a reference for comparing tools: every tool on the market covers one or more of the stages below, and tools should only be compared within the same stage.
 
 ## Overview
@@ -20,7 +27,7 @@ flowchart LR
 
 End-to-end services such as Polycam, Scaniverse, KIRI Engine or Teleport bundle stages 1 to 4 into a single product. They are convenient but opaque: you cannot inspect or control the intermediate steps.
 
----
+______________________________________________________________________
 
 ## 1. Capture
 
@@ -37,7 +44,7 @@ End-to-end services such as Polycam, Scaniverse, KIRI Engine or Teleport bundle 
 
 **Operating room specifics:** white, featureless walls give the next stage nothing to match. Adding texture (posters, stickers) or using a controlled capture path (a tripod robot following a predefined pattern) directly addresses this. LiDAR scanners avoid the problem by measuring depth directly.
 
----
+______________________________________________________________________
 
 ## 2. Pose estimation (Structure-from-Motion)
 
@@ -48,14 +55,14 @@ End-to-end services such as Polycam, Scaniverse, KIRI Engine or Teleport bundle 
 **How it works:**
 
 1. **Feature detection.** Find distinctive points in each image, such as corners and texture patterns.
-2. **Feature matching.** Find the same points across different images.
-3. **Triangulation and bundle adjustment.** Solve jointly for the 3D position of the points and the pose of the cameras that best explain all the matches.
+1. **Feature matching.** Find the same points across different images.
+1. **Triangulation and bundle adjustment.** Solve jointly for the 3D position of the points and the pose of the cameras that best explain all the matches.
 
 **Why it matters:** this is the most fragile stage. If poses are wrong, the trainer tries to reconcile inconsistent views and produces blur and floaters, and no training setting can fix it. Textureless surfaces are the main cause of failure, because they yield no features to match.
 
 **Tools:** COLMAP (the standard, incremental and accurate but slow), GLOMAP (global approach, much faster on large captures), RealityScan (free, graphical). Learned approaches such as MASt3R or VGGT are more robust when texture is scarce.
 
----
+______________________________________________________________________
 
 ## 3. Training (Gaussian optimization)
 
@@ -73,17 +80,17 @@ End-to-end services such as Polycam, Scaniverse, KIRI Engine or Teleport bundle 
 **How training works:**
 
 1. **Initialization.** One Gaussian is placed at each point of the sparse point cloud.
-2. **Rendering.** For a training image, all Gaussians are projected onto the image plane and blended front to back. This is the "splatting" step, and it is fast because it is rasterization, not ray marching.
-3. **Comparison.** The rendered image is compared with the real photo, which gives an error (loss).
-4. **Update.** Gradients of that error adjust every Gaussian's parameters.
-5. **Densification and pruning.** Periodically, Gaussians are split or cloned where detail is missing, and removed where they are nearly transparent or useless.
-6. Repeat, typically for about 30,000 iterations.
+1. **Rendering.** For a training image, all Gaussians are projected onto the image plane and blended front to back. This is the "splatting" step, and it is fast because it is rasterization, not ray marching.
+1. **Comparison.** The rendered image is compared with the real photo, which gives an error (loss).
+1. **Update.** Gradients of that error adjust every Gaussian's parameters.
+1. **Densification and pruning.** Periodically, Gaussians are split or cloned where detail is missing, and removed where they are nearly transparent or useless.
+1. Repeat, typically for about 30,000 iterations.
 
 **What matters:** training time, GPU memory (VRAM), final quality, and the number of Gaussians, which drives file size and rendering speed.
 
 **Tools:** Nerfstudio / Splatfacto (built on the gsplat library), Brush, LichtFeld Studio, Postshot. Method variants that address specific issues are often available inside these tools: 2DGS or PGSR for flat surfaces, Mip-Splatting for anti-aliasing, MCMC densification for fewer floaters.
 
----
+______________________________________________________________________
 
 ## 4. Editing (cleanup)
 
@@ -100,7 +107,7 @@ End-to-end services such as Polycam, Scaniverse, KIRI Engine or Teleport bundle 
 
 **Tools:** SuperSplat, and the editing features built into some trainers such as LichtFeld Studio.
 
----
+______________________________________________________________________
 
 ## 5. Viewing and deployment
 
@@ -115,3 +122,7 @@ End-to-end services such as Polycam, Scaniverse, KIRI Engine or Teleport bundle 
 - **VR headset:** the most immersive. It requires a high and stable frame rate (typically 72 to 90 fps per eye), which limits how many Gaussians the scene can contain.
 
 **Operating room specifics:** since the goal is immersive staff training, deployment constraints (headset, frame rate, whether interactions are needed) should be decided early, because they set a budget on scene size that affects training choices upstream.
+
+## Links
+
+- [[cours exploration]]

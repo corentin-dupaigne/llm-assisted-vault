@@ -1,3 +1,10 @@
+---
+domain: computer-vision
+tags: [3d-reconstruction, robotics, devops]
+date: 2026-10-03
+para: Projects
+project: projet-recherche
+---
 ## Labels
 
 | Label             | Usage                                                       |
@@ -612,3 +619,11 @@ Le chercheur n'est pas spécialiste : un échec doit être compréhensible et ac
 
 ### Dépendances
 #30
+
+## Links
+
+- [[Pipeline]]
+- [[overview]]
+- [[capture comparaison]]
+- [[Gaussian Splatting pipeline]]
+- [[Pose estimation]]

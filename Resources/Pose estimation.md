@@ -1,10 +1,17 @@
+---
+domain: computer-vision
+tags: [3d-reconstruction, robotics]
+date: 2026-10-03
+para: Resources
+project: null
+---
 # Pose Estimation: Theoretical Comparison
 
 Theoretical comparison of pose estimation options for 3D Gaussian Splatting: how each approach works, its strengths and weaknesses, and its effect on training.
 
 Pose estimation takes a set of images and produces three things: the position and orientation of the camera for each image (poses), the camera intrinsics (focal length, lens distortion), and a sparse 3D point cloud used to initialize the Gaussians. Most trainers expect these in COLMAP format.
 
----
+______________________________________________________________________
 
 ## 1. Key concepts
 
@@ -25,7 +32,7 @@ To relate images to each other, the software detects distinctive points (feature
 
 All strategies can end with **bundle adjustment**, an optimization that jointly refines poses and 3D points to minimize the reprojection error (the distance between where a 3D point projects in an image and where it was actually detected).
 
----
+______________________________________________________________________
 
 ## 2. Options
 
@@ -117,7 +124,7 @@ All strategies can end with **bundle adjustment**, an optimization that jointly 
 
 **Effect on reconstruction:** a way to bypass the texture problem entirely, depending on the capture hardware chosen.
 
----
+______________________________________________________________________
 
 ## 3. Summary
 
@@ -136,6 +143,10 @@ All strategies can end with **bundle adjustment**, an optimization that jointly 
 Hypotheses suggested by this comparison, to be tested experimentally:
 
 1. On images of plain surfaces, feature-based methods with SIFT (COLMAP, GLOMAP) register significantly fewer images than learned approaches.
-2. GLOMAP matches COLMAP's precision with much shorter processing time.
-3. Learned features (hloc) are the best compromise between robustness, precision and a standard, open-source pipeline.
-4. Feed-forward methods (VGGT) give usable poses quickly but need bundle adjustment refinement to match the training quality of optimization-based methods.
+1. GLOMAP matches COLMAP's precision with much shorter processing time.
+1. Learned features (hloc) are the best compromise between robustness, precision and a standard, open-source pipeline.
+1. Feed-forward methods (VGGT) give usable poses quickly but need bundle adjustment refinement to match the training quality of optimization-based methods.
+
+## Links
+
+- [[Gaussian Splatting pipeline]]

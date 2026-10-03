@@ -1,3 +1,10 @@
+---
+domain: computer-vision
+tags: [3d-reconstruction, robotics]
+date: 2026-10-03
+para: Projects
+project: projet-recherche
+---
 ## Faut-il travailler les maths et comprendre les fondamentaux ?
 
 Non, aucunement : seul un travail purement applicatif est demandé. Il s'agit donc simplement d'utiliser des outils existants.
@@ -26,3 +33,10 @@ Elle nous a également donné des pistes pour résoudre le problème des murs bl
 
 - **Murs** : placer des posters ou des stickers sur les murs pour faciliter le rendu.
 - **Captation vidéo** : utiliser un robot trépied placé au milieu de la chambre, qui filme à vitesse constante sous tous les angles en suivant un schéma prédéfini.
+
+## Links
+
+- [[Pipeline]]
+- [[Issues]]
+- [[capture comparaison]]
+- [[Gaussian Splatting pipeline]]

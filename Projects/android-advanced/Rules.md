@@ -1,3 +1,10 @@
+---
+domain: board-games
+tags: [game-rules]
+date: 2026-10-03
+para: Projects
+project: android-advanced
+---
 # King of Tokyo – Dark Edition : Règles du jeu
 
 *Un jeu de Richard Garfield, illustré par Paul Mafayon — 2 à 6 joueurs*
@@ -209,3 +216,7 @@ Ce Monstre gagne et est sacré **King of Tokyo**.
 - **Fuir** : un Monstre peut Fuir Tokyo lorsqu'il est blessé par un autre Monstre.
 - **Blesser** : faire perdre un ou plusieurs ♥ à un autre Monstre avec ses 🐾 pendant la phase Résoudre les dés.
 - **Tour** : se termine chaque fois qu'un joueur a fini son tour.
+
+## Links
+
+- [[Regles de base]]
