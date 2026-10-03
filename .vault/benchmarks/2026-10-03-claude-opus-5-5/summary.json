@@ -1,0 +1,102 @@
+{
+  "model": "claude-opus-5-5",
+  "cases": 65,
+  "api_errors": 0,
+  "skipped_cases": [
+    "ab70265 pattern linked list.md: note since deleted",
+    "06ced91 pattern linked list dummy head node.md: note since deleted",
+    "2d5449c pattern linked list dummy head node.md: note since deleted"
+  ],
+  "filed_valid": {
+    "hits": 62,
+    "total": 65,
+    "rate": 0.954
+  },
+  "unfileable_or_rejected": [
+    "2026-07-06T12:31:13+00:00:Roadmap.md",
+    "2026-09-28T09:49:27+00:00:Planning de revisions - Rattrapages Proba Stats.md",
+    "2026-09-28T09:49:27+00:00:cours exploration.md"
+  ],
+  "placement_exact": {
+    "hits": 58,
+    "total": 62,
+    "rate": 0.935
+  },
+  "placement_misses": [
+    {
+      "id": "2026-06-12T23:43:13+00:00:Bucket sort algorithm.md",
+      "expected": "Resources/",
+      "got": "Projects/neetcode-150"
+    },
+    {
+      "id": "2026-07-02T22:39:02+00:00:Floyd's Tortoise and Hare.md",
+      "expected": "Resources/",
+      "got": "Projects/neetcode-150"
+    },
+    {
+      "id": "2026-07-08T18:09:41+00:00:Go Project Structure — Rules & Conventions.md",
+      "expected": "Resources/",
+      "got": "Projects/cni"
+    },
+    {
+      "id": "2026-07-08T18:09:41+00:00:IPAM (IP Address Management).md",
+      "expected": "Resources/",
+      "got": "Projects/cni"
+    }
+  ],
+  "domain_exact_model_decided": {
+    "hits": 49,
+    "total": 54,
+    "rate": 0.907
+  },
+  "domain_misses": [
+    {
+      "id": "2026-06-11T11:39:33+00:00:merino-wool-sock-material-science-and-recommendations.md",
+      "expected": "textile-science",
+      "got": "clothing"
+    },
+    {
+      "id": "2026-06-12T11:23:01+00:00:PV, PVC, StorageClass.md",
+      "expected": "kubernetes",
+      "got": "devops"
+    },
+    {
+      "id": "2026-06-12T11:23:01+00:00:Question-1 MariaDB-Presistent volume.md",
+      "expected": "kubernetes",
+      "got": "devops"
+    },
+    {
+      "id": "2026-07-08T18:09:41+00:00:IPAM (IP Address Management).md",
+      "expected": "kubernetes",
+      "got": "networking"
+    },
+    {
+      "id": "2026-07-29T17:44:19+00:00:Understanding TCP-IP addressing and subnetting basics.md",
+      "expected": "kubernetes",
+      "got": "networking"
+    }
+  ],
+  "tags_jaccard_model_decided": 0.543,
+  "links": {
+    "agreed": 89,
+    "proposed": 101,
+    "kept_in_vault": 173,
+    "precision": 0.881,
+    "recall": 0.514
+  },
+  "retries_without_tool_call": 0,
+  "tokens": {
+    "input": 301239,
+    "output": 23892,
+    "input_per_case": 4634
+  },
+  "cost_usd": 1.6828,
+  "seconds_median": 4.44,
+  "history_placements_corrected_by_hand": [
+    {
+      "id": "2026-07-02T22:39:02+00:00:Floyd's Tortoise and Hare.md",
+      "bot": "Projects/neetcode-150/Floyd's Tortoise and Hare.md",
+      "now": "Resources/Floyd's Tortoise and Hare.md"
+    }
+  ]
+}
