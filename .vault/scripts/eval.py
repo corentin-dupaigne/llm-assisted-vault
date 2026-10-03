@@ -24,8 +24,8 @@ Usage (from the repo root; reads the key from ``.vault/.env``)::
     .venv/bin/python .vault/scripts/eval.py --model claude-haiku-4-5
     .venv/bin/python .vault/scripts/eval.py --model claude-sonnet-4-6 --rev my-notes --limit 10
 
-Results land in ``.vault/benchmarks/<date>-<model>/`` — tracked, so a run is
-kept with the notes it was measured on (commit it on your notes branch):
+Results land in ``.vault/benchmarks/<date>-<model>/`` — tracked, so runs are
+kept in the repo (see ``.vault/benchmarks/README.md``):
 ``cases.jsonl`` (one line per case) and ``summary.json``. ``--rescore`` writes
 ``cases.rescored.jsonl`` / ``summary.rescored.json`` next to them.
 """

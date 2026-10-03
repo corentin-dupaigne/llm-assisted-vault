@@ -406,9 +406,9 @@ prompt or the index format:
 ```
 
 Each run is written to `.vault/benchmarks/<date>-<model>/` (`cases.jsonl`: every
-raw decision; `summary.json`: the scores). The folder is tracked on purpose:
-the results describe your notes, so commit them on the notes branch, not on
-the framework branch. `--rescore` re-applies the current code-side checks to
+raw decision; `summary.json`: the scores). The folder is tracked on purpose so
+results are never lost; `.vault/benchmarks/README.md` records the comparisons
+and decisions made from them. `--rescore` re-applies the current code-side checks to
 a saved run for free and writes `*.rescored.*` beside it.
 
 Link scores measure agreement with the links the vault kept (picked by the
