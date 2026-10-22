@@ -1,9 +1,16 @@
+---
+domain: cpp
+tags: [stl, lambdas, operator-overloading]
+date: 2026-10-22
+para: Resources
+project: null
+---
 A **functor** (function object) is an object that **behaves like a function and carries its own data**. See also [[C++ Syntax]].
 
 - **Data** → stored in member variables, set once when the object is constructed
 - **Behavior** → defined in `operator()`, runs every time the object is called
 
----
+______________________________________________________________________
 
 ## The problem it solves
 
@@ -20,7 +27,7 @@ But what about "greater than N", with N chosen at runtime? You can't add a secon
 
 → You need something that **remembers a value** *and* **can be called with one argument**: an object with `operator()`.
 
----
+______________________________________________________________________
 
 ## Writing a functor
 
@@ -48,7 +55,7 @@ std::count_if(v.begin(), v.end(), GreaterThan{n});  // N chosen at runtime
 
 The algorithm just writes `pred(element)`. It doesn't care whether `pred` is a function or a functor.
 
----
+______________________________________________________________________
 
 ## Where does `limit` get its value?
 
@@ -79,7 +86,7 @@ struct Counter {
 };
 ```
 
----
+______________________________________________________________________
 
 ## `operator()` is not a constructor
 
@@ -99,7 +106,7 @@ gt(42);              // operator() again, same object
 
 > [!tip] Why `operator()(int x)` has two pairs of parentheses: the first `()` is part of the name, the second holds the parameter list.
 
----
+______________________________________________________________________
 
 ## Why use a functor instead of a function?
 
@@ -115,7 +122,7 @@ gt(42);              // operator() again, same object
 std::sort(v.begin(), v.end(), std::greater<int>()); // descending
 ```
 
----
+______________________________________________________________________
 
 ## Functors and lambdas
 
@@ -127,6 +134,7 @@ std::count_if(v.begin(), v.end(), [n](int x) { return x > n; });
 ```
 
 That compiles to an unnamed class roughly equivalent to `GreaterThan`:
+
 - capture list `[n]` → member variable
 - lambda body → `operator()`
 

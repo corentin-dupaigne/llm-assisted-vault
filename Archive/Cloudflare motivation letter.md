@@ -1,5 +1,19 @@
+---
+domain: networking
+tags: [kubernetes, golang, devops]
+date: 2026-10-22
+para: Archive
+project: null
+---
 What Cloudflare does is exactly what I'm interested in: a high-performance, reliable network with security built in. Running my own homelab, I've dealt with many of the problems your products solve: exposing several services across multiple domains, routing traffic through Envoy Gateway, automating TLS with cert-manager, and keeping admin tools off the public internet. Going one level lower, I also built tiny-cni, a Kubernetes network plugin in Go working directly with network namespaces, veth pairs and iptables.
 
 That's why Load Balancing is the product I'd most like to work on. It isn't an exotic component, but your work on Unimog shows how much it can still be pushed, and moving from iptables-based packet handling to XDP/eBPF is exactly the direction I want to grow in. Cloudflare DNS interests me as well, for its scale and its security focus.
 
 Practical note: this is the mandatory final internship of my engineering degree (EPITA, graduating August 2027). I'm available full-time for the Summer term, from mid-May to late August 2027, and would be glad to discuss a full-time role afterwards.
+
+## Links
+
+- [[iptables Netfilter and masquerade]]
+- [[IPAM (IP Address Management)]]
+- [[Hairpin bug - self-directed ClusterIP traffic is dropped]]
+- [[Roadmap]]

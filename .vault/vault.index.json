@@ -3,7 +3,6 @@
     "android-advanced",
     "cka",
     "cni",
-    "neetcode-150",
     "projet-recherche",
     "rse"
   ],
@@ -20,7 +19,8 @@
     "networking",
     "board-games",
     "sustainability",
-    "personal-finance"
+    "personal-finance",
+    "cpp"
   ],
   "tags": [
     "pharmacology",
@@ -42,15 +42,12 @@
     "tourism",
     "leetcode",
     "neetcode-150",
-    "arrays-hashing",
     "two-pointers",
     "kubernetes",
     "pods",
     "init-containers",
     "sidecar",
     "helm",
-    "stack",
-    "binary-search",
     "linked-list",
     "networking",
     "bug",
@@ -63,7 +60,10 @@
     "game-rules",
     "mathematics",
     "web-design",
-    "accessibility"
+    "accessibility",
+    "stl",
+    "lambdas",
+    "operator-overloading"
   ],
   "notes": [
     {
@@ -80,19 +80,6 @@
       "para": "Resources",
       "project": null,
       "date": "2026-06-11"
-    },
-    {
-      "title": "contains-duplicate",
-      "path": "Projects/neetcode-150/contains-duplicate.md",
-      "domain": "leetcode",
-      "tags": [
-        "array-hashing",
-        "hashmap",
-        "golang"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-10"
     },
     {
       "title": "docker-image-layers-cow",
@@ -167,19 +154,6 @@
       "date": "2026-06-11"
     },
     {
-      "title": "two-sum",
-      "path": "Projects/neetcode-150/two-sum.md",
-      "domain": "leetcode",
-      "tags": [
-        "array-hashing",
-        "hashmap",
-        "golang"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-10"
-    },
-    {
       "title": "underwear-material-science-reproductive-health",
       "path": "Resources/underwear-material-science-reproductive-health.md",
       "domain": "textile-science",
@@ -191,32 +165,6 @@
       "para": "Resources",
       "project": null,
       "date": "2026-06-05"
-    },
-    {
-      "title": "valid-anagram",
-      "path": "Projects/neetcode-150/valid-anagram.md",
-      "domain": "leetcode",
-      "tags": [
-        "array-hashing",
-        "hashmap",
-        "golang"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-11"
-    },
-    {
-      "title": "group-anagrams",
-      "path": "Projects/neetcode-150/group-anagrams.md",
-      "domain": "leetcode",
-      "tags": [
-        "array-hashing",
-        "hashmap",
-        "golang"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-11"
     },
     {
       "title": "golang-arrays",
@@ -294,19 +242,6 @@
       "date": "2026-06-12"
     },
     {
-      "title": "top-k-frequent-elements",
-      "path": "Projects/neetcode-150/top-k-frequent-elements.md",
-      "domain": "leetcode",
-      "tags": [
-        "array-hashing",
-        "hashmap",
-        "golang"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-12"
-    },
-    {
       "title": "versailles-visit-itinerary",
       "path": "Resources/versailles-visit-itinerary.md",
       "domain": "travel",
@@ -319,19 +254,6 @@
       "date": "2026-06-14"
     },
     {
-      "title": "encode-decode-strings",
-      "path": "Projects/neetcode-150/encode-decode-strings.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "arrays-hashing"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-14"
-    },
-    {
       "title": "golang-strings",
       "path": "Resources/golang-strings.md",
       "domain": "golang",
@@ -339,45 +261,6 @@
       "para": "Resources",
       "project": null,
       "date": "2026-06-14"
-    },
-    {
-      "title": "product-of-array-except-self",
-      "path": "Projects/neetcode-150/product-of-array-except-self.md",
-      "domain": "leetcode",
-      "tags": [
-        "array-hashing",
-        "golang",
-        "neetcode-150"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-14"
-    },
-    {
-      "title": "valid-palindrome",
-      "path": "Projects/neetcode-150/valid-palindrome.md",
-      "domain": "leetcode",
-      "tags": [
-        "two-pointers",
-        "golang",
-        "neetcode-150"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-16"
-    },
-    {
-      "title": "two-sum-ii-input-array-is-sorted",
-      "path": "Projects/neetcode-150/two-sum-ii-input-array-is-sorted.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "two-pointers"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-16"
     },
     {
       "title": "kubernetes-init-containers-sidecars",
@@ -395,19 +278,6 @@
       "date": "2026-06-16"
     },
     {
-      "title": "longest-consecutive-sequence",
-      "path": "Projects/neetcode-150/longest-consecutive-sequence.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "arrays-hashing"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-16"
-    },
-    {
       "title": "argocd-helm-install-no-crds",
       "path": "Projects/cka/argocd-helm-install-no-crds.md",
       "domain": "kubernetes",
@@ -419,71 +289,6 @@
       "para": "Projects",
       "project": "cka",
       "date": "2026-06-16"
-    },
-    {
-      "title": "valid-sudoku",
-      "path": "Projects/neetcode-150/valid-sudoku.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "arrays-hashing"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-17"
-    },
-    {
-      "title": "three-sum",
-      "path": "Projects/neetcode-150/three-sum.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "two-pointers"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-22"
-    },
-    {
-      "title": "daily-temperatures",
-      "path": "Projects/neetcode-150/daily-temperatures.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "stack"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-22"
-    },
-    {
-      "title": "evaluate-reverse-polish-notation",
-      "path": "Projects/neetcode-150/evaluate-reverse-polish-notation.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "stack"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-22"
-    },
-    {
-      "title": "valid-parentheses",
-      "path": "Projects/neetcode-150/valid-parentheses.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "stack"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-22"
     },
     {
       "title": "golang-interfaces",
@@ -511,58 +316,6 @@
       "para": "Resources",
       "project": null,
       "date": "2026-06-22"
-    },
-    {
-      "title": "car-fleet",
-      "path": "Projects/neetcode-150/car-fleet.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "stack"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-24"
-    },
-    {
-      "title": "container-with-most-water",
-      "path": "Projects/neetcode-150/container-with-most-water.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "two-pointers"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-24"
-    },
-    {
-      "title": "find-minimum-in-rotated-sorted-array",
-      "path": "Projects/neetcode-150/find-minimum-in-rotated-sorted-array.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "binary-search"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-24"
-    },
-    {
-      "title": "koko-eating-bananas",
-      "path": "Projects/neetcode-150/koko-eating-bananas.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "binary-search"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-06-24"
     },
     {
       "title": "kubernetes-volumes-emptydir-sidecar",
@@ -607,19 +360,6 @@
       "date": null
     },
     {
-      "title": "Merge two linked lists",
-      "path": "Projects/neetcode-150/Merge two linked lists.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "linked-list"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-07-02"
-    },
-    {
       "title": "Zagreb Addresses",
       "path": "Resources/Zagreb Addresses.md",
       "domain": "travel",
@@ -629,19 +369,6 @@
       ],
       "para": "Resources",
       "project": null,
-      "date": "2026-07-02"
-    },
-    {
-      "title": "Linked List cycle Definition",
-      "path": "Projects/neetcode-150/Linked List cycle Definition.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "linked-list"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
       "date": "2026-07-02"
     },
     {
@@ -658,19 +385,6 @@
       "para": "Resources",
       "project": null,
       "date": "2026-07-02"
-    },
-    {
-      "title": "Key value binary search",
-      "path": "Projects/neetcode-150/Key value binary search.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "binary-search"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-07-06"
     },
     {
       "title": "Roadmap",
@@ -695,32 +409,6 @@
       "date": "2026-07-06"
     },
     {
-      "title": "Merge two Linked lists 1",
-      "path": "Projects/neetcode-150/Merge two Linked lists 1.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "linked-list"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-10-03"
-    },
-    {
-      "title": "Remove nth node from the end",
-      "path": "Projects/neetcode-150/Remove nth node from the end.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "linked-list"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-10-03"
-    },
-    {
       "title": "Go Project Structure — Rules & Conventions",
       "path": "Resources/Go Project Structure — Rules & Conventions.md",
       "domain": "golang",
@@ -742,32 +430,6 @@
       "para": "Resources",
       "project": null,
       "date": "2026-07-08"
-    },
-    {
-      "title": "Add Two Numbers",
-      "path": "Projects/neetcode-150/Add Two Numbers.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "linked-list"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-07-29"
-    },
-    {
-      "title": "Copy Linked List With Random Pointer",
-      "path": "Projects/neetcode-150/Copy Linked List With Random Pointer.md",
-      "domain": "leetcode",
-      "tags": [
-        "leetcode",
-        "neetcode-150",
-        "linked-list"
-      ],
-      "para": "Projects",
-      "project": "neetcode-150",
-      "date": "2026-07-29"
     },
     {
       "title": "Dummy Head Pattern",
@@ -1049,6 +711,68 @@
       "para": "Projects",
       "project": "projet-recherche",
       "date": "2026-10-03"
+    },
+    {
+      "title": "C++ Functors",
+      "path": "Resources/C++ Functors.md",
+      "domain": "cpp",
+      "tags": [
+        "stl",
+        "lambdas",
+        "operator-overloading"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-10-22"
+    },
+    {
+      "title": "C++ Syntax",
+      "path": "Resources/C++ Syntax.md",
+      "domain": "cpp",
+      "tags": [
+        "stl",
+        "lambdas",
+        "operator-overloading"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-10-22"
+    },
+    {
+      "title": "Cloudflare motivation letter",
+      "path": "Archive/Cloudflare motivation letter.md",
+      "domain": "networking",
+      "tags": [
+        "kubernetes",
+        "golang",
+        "devops"
+      ],
+      "para": "Archive",
+      "project": null,
+      "date": "2026-10-22"
+    },
+    {
+      "title": "Linked Lists - The Theory You Need",
+      "path": "Resources/Linked Lists - The Theory You Need.md",
+      "domain": "leetcode",
+      "tags": [
+        "linked-list",
+        "golang",
+        "two-pointers",
+        "neetcode-150"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-10-22"
+    },
+    {
+      "title": "Notes orateur RSE",
+      "path": "Projects/rse/Notes orateur RSE.md",
+      "domain": "sustainability",
+      "tags": [],
+      "para": "Projects",
+      "project": "rse",
+      "date": "2026-10-22"
     }
   ],
   "areas": [

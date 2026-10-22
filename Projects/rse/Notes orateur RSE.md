@@ -1,3 +1,10 @@
+---
+domain: sustainability
+tags: []
+date: 2026-10-22
+para: Projects
+project: rse
+---
 # Version longue
 
 **Slide 4 : Étude du rapport RSE**
@@ -6,7 +13,7 @@ On commence par ce que MBDA dit d'elle-même, à travers son rapport de durabili
 Contexte : c'est un rapport volontaire. MBDA n'est pas encore soumise à la directive européenne CSRD. Son premier rapport obligatoire portera sur l'exercice 2027 et sortira en 2028 (p.29).
 On en retient trois constats : le discours de l'entreprise, ce que le rapport laisse de côté, et ses chiffres climat.
 
----
+______________________________________________________________________
 
 **Slide 5 : Une RSE pensée comme levier de performance**
 
@@ -16,7 +23,7 @@ Ensuite, la façon dont il justifie la RSE. Sa formule : « produire de façon p
 La RSE n'est donc pas présentée comme une fin en soi, mais comme un moyen de tenir la montée en cadence. C'est ce qu'on appelle une RSE utilitariste.
 → Transition : voilà ce que MBDA met en avant. Voyons maintenant ce que le rapport laisse de côté.
 
----
+______________________________________________________________________
 
 **Slide 6 : Les angles morts du rapport**
 
@@ -28,7 +35,7 @@ Trois : les exportations. MBDA se fixe comme priorité un « niveau record » de
 
 *Si on me demande de quelle analyse il s'agit :* c'est l'étape où l'entreprise choisit les sujets importants à traiter dans son rapport.
 
----
+______________________________________________________________________
 
 **Slide 7 : Une baisse réelle, sur un périmètre restreint**
 
@@ -40,16 +47,18 @@ Conclusion : le progrès est réel, mais il porte sur la plus petite partie de l
 *Si on me demande pourquoi les émissions baissent alors que la consommation d'énergie augmente de 3,7 % :* le rapport ne l'explique pas, et les renouvelables n'en expliquent qu'une petite partie. On y revient en partie II (slide 14).
 *Si on me demande comment on sait que les fournisseurs pèsent le plus :* chez Lockheed Martin, ces émissions sont environ 45 fois plus élevées que celles de ses sites (slide 19).
 
----
+______________________________________________________________________
 
 # Version courte (bullet points)
 
 **Slide 4 : Étude du rapport RSE**
+
 - Ce que MBDA dit d'elle-même, à travers son rapport 2025-2026
 - Rapport volontaire : pas encore soumise à la CSRD, premier rapport obligatoire en 2028 (p.29)
 - 3 constats : le discours, les angles morts, les chiffres climat
 
 **Slide 5 : Le discours**
+
 - Intro du PDG (p.4) : MBDA renforce « souveraineté et prospérité pacifique »
 - Un rapport de développement durable qui s'ouvre sur un argument géopolitique, où les armes sont présentées comme une contribution à la paix
 - « Produire plus durable = produire plus fiable »
@@ -57,12 +66,14 @@ Conclusion : le progrès est réel, mais il porte sur la plus petite partie de l
 - → Ce que le rapport laisse de côté
 
 **Slide 6 : 3 angles morts**
+
 - **Usage exclu** (p.29) : le rapport ne prend pas en compte l'utilisation des missiles par les armées clientes, alors que c'est l'impact principal ; le bilan se limite aux usines, bureaux et fournisseurs
 - **Nucléaire** (p.23) : la dissuasion est citée comme une capacité parmi d'autres, sans discussion éthique, alors que de nombreux fonds responsables l'excluent
 - **Exportations** (p.27) : objectif d'un « niveau record » à l'export, mais une section droits humains limitée aux salariés et aux fournisseurs ; détaillé en I.2
 - → Les chiffres climat
 
 **Slide 7 : Climat**
+
 - −19,1 % d'émissions (sites + électricité, p.39), un vrai résultat malgré la hausse de la production
 - Mais 4 000+ fournisseurs : ni chiffre ni objectif sur leurs émissions (p.33)
 - Ce sont généralement elles qui pèsent le plus
@@ -71,6 +82,13 @@ Conclusion : le progrès est réel, mais il porte sur la plus petite partie de l
 - → [Prénom] : ce qu'en disent les acteurs extérieurs
 
 *Questions possibles :*
+
 - Émissions en baisse et énergie +3,7 % ? Le rapport ne l'explique pas, et les renouvelables n'en expliquent qu'une petite partie (slide 14)
 - Pourquoi les fournisseurs pèsent le plus ? Chez Lockheed, ces émissions sont environ 45 fois celles des sites (slide 19)
 - De quelle analyse parle-t-on (slide 6) ? L'étape où l'entreprise choisit les sujets importants à traiter dans son rapport
+
+## Links
+
+- [[rse pres - mbda report]]
+- [[rse pres]]
+- [[rse bookmarks]]

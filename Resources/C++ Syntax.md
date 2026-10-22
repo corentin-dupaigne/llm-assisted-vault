@@ -1,3 +1,10 @@
+---
+domain: cpp
+tags: [stl, lambdas, operator-overloading]
+date: 2026-10-22
+para: Resources
+project: null
+---
 ## Program structure
 
 ```cpp
@@ -16,11 +23,12 @@ int main() {
 - Comments: `// line` and `/* block */`
 
 **Compile & run**
+
 ```bash
 g++ -std=c++20 -Wall -Wextra -o main main.cpp && ./main
 ```
 
----
+______________________________________________________________________
 
 ## Variables & types
 
@@ -48,6 +56,7 @@ constexpr int SIZE = 16; // evaluated at compile time
 | `int32_t`, `uint64_t`… | exact | from `<cstdint>` |
 
 **Initialization styles**
+
 ```cpp
 int a = 5;    // copy init
 int b(5);     // direct init
@@ -57,7 +66,7 @@ int d{};      // zero-initialized
 
 > [!tip] Prefer `{}` initialization: `int x{3.7};` is a compile error instead of a silent truncation.
 
----
+______________________________________________________________________
 
 ## Operators
 
@@ -69,7 +78,7 @@ int d{};      // zero-initialized
 - Ternary: `cond ? a : b`
 - Scope: `::` · Member: `.` · Pointer member: `->`
 
----
+______________________________________________________________________
 
 ## Control flow
 
@@ -100,7 +109,7 @@ do { } while (cond);
 
 `break` exits the loop, `continue` skips to the next iteration.
 
----
+______________________________________________________________________
 
 ## Functions
 
@@ -124,19 +133,21 @@ auto mul(int a, int b) -> int { return a * b; } // trailing return type
 | `T&& x` | rvalue reference | move semantics |
 
 **Overloading** — same name, different parameters:
+
 ```cpp
 int  area(int side);
 int  area(int w, int h);
 ```
 
 **Declaration vs definition** — declare in `.h`, define in `.cpp`:
+
 ```cpp
 // math.h
 #pragma once
 int add(int a, int b);
 ```
 
----
+______________________________________________________________________
 
 ## Pointers & references
 
@@ -176,17 +187,18 @@ incPtr(nullptr); // allowed (does nothing here)
 // incRef(nullptr); // compile error: a reference can't be null
 ```
 
-|                                          | Pointer `T*`      | Reference `T&`                |
+| | Pointer `T*` | Reference `T&` |
 | ---------------------------------------- | ----------------- | ----------------------------- |
-| Call syntax                              | `f(&a)`           | `f(a)`                        |
-| Access inside                            | `*p`, `p->member` | `r`, `r.member`               |
-| Can be null                              | Yes (`nullptr`)   | No                            |
-| Can be reseated (point elsewhere)        | Yes (`p = &b;`)   | No, bound once at init        |
-| Must be initialized                      | No                | Yes                           |
-| Pointer arithmetic                       | Yes (`p + 1`)     | No                            |
-| Visible at call site that arg may change | Yes (`&a`)        | No (looks like pass-by-value) |
+| Call syntax | `f(&a)` | `f(a)` |
+| Access inside | `*p`, `p->member` | `r`, `r.member` |
+| Can be null | Yes (`nullptr`) | No |
+| Can be reseated (point elsewhere) | Yes (`p = &b;`) | No, bound once at init |
+| Must be initialized | No | Yes |
+| Pointer arithmetic | Yes (`p + 1`) | No |
+| Visible at call site that arg may change | Yes (`&a`) | No (looks like pass-by-value) |
 
 **When to use which**
+
 - `const T&` → large read-only input (default for strings, vectors, objects)
 - `T&` → required argument the function modifies
 - `T*` → optional argument (can be `nullptr`), C APIs (`scanf("%d", &a)`), or when you need pointer arithmetic or reseating
@@ -194,13 +206,14 @@ incPtr(nullptr); // allowed (does nothing here)
 > [!note] A reference is usually implemented as a pointer under the hood, but at the language level it behaves as an alias: once bound, any operation on it acts on the original variable.
 
 **Smart pointers** (`<memory>`) — prefer over raw `new`/`delete`:
+
 ```cpp
 auto u = std::make_unique<Foo>(args);   // single owner
 auto s = std::make_shared<Foo>(args);   // shared ownership (ref counted)
 std::weak_ptr<Foo> w = s;               // non-owning observer of a shared_ptr
 ```
 
----
+______________________________________________________________________
 
 ## Arrays & containers
 
@@ -223,7 +236,7 @@ std::pair<int, std::string> pr{1, "x"};
 auto [id, name] = pr;                 // structured binding (C++17)
 ```
 
----
+______________________________________________________________________
 
 ## Classes & structs
 
@@ -258,6 +271,7 @@ d.bark();
 - `this` is a pointer to the current object
 
 **Inheritance & polymorphism**
+
 ```cpp
 class Animal {
 public:
@@ -278,7 +292,7 @@ a->speak();   // dynamic dispatch → "meow"
 destructor, copy constructor, copy assignment, move constructor, move assignment.
 Prefer the **Rule of 0**: use RAII members (`std::string`, `std::vector`, smart pointers) and define none.
 
----
+______________________________________________________________________
 
 ## Templates
 
@@ -303,7 +317,7 @@ template <std::integral T>
 T square(T x) { return x * x; }
 ```
 
----
+______________________________________________________________________
 
 ## Lambdas
 
@@ -321,7 +335,7 @@ std::sort(v.begin(), v.end(), [](int a, int b) { return a > b; });
 
 Syntax: `[capture](params) -> return_type { body }`
 
----
+______________________________________________________________________
 
 ## Namespaces
 
@@ -335,7 +349,7 @@ using std::string;          // import a single name
 namespace fs = std::filesystem; // alias
 ```
 
----
+______________________________________________________________________
 
 ## Error handling
 
@@ -353,7 +367,7 @@ void f() noexcept; // promises not to throw
 
 Alternatives: `std::optional<T>` (value or nothing), `std::expected<T, E>` (C++23, value or error).
 
----
+______________________________________________________________________
 
 ## Casting
 
@@ -366,7 +380,7 @@ reinterpret_cast<char*>(p);    // raw bit reinterpretation (dangerous)
 
 > [!warning] Avoid C-style casts `(int)x` — they silently pick any of the above.
 
----
+______________________________________________________________________
 
 ## Move semantics
 
@@ -379,7 +393,7 @@ std::vector<int> b = std::move(a); // steals a's buffer, a is now valid but unsp
 - **rvalue**: temporary (`x + 1`, `std::move(x)`)
 - `std::move` doesn't move anything — it just casts to an rvalue so the move constructor gets picked
 
----
+______________________________________________________________________
 
 ## Preprocessor
 
@@ -393,7 +407,7 @@ std::vector<int> b = std::move(a); // steals a's buffer, a is now valid but unsp
 #pragma once           // include guard
 ```
 
----
+______________________________________________________________________
 
 ## Common gotchas
 
@@ -405,3 +419,7 @@ std::vector<int> b = std::move(a); // steals a's buffer, a is now valid but unsp
 - Forgetting `virtual` destructor in a polymorphic base class → leaks
 - Missing `break` in a `switch` → fallthrough
 - Iterator invalidation: modifying a `vector` while iterating over it
+
+## Links
+
+- [[C++ Functors]]
