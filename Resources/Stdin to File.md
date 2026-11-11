@@ -1,4 +1,10 @@
-
+---
+domain: cpp
+tags: [stl]
+date: 2026-11-11
+para: Resources
+project: null
+---
 > Exercise `stdin_to_file`, converted from `dump/stdin_to_file.pdf`. The PDF stays the reference.
 
 ## File tree
@@ -47,3 +53,7 @@ is$
 a$
 test.$
 ```
+
+## Links
+
+- [[C++ Syntax]]

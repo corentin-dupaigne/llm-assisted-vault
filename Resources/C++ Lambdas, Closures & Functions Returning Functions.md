@@ -1,4 +1,10 @@
-
+---
+domain: cpp
+tags: [lambdas, stl]
+date: 2026-11-11
+para: Resources
+project: null
+---
 ## 1. The idea: currying
 
 A function of two arguments `f(a, b)` can be rewritten as a function of **one** argument that **returns another function** of one argument:
@@ -17,7 +23,7 @@ This is called **currying** (or partial application when you fix only some argum
 > If the returned function needs `a` later, *where* is `a` stored once `g` has returned?
 > → Answer in section 4 (closures).
 
----
+______________________________________________________________________
 
 ## 2. Lambda syntax
 
@@ -47,7 +53,7 @@ square(4); // 16
 > `[](int x) { return x + 1; }(3)` creates the lambda **and** calls it at once → `4`.
 > Similarly, if something *returns* a callable, you can chain calls: `something(1)(2)`.
 
----
+______________________________________________________________________
 
 ## 3. Captures
 
@@ -91,9 +97,10 @@ byRef(); // 42  (reads the current n)
 > In the exercise, the inner lambda is returned out of the outer lambda's call. What happens to the outer lambda's parameter at that point? Which capture mode is safe?
 
 ### Globals don't need capturing
+
 Variables with **static storage duration** (globals, `static` locals) are not captured: they're simply accessible. Only *automatic* (local / parameter) variables need capturing.
 
----
+______________________________________________________________________
 
 ## 4. Closures
 
@@ -116,11 +123,12 @@ struct __Lambda_unique_name
 
 This answers the question of §1: the "remembered" value lives **inside the returned closure object**.
 
----
+______________________________________________________________________
 
 ## 5. Return type deduction & `std::function`
 
 ### 5.1 `auto` deduction
+
 A lambda's return type is deduced from its `return` statement(s). If a lambda returns *another lambda*, the deduced return type is that inner lambda's unique closure type — fine, as long as nobody needs to write it down.
 
 ```cpp
@@ -148,11 +156,13 @@ std::function<std::string(int)> h = [](int n) { return std::to_string(n); };
 ```
 
 Key properties:
+
 - Lambdas, function pointers, functors… all convert to a `std::function` with a compatible signature.
 - Gives a **nameable type** → can appear in a header, as a variable type, a parameter, a return type.
 - Cost: a small runtime overhead (indirect call, possible heap allocation). Irrelevant here.
 
 ### 5.3 Nesting signatures
+
 The `R` in `std::function<R(Args...)>` can itself be a `std::function`. To read a nested type, **work from the outside in**:
 
 ```
@@ -170,7 +180,7 @@ std::function<std::function<bool()>(std::string)>
 > [!tip]
 > Read the provided `forward_multiplication.hh` carefully and decompose the type of `mult_by` this way: what does the outer call take, what does it return, what does *that* take and return?
 
----
+______________________________________________________________________
 
 ## 6. Declaring a variable in a header, defining it in a `.cc`
 
@@ -196,9 +206,10 @@ int counter = 0;             // definition: storage + initializer, exactly ONE
 > Only `forward_multiplication.cc` is submitted: your code must work with the `.hh` as given.
 
 ### Initializing a global with a lambda
+
 A global can be initialized with any expression, including a lambda expression. Note that a lambda defined at **namespace scope** has nothing local to capture: its capture list is empty. Captures only become relevant for lambdas created *inside* another function/lambda body.
 
----
+______________________________________________________________________
 
 ## 7. Compilation flags to keep in mind
 
@@ -214,20 +225,26 @@ A global can be initialized with any expression, including a lambda expression. 
 > [!note]
 > Clang warns on an **unused lambda capture** (`-Wunused-lambda-capture`). Capture only what you actually use.
 
----
+______________________________________________________________________
 
 ## 8. Self-check questions (Socratic)
 
 1. What is the *type* of a lambda expression, and why can't you write it by name?
-2. If `h` has type `std::function<A(B)>`, what does `h(b)` give you? What about `h(b)(c)` if `A` is itself callable?
-3. A function parameter is captured **by reference** in a lambda that is returned. What happens when that returned lambda is called later?
-4. Why does a lambda defined at global scope have nothing to capture?
-5. Why must a variable declared `extern` in a header be defined in **exactly one** `.cc`?
-6. Two closures are created by evaluating the same lambda expression with different captured values. Do they share state? Why?
+1. If `h` has type `std::function<A(B)>`, what does `h(b)` give you? What about `h(b)(c)` if `A` is itself callable?
+1. A function parameter is captured **by reference** in a lambda that is returned. What happens when that returned lambda is called later?
+1. Why does a lambda defined at global scope have nothing to capture?
+1. Why must a variable declared `extern` in a header be defined in **exactly one** `.cc`?
+1. Two closures are created by evaluating the same lambda expression with different captured values. Do they share state? Why?
 
----
+______________________________________________________________________
 
 ## Related
+
 - [[Currying]]
 - [[std::function]]
 - [[One Definition Rule]]
+
+## Links
+
+- [[C++ Functors]]
+- [[C++ Syntax]]

@@ -1,11 +1,17 @@
-
+---
+domain: leetcode
+tags: [golang, study-plan]
+date: 2026-11-11
+para: Resources
+project: null
+---
 > [!summary] The one rule
 > **List the cases before coding. Trace by hand before running.**
 > My mock 1 bugs (infinite `continue`, space leaking into the next word, missing last word, `r > 0`) would all have been caught by these two steps.
 
 Time budget for an easy problem: **~3 min understand → ~2 min plan → ~7 min code → ~3 min test**
 
----
+______________________________________________________________________
 
 ## 1. Understand (2–3 min) — before touching the keyboard
 
@@ -37,6 +43,7 @@ Time budget for an easy problem: **~3 min understand → ~2 min plan → ~7 min 
 - [ ] **Check my idea against the expected output** before going further. (Mock 1: reversing the characters gives "eulb", not "blue".)
 
 Standard edge cases:
+
 - empty / a single element / everything identical
 - strings: spaces at the start, end and middle; only spaces; a single word
 - lists: `nil`, one node, the target is the head
@@ -86,7 +93,7 @@ Standard edge cases:
 - [ ] Run the normal case plus the edge cases from step 2.
 - [ ] Give the final complexity again, unprompted.
 
----
+______________________________________________________________________
 
 ## If I get stuck
 
@@ -98,7 +105,7 @@ Standard edge cases:
 
 Saying "I'm thinking about whether a stack helps here" is better than silence.
 
----
+______________________________________________________________________
 
 ## Go idioms to type without thinking
 
@@ -134,5 +141,14 @@ func show(n *Node) { for ; n != nil; n = n.Next { fmt.Print(n.Val, " ") }; fmt.P
 
 ## After each practice problem
 
-- [ ] Write one line: **"The hint that should have pointed me to the solution was ___."**
+- [ ] Write one line: **"The hint that should have pointed me to the solution was \_\_\_."**
 - [ ] Note where I got stuck in the LeetCode note (the "Where I got stuck" field).
+
+## Links
+
+- [[golang-loops]]
+- [[golang-strings]]
+- [[golang-sorting]]
+- [[Floyd's Tortoise and Hare]]
+- [[Dummy Head Pattern]]
+- [[Linked Lists - The Theory You Need]]

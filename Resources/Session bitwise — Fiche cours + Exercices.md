@@ -1,18 +1,25 @@
+---
+domain: golang
+tags: [leetcode, cpp, mathematics]
+date: 2026-11-11
+para: Resources
+project: null
+---
 ## Fiche cours : Opérateurs de bits
 
 Reprise de ta fiche théorie (section 2 de tes fiches) avec le rappel des points clés.
 
 ### Les opérateurs, sur x = 1100 et y = 1010
 
-| Opérateur | Nom                 | Résultat       | Règle                          |
+| Opérateur | Nom | Résultat | Règle |
 | --------- | ------------------- | -------------- | ------------------------------ |
-| `x & y`   | ET                  | `1000`         | 1 si les deux sont à 1         |
-| `x \| y`  | OU                  | `1110`         | 1 si au moins un est à 1       |
-| `x ^ y`   | XOR                 | `0110`         | 1 si différents                |
-| `x &^ y`  | AND NOT (bit clear) | `0100`         | garde x, efface là où y vaut 1 |
-| `^x`      | NOT (unaire)        | `...0011`      | inverse tout (en C : `~x`)     |
-| `x << k`  | shift gauche        | `110000` (k=2) | multiplie par 2^k              |
-| `x >> k`  | shift droit         | `0011` (k=2)   | divise par 2^k (non signé)     |
+| `x & y` | ET | `1000` | 1 si les deux sont à 1 |
+| `x \| y` | OU | `1110` | 1 si au moins un est à 1 |
+| `x ^ y` | XOR | `0110` | 1 si différents |
+| `x &^ y` | AND NOT (bit clear) | `0100` | garde x, efface là où y vaut 1 |
+| `^x` | NOT (unaire) | `...0011` | inverse tout (en C : `~x`) |
+| `x << k` | shift gauche | `110000` (k=2) | multiplie par 2^k |
+| `x >> k` | shift droit | `0011` (k=2) | divise par 2^k (non signé) |
 
 ### Les trois motifs à connaître par cœur
 
@@ -40,6 +47,7 @@ x & -x  = 0000 1000   ← bit isolé
 ```
 
 Applications :
+
 ```go
 // Popcount : autant de tours que de bits à 1
 func popcount(x uint32) int {
@@ -84,4 +92,9 @@ En Go, `<<`, `>>`, `&`, `&^` ont la priorité de `*`. Donc `x&mask != 0` se lit 
 - `>>` sur un signé négatif recopie le bit de signe (arithmetic shift).
 - Sign extend : `int32(x << shift) >> shift` propage le bit de signe.
 
----
+______________________________________________________________________
+
+## Links
+
+- [[Fiche Binary Search — Arista Interview Prep]]
+- [[C++ Syntax]]

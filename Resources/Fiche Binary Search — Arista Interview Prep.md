@@ -1,3 +1,10 @@
+---
+domain: leetcode
+tags: [golang, neetcode-150, arrays-hashing]
+date: 2026-11-11
+para: Resources
+project: null
+---
 ## Le pattern de base
 
 Binary search divise l'espace de recherche en deux a chaque etape. O(log n) temps, O(1) espace.
@@ -22,8 +29,8 @@ func BinarySearch(nums []int, target int) int {
 ### Les 3 pieges classiques
 
 1. **Overflow** : `mid = (lo + hi) / 2` overflow si lo+hi > MaxInt. Toujours ecrire `mid = lo + (hi-lo)/2`.
-2. **Boucle infinie** : si tu oublies `+1` ou `-1` dans `lo = mid + 1` / `hi = mid - 1`, la boucle ne termine pas.
-3. **Off-by-one** : `lo <= hi` (pas `<`) quand tu cherches un element exact. Avec `<`, tu rates le cas ou lo == hi == index de la cible.
+1. **Boucle infinie** : si tu oublies `+1` ou `-1` dans `lo = mid + 1` / `hi = mid - 1`, la boucle ne termine pas.
+1. **Off-by-one** : `lo <= hi` (pas `<`) quand tu cherches un element exact. Avec `<`, tu rates le cas ou lo == hi == index de la cible.
 
 ### Variante : Lower Bound (premiere occurrence)
 
@@ -110,7 +117,7 @@ Sinon → la moitie droite est triee
 | Rotated array search | O(log n) | O(1) |
 | Search on answer | O(log(range) * check) | O(1) |
 
----
+______________________________________________________________________
 
 ## Exercices — ordre de priorite
 
@@ -132,7 +139,7 @@ Sinon → la moitie droite est triee
 | 7 | PeakElement | Trouver un pic dans un tableau non trie | 6 min |
 | 8 | MinRotatedArray | Minimum dans un tableau tourne | 5 min |
 
----
+______________________________________________________________________
 
 ## Prototypes
 

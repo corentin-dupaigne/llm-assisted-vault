@@ -63,7 +63,9 @@
     "accessibility",
     "stl",
     "lambdas",
-    "operator-overloading"
+    "operator-overloading",
+    "arrays-hashing",
+    "cpp"
   ],
   "notes": [
     {
@@ -773,12 +775,110 @@
       "para": "Projects",
       "project": "rse",
       "date": "2026-10-22"
+    },
+    {
+      "title": "Binary Trees - The Theory You Need",
+      "path": "Resources/Binary Trees - The Theory You Need.md",
+      "domain": "leetcode",
+      "tags": [
+        "golang",
+        "neetcode-150",
+        "study-plan"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-11"
+    },
+    {
+      "title": "C++ Lambdas, Closures & Functions Returning Functions",
+      "path": "Resources/C++ Lambdas, Closures & Functions Returning Functions.md",
+      "domain": "cpp",
+      "tags": [
+        "lambdas",
+        "stl"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-11"
+    },
+    {
+      "title": "C++ Templates",
+      "path": "Resources/C++ Templates.md",
+      "domain": "cpp",
+      "tags": [
+        "stl"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-11"
+    },
+    {
+      "title": "Coding Interview Method",
+      "path": "Resources/Coding Interview Method.md",
+      "domain": "leetcode",
+      "tags": [
+        "golang",
+        "study-plan"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-11"
+    },
+    {
+      "title": "Fiche Binary Search — Arista Interview Prep",
+      "path": "Resources/Fiche Binary Search — Arista Interview Prep.md",
+      "domain": "leetcode",
+      "tags": [
+        "golang",
+        "neetcode-150",
+        "arrays-hashing"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-11"
+    },
+    {
+      "title": "Go Slices - Header Shared Array and append",
+      "path": "Resources/Go Slices - Header Shared Array and append.md",
+      "domain": "golang",
+      "tags": [
+        "arrays-hashing",
+        "leetcode"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-11"
+    },
+    {
+      "title": "Session bitwise — Fiche cours + Exercices",
+      "path": "Resources/Session bitwise — Fiche cours + Exercices.md",
+      "domain": "golang",
+      "tags": [
+        "leetcode",
+        "cpp",
+        "mathematics"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-11"
+    },
+    {
+      "title": "Stdin to File",
+      "path": "Resources/Stdin to File.md",
+      "domain": "cpp",
+      "tags": [
+        "stl"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-11"
     }
   ],
   "areas": [
     "q-reviews"
   ],
   "generated_mocs": [
-    "computer-vision"
+    "computer-vision",
+    "cpp"
   ]
 }

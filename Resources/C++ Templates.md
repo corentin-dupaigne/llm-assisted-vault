@@ -1,8 +1,14 @@
-
+---
+domain: cpp
+tags: [stl]
+date: 2026-11-11
+para: Resources
+project: null
+---
 > [!goal] Objective
 > Turn a class that works for **one** type (`IntStack`) into a class that works for **any** type (`GenericStack<T>`), split across a `.hh` and a `.hxx`, and still correct for move-only types like `std::unique_ptr<int>`.
 
----
+______________________________________________________________________
 
 ## 1. Why templates?
 
@@ -15,7 +21,7 @@ GenericStack<std::string> // and another one where T = std::string
 
 Each generated version is called an **instantiation**. It happens at compile time, so there's no runtime cost.
 
----
+______________________________________________________________________
 
 ## 2. Template syntax
 
@@ -53,7 +59,7 @@ Box<int> b{ 42 };   // you MUST write <int> for the class... (or let C++17 deduc
 
 Inside the class, `T` is used like any normal type: attribute types, parameters, return types.
 
----
+______________________________________________________________________
 
 ## 3. The file layout: `.hh` + `.hxx`
 
@@ -63,6 +69,7 @@ Inside the class, `T` is used like any normal type: attribute types, parameters,
 That's why you **can't** put template method bodies in a `.cc` compiled separately: the `.cc` would never know which `T` to generate, and you'd get `undefined reference` at link time.
 
 The EPITA convention:
+
 - **`.hh`** — the class declaration
 - **`.hxx`** — the method definitions
 - the `.hh` **includes the `.hxx` at the very end**
@@ -104,7 +111,7 @@ const T& Box<T>::get() const
 
 The user only does `#include "box.hh"`, and gets everything. There's **no `.cc`** for a template class, which is why `main_generic.cc` compiles alone, without your stack in the command.
 
----
+______________________________________________________________________
 
 ## 4. Defining methods outside the class
 
@@ -123,7 +130,7 @@ void Box<T>::set(T value)      // 2. the class name is Box<T>, not Box
 
 Forgetting `<T>` after the class name is the most common compile error.
 
----
+______________________________________________________________________
 
 ## 5. The `typename` trap: nested types
 
@@ -168,7 +175,7 @@ auto Tree<T>::first() const -> Leaf* { ... }
 > [!warning] Rule
 > A type written as `Something<T>::Name` **outside** the class needs `typename` in front. Inside the class, or after the `Class<T>::method(` part, it doesn't.
 
----
+______________________________________________________________________
 
 ## 6. Requirements on `T`
 
@@ -184,7 +191,7 @@ A template compiles only if `T` supports everything you **do** with it. The comp
 > [!info] Good news
 > A method is only generated **if it's called**. So `GenericStack<std::unique_ptr<int>>` compiles even if `print` uses `<<`, **as long as the test never calls `print` on it**.
 
----
+______________________________________________________________________
 
 ## 7. Move semantics: supporting move-only types
 
@@ -227,7 +234,7 @@ auto node = std::make_unique<Node>();
 
 That requires `T` to be **default-constructible** (`T{}` must work). `int`, `std::string` and `std::unique_ptr` all are. Fine for this exercise.
 
----
+______________________________________________________________________
 
 ## 8. Common errors and what they mean
 
@@ -242,7 +249,7 @@ That requires `T` to be **default-constructible** (`T{}` must work). `int`, `std
 > [!warning] Template error messages are long
 > Read the **first** error line that points into **your** file. Everything after it is usually the compiler explaining where it was instantiated from.
 
----
+______________________________________________________________________
 
 ## 9. Checklist: IntStack → GenericStack
 
@@ -258,14 +265,20 @@ That requires `T` to be **default-constructible** (`T{}` must work). `int`, `std
 - [ ] `print` writes `value` with `<<` into `os`
 - [ ] same `const` methods as `IntStack`
 
----
+______________________________________________________________________
 
 ## 10. Check yourself
 
 1. Why can't `GenericStack`'s method bodies go in a `generic_stack.cc`?
-2. What does the compiler need `typename` for in `typename GenericStack<T>::GenericNode*`?
-3. In `push(T value)`, what happens when the caller passes `std::make_unique<int>(12)`? What about a named `std::string` variable?
-4. Why does `pop` have to `std::move` the value out **before** `top_` is reassigned?
-5. `GenericStack<std::unique_ptr<int>>` has a `print` that uses `<<`. Why does it still compile?
+1. What does the compiler need `typename` for in `typename GenericStack<T>::GenericNode*`?
+1. In `push(T value)`, what happens when the caller passes `std::make_unique<int>(12)`? What about a named `std::string` variable?
+1. Why does `pop` have to `std::move` the value out **before** `top_` is reassigned?
+1. `GenericStack<std::unique_ptr<int>>` has a `print` that uses `<<`. Why does it still compile?
 
 #cpp #templates
+
+## Links
+
+- [[C++ Syntax]]
+- [[C++ Lambdas, Closures & Functions Returning Functions]]
+- [[C++ Functors]]

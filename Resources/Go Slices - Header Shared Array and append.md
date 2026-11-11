@@ -1,3 +1,10 @@
+---
+domain: golang
+tags: [arrays-hashing, leetcode]
+date: 2026-11-11
+para: Resources
+project: null
+---
 ## 1. Array vs slice: two different things
 
 **An array** (`[4]int`) has a fixed size that is part of its type. `[4]int` and `[5]int` are two incompatible types. An array is a **value**: assigning it or passing it to a function copies all its elements.
@@ -31,7 +38,7 @@ T: [ 1  2  3  _  _ ]
 > [!important] Key takeaway
 > A slice = **header** (small, copied by value) + **underlying array** (shared).
 
----
+______________________________________________________________________
 
 ## 2. `len` and `cap`
 
@@ -54,7 +61,7 @@ You can still "see" beyond `len` by reslicing, as long as you stay within `cap`:
 fmt.Println(s[:5]) // [0 0 0 0 0]: allowed since 5 <= cap
 ```
 
----
+______________________________________________________________________
 
 ## 3. Pass by value: the header is copied
 
@@ -84,14 +91,14 @@ func f(n *Node) {
 > Modifying **what is pointed to** → visible to the caller.
 > Modifying **the variable itself** (the pointer, the header) → invisible to the caller.
 
----
+______________________________________________________________________
 
 ## 4. `append`: the capacity rule
 
 `append(s, x)` does the following:
 
 1. **If `len(s) < cap(s)`**: it writes `x` into slot `len(s)` of the **same array**, then returns a new header `{same ptr, len+1, same cap}`.
-2. **If `len(s) == cap(s)`**: it allocates a **new, larger array**, copies the elements over, writes `x`, then returns a header pointing to that new array.
+1. **If `len(s) == cap(s)`**: it allocates a **new, larger array**, copies the elements over, writes `x`, then returns a header pointing to that new array.
 
 In both cases, **`append` does not modify the variable `s`**: it can't, since it received a copy. It returns a new header. Hence the mandatory form:
 
@@ -102,7 +109,7 @@ s = append(s, x) // without the reassignment, s does not "see" x
 > [!note] Growth factor
 > On reallocation, capacity roughly doubles for small slices and grows less for large ones. The exact factor is a runtime implementation detail: never rely on it.
 
----
+______________________________________________________________________
 
 ## 5. The trap: two slices on the same array
 
@@ -137,7 +144,7 @@ fmt.Println(a[0]) // 0: a and b no longer share anything
 > [!important] Key takeaway
 > As long as capacity suffices, two slices built from the same array **overwrite each other**. As soon as an `append` reallocates, they become **independent**. That's what makes the behavior look unpredictable if you don't check `cap`.
 
----
+______________________________________________________________________
 
 ## 6. Reslicing shares the array too
 
@@ -155,7 +162,7 @@ b = append(b, 100)
 fmt.Println(a) // [1 99 3 100 5]: append overwrote a[3]!
 ```
 
----
+______________________________________________________________________
 
 ## 7. Protecting against sharing
 
@@ -183,7 +190,7 @@ b = append(b, 100) // cap exceeded → new array
 fmt.Println(a) // [1 2 3 4 5]: a is intact
 ```
 
----
+______________________________________________________________________
 
 ## 8. In interviews: the backtracking case
 
@@ -216,20 +223,20 @@ res = append(res, append([]int(nil), cur...))
 > [!tip] Reflex
 > Before **storing** a slice you're going to keep modifying, **copy it**.
 
----
+______________________________________________________________________
 
 ## 9. Summary
 
 1. A slice = header `{ptr, len, cap}` + shared array.
-2. The header is copied by value: a function cannot change your slice's `len`.
-3. Always write `s = append(s, x)`.
-4. `append` writes into the same array if `len < cap`, otherwise it reallocates.
-5. Two slices on the same array overwrite each other until a reallocation happens.
-6. Reslicing keeps capacity up to the end of the original array.
-7. To isolate a slice: `copy`, `append([]int(nil), s...)` or `s[a:b:b]`.
-8. In backtracking: copy before storing.
+1. The header is copied by value: a function cannot change your slice's `len`.
+1. Always write `s = append(s, x)`.
+1. `append` writes into the same array if `len < cap`, otherwise it reallocates.
+1. Two slices on the same array overwrite each other until a reallocation happens.
+1. Reslicing keeps capacity up to the end of the original array.
+1. To isolate a slice: `copy`, `append([]int(nil), s...)` or `s[a:b:b]`.
+1. In backtracking: copy before storing.
 
----
+______________________________________________________________________
 
 ## 10. Exercises
 
@@ -296,8 +303,15 @@ res = append(res, cur)
 > [!note]- Answer
 > It stores `cur`'s header, which points to an array the rest of the algorithm will keep modifying. All stored results end up reflecting that array's final state. Fix: `res = append(res, append([]int(nil), cur...))`.
 
----
+______________________________________________________________________
 
 ## Further reading
 
 - [Go Slices: usage and internals](https://go.dev/blog/slices-intro), the official Go blog
+
+## Links
+
+- [[golang-slices]]
+- [[golang-arrays]]
+- [[golang-slice-expressions]]
+- [[golang-maps]]
