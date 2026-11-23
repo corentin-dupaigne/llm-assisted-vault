@@ -872,6 +872,32 @@
       "para": "Resources",
       "project": null,
       "date": "2026-11-11"
+    },
+    {
+      "title": "Complexite recherche exhaustive",
+      "path": "Resources/Complexite recherche exhaustive.md",
+      "domain": "mathematics",
+      "tags": [
+        "leetcode",
+        "study-plan",
+        "flashcards"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-23"
+    },
+    {
+      "title": "debug lab",
+      "path": "Resources/debug lab.md",
+      "domain": "cpp",
+      "tags": [
+        "bug",
+        "stl",
+        "study-plan"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-23"
     }
   ],
   "areas": [

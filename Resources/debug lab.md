@@ -1,13 +1,21 @@
+---
+domain: cpp
+tags: [bug, stl, study-plan]
+date: 2026-11-23
+para: Resources
+project: null
+---
 # Labo debug — 1h, le minimum vital
 
 Chaque dossier contient un programme bugué. Pour chacun :
+
 1. lis le **symptôme** et l'**outil** imposé,
-2. trouve **la ligne fautive** et **la cause** avec l'outil (pas en relisant le code au hasard),
-3. corrige, recompile, vérifie.
+1. trouve **la ligne fautive** et **la cause** avec l'outil (pas en relisant le code au hasard),
+1. corrige, recompile, vérifie.
 
 Note pour chaque exercice : *outil utilisé → ce qu'il t'a dit → ta correction*. Envoie-moi tes notes à la fin.
 
----
+______________________________________________________________________
 
 ## Antisèche des outils
 
@@ -36,45 +44,53 @@ g++ -std=c++20 -g -O0 *.cc && gdb ./a.out
 | `catch throw` | s'arrêter quand une exception est lancée |
 | `q` | quitter |
 
----
+______________________________________________________________________
 
 ## Les exercices (~7 min chacun)
 
 ### ex1_compile — ne compile pas
+
 - **Outil :** le compilateur seul.
 - **Règle :** corrige **uniquement la première erreur**, recompile, recommence.
 - **À noter :** combien de compilations il t'a fallu, et quelle était chaque cause.
 
 ### ex2_vector — « Best score » affiche n'importe quoi au lieu de 42
+
 - **Outil :** sanitizers.
 - **Question :** quel est le type d'erreur ? À quelle ligne la mémoire a-t-elle été libérée, et pourquoi ? (Indice : que fait un `vector` quand il grandit ?)
 
 ### ex3_bounds — affiche `10 | 20 | 30 | 40` alors que la capacité est 3
+
 - **Outil :** sanitizers.
 - **Question :** le programme ne plante pas sans sanitizer. Pourquoi est-ce quand même grave ? Quelle condition est fausse ?
 
 ### ex4_segfault — « Segmentation fault », et rien ne s'affiche
+
 - **Outil :** gdb (`r`, `bt`, `p`).
 - **Questions :** à quelle ligne ? Que valent `curr` et `i` au moment du crash ? Quel est le bug dans la boucle ?
 - **Bonus :** pourquoi même la première ligne (« sum of first 2 ») ne s'affiche pas avant le crash ? Et que devrait-elle afficher (5 + 10 = 15) ?
 
 ### ex5_reverse — « Segmentation fault »
+
 - **Outil :** sanitizers (lis bien le `runtime error` qui arrive *avant* le crash).
 - **Question :** quel objet déclenche le crash ? Réécris le constructeur pour qu'il soit correct, y compris avec une liste vide.
 
 ### ex6_logic — « Average: 10 » au lieu de 13.25
+
 - **Outil :** au choix : `std::cerr` temporaires, ou gdb avec `b average`, `n`, `p sum`.
 - **Question :** il y a **deux** bugs. Lesquels ?
 
 ### ex7_exception — `terminate called … what(): map::at`
+
 - **Outil :** gdb, `catch throw` puis `r` puis `bt`.
 - **Question :** le message ne dit pas quel appel pose problème. Lequel est-ce (fonction, ligne, argument) ? Comment rendre `remove` robuste, avec un message clair ?
 
 ### ex8_leak — tout s'affiche correctement
+
 - **Outil :** sanitizers (LeakSanitizer s'active automatiquement en fin de programme).
 - **Question :** qu'est-ce qui fuit, et pourquoi ? Corrige-le de **deux façons** : avec un destructeur, puis (mieux) avec `std::unique_ptr` comme dans ta Queue.
 
----
+______________________________________________________________________
 
 ## À retenir
 
@@ -85,3 +101,8 @@ g++ -std=c++20 -g -O0 *.cc && gdb ./a.out
 | Plante et les sanitizers ne suffisent pas | **gdb** : `r`, `bt`, `f N`, `p` |
 | Exception non attrapée | **gdb** : `catch throw`, `r`, `bt` |
 | Résultat faux sans plantage | `std::cerr` ou gdb `b` + `n` + `p` |
+
+## Links
+
+- [[C++ Syntax]]
+- [[C++ Lambdas, Closures & Functions Returning Functions]]
