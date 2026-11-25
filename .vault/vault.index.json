@@ -20,7 +20,8 @@
     "board-games",
     "sustainability",
     "personal-finance",
-    "cpp"
+    "cpp",
+    "mobile-security"
   ],
   "tags": [
     "pharmacology",
@@ -65,7 +66,12 @@
     "lambdas",
     "operator-overloading",
     "arrays-hashing",
-    "cpp"
+    "cpp",
+    "security",
+    "owasp",
+    "mobile",
+    "roadmap",
+    "entretiens"
   ],
   "notes": [
     {
@@ -898,6 +904,44 @@
       "para": "Resources",
       "project": null,
       "date": "2026-11-23"
+    },
+    {
+      "title": "MASVS Coverage Matrix",
+      "path": "Resources/MASVS Coverage Matrix.md",
+      "domain": "mobile-security",
+      "tags": [
+        "security",
+        "owasp",
+        "mobile"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-25"
+    },
+    {
+      "title": "Security Context",
+      "path": "Resources/Security Context.md",
+      "domain": "mobile-security",
+      "tags": [
+        "security",
+        "owasp",
+        "mobile"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-25"
+    },
+    {
+      "title": "Untitled",
+      "path": "Resources/Untitled.md",
+      "domain": "leetcode",
+      "tags": [
+        "roadmap",
+        "entretiens"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-25"
     }
   ],
   "areas": [

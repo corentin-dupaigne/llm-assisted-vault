@@ -1,3 +1,10 @@
+---
+domain: mobile-security
+tags: [security, owasp, mobile]
+date: 2026-11-25
+para: Resources
+project: null
+---
 # MASVS Coverage Matrix
 
 | | |
@@ -19,6 +26,7 @@
 **Scope:** ✅ in scope · ❌ out of scope (reason required in "Out of scope & accepted risks") · ❓ to decide
 
 **Status:**
+
 - ✅ Verified: check in place, no open finding
 - ⚠️ Open finding(s): link the issue
 - 🔧 Check planned, not implemented yet
@@ -28,7 +36,7 @@
 **Automated** = runs in the pipeline on every push/PR. **Manual** = red team / review, run periodically.
 The "planned" entries below are suggestions: replace them with what you actually implement.
 
----
+______________________________________________________________________
 
 ## MASVS-STORAGE: data at rest
 
@@ -94,7 +102,7 @@ The "planned" entries below are suggestions: replace them with what you actually
 | PRIVACY-3 | The app is transparent about data collection and usage | ❓ | | planned: review (privacy manifest, App Store privacy labels) | | ⏳ | |
 | PRIVACY-4 | The app offers user control over their data | ❓ | | planned: review (account / data deletion) | | ⏳ | |
 
----
+______________________________________________________________________
 
 ## Out of scope & accepted risks
 

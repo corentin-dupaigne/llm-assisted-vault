@@ -1,3 +1,10 @@
+---
+domain: mobile-security
+tags: [security, owasp, mobile]
+date: 2026-11-25
+para: Resources
+project: null
+---
 # Security Context
 
 | | |
@@ -10,7 +17,7 @@
 > Purpose: describe what we protect, from whom, and how exposed it is.
 > Every section feeds a decision in the coverage matrix (noted as **→ Feeds**). If a section changes nothing there, cut it.
 
----
+______________________________________________________________________
 
 ## 1. App overview
 
@@ -28,6 +35,7 @@
 | `<e.g. third-party API key>` | | | | | |
 
 **Sensitivity scale:**
+
 - **Low**: public or harmless if leaked
 - **Medium**: personal data (name, email, preferences)
 - **High**: credentials, tokens, keys, location history, health, financial, or anything with legal or regulatory weight (GDPR special categories)
@@ -105,10 +113,14 @@
 
 **Out of scope:** `<e.g. MASVS-RESILIENCE: no business assets worth tampering with (§7)>`
 
----
+______________________________________________________________________
 
 ## Changelog
 
 | Date | Change | Author |
 |---|---|---|
 | `<YYYY-MM-DD>` | Initial draft | |
+
+## Links
+
+- [[MASVS Coverage Matrix]]
