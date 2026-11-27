@@ -1,7 +1,10 @@
 ---
 tags: [algo, trees, roadmap/week-1]
+domain: leetcode
+date: 2026-11-27
+para: Resources
+project: null
 ---
-
 # Trees - Recursive DFS
 
 ## Theory
@@ -9,9 +12,10 @@ tags: [algo, trees, roadmap/week-1]
 Almost every tree problem comes down to one idea: **a function that solves the problem for a node, assuming it already works for both children**. You don't "follow" the recursion in your head: you trust the calls on `Left` and `Right`, and only ask how to combine their results.
 
 Three questions, always in this order:
+
 1. **Base case**: what does the function return for `nil`? (often `0`, `true` or `nil`)
-2. **What I ask the children**: which value should each child send back up?
-3. **How I combine**: with both answers and the node's value, what do I return to my parent?
+1. **What I ask the children**: which value should each child send back up?
+1. **How I combine**: with both answers and the node's value, what do I return to my parent?
 
 ### Two families of DFS
 
@@ -85,12 +89,12 @@ In Go, a recursive closure must be declared with `var height func(...)` **before
 ## Problems
 
 1. [Maximum Depth of Binary Tree](https://leetcode.com/problems/maximum-depth-of-binary-tree/) (easy)
-2. [Invert Binary Tree](https://leetcode.com/problems/invert-binary-tree/) (easy)
-3. [Same Tree](https://leetcode.com/problems/same-tree/) (easy)
-4. [Balanced Binary Tree](https://leetcode.com/problems/balanced-binary-tree/) (easy)
-5. [Diameter of Binary Tree](https://leetcode.com/problems/diameter-of-binary-tree/) (easy, family 2)
-6. [Count Good Nodes in Binary Tree](https://leetcode.com/problems/count-good-nodes-in-binary-tree/) (medium, info passed down)
-7. [Subtree of Another Tree](https://leetcode.com/problems/subtree-of-another-tree/) (easy)
+1. [Invert Binary Tree](https://leetcode.com/problems/invert-binary-tree/) (easy)
+1. [Same Tree](https://leetcode.com/problems/same-tree/) (easy)
+1. [Balanced Binary Tree](https://leetcode.com/problems/balanced-binary-tree/) (easy)
+1. [Diameter of Binary Tree](https://leetcode.com/problems/diameter-of-binary-tree/) (easy, family 2)
+1. [Count Good Nodes in Binary Tree](https://leetcode.com/problems/count-good-nodes-in-binary-tree/) (medium, info passed down)
+1. [Subtree of Another Tree](https://leetcode.com/problems/subtree-of-another-tree/) (easy)
 
 ## My notes
 
@@ -99,3 +103,11 @@ In Go, a recursive closure must be declared with `var height func(...)` **before
 **My mistakes:**
 
 **What I'm keeping:**
+
+## Links
+
+- [[Binary Trees - The Theory You Need]]
+- [[Trees - BST and validation]]
+- [[Trees - Build a tree from its traversals]]
+- [[Trees - Level-order BFS]]
+- [[Trees - Lowest Common Ancestor]]

@@ -1,5 +1,6 @@
 {
   "projects": [
+    "Roadmap Stage",
     "android-advanced",
     "cka",
     "cni",
@@ -71,7 +72,19 @@
     "owasp",
     "mobile",
     "roadmap",
-    "entretiens"
+    "entretiens",
+    "interviews",
+    "exam",
+    "sre",
+    "dns",
+    "roadmap/week-1",
+    "http",
+    "tcp",
+    "tls",
+    "algo",
+    "trees",
+    "bst",
+    "tries"
   ],
   "notes": [
     {
@@ -942,6 +955,191 @@
       "para": "Resources",
       "project": null,
       "date": "2026-11-25"
+    },
+    {
+      "title": "Section exam protocol",
+      "path": "Projects/Roadmap Stage/Section exam protocol.md",
+      "domain": "leetcode",
+      "tags": [
+        "roadmap",
+        "interviews",
+        "exam"
+      ],
+      "para": "Projects",
+      "project": "Roadmap Stage",
+      "date": "2026-11-27"
+    },
+    {
+      "title": "Benchmark des méthodes de Gaussian Splatting - état d'avancement 27-11",
+      "path": "Projects/projet-recherche/Benchmark des méthodes de Gaussian Splatting - état d'avancement 27-11.md",
+      "domain": "computer-vision",
+      "tags": [
+        "3d-reconstruction",
+        "robotics"
+      ],
+      "para": "Projects",
+      "project": "projet-recherche",
+      "date": "2026-11-27"
+    },
+    {
+      "title": "Gaussian splatting methods",
+      "path": "Projects/projet-recherche/Gaussian splatting methods.md",
+      "domain": "computer-vision",
+      "tags": [
+        "3d-reconstruction",
+        "robotics"
+      ],
+      "para": "Projects",
+      "project": "projet-recherche",
+      "date": "2026-11-27"
+    },
+    {
+      "title": "Networking - DNS resolution",
+      "path": "Projects/Roadmap Stage/Networking - DNS resolution.md",
+      "domain": "networking",
+      "tags": [
+        "sre",
+        "networking",
+        "dns",
+        "roadmap/week-1"
+      ],
+      "para": "Projects",
+      "project": "Roadmap Stage",
+      "date": "2026-11-27"
+    },
+    {
+      "title": "Networking - HTTP request end to end",
+      "path": "Projects/Roadmap Stage/Networking - HTTP request end to end.md",
+      "domain": "networking",
+      "tags": [
+        "sre",
+        "networking",
+        "http",
+        "roadmap/week-1"
+      ],
+      "para": "Projects",
+      "project": "Roadmap Stage",
+      "date": "2026-11-27"
+    },
+    {
+      "title": "Networking - TCP handshake",
+      "path": "Projects/Roadmap Stage/Networking - TCP handshake.md",
+      "domain": "networking",
+      "tags": [
+        "sre",
+        "networking",
+        "tcp",
+        "roadmap/week-1"
+      ],
+      "para": "Projects",
+      "project": "Roadmap Stage",
+      "date": "2026-11-27"
+    },
+    {
+      "title": "Networking - TLS",
+      "path": "Projects/Roadmap Stage/Networking - TLS.md",
+      "domain": "networking",
+      "tags": [
+        "sre",
+        "networking",
+        "tls",
+        "roadmap/week-1"
+      ],
+      "para": "Projects",
+      "project": "Roadmap Stage",
+      "date": "2026-11-27"
+    },
+    {
+      "title": "Trees - BST and validation",
+      "path": "Resources/Trees - BST and validation.md",
+      "domain": "leetcode",
+      "tags": [
+        "algo",
+        "trees",
+        "bst",
+        "roadmap/week-1"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-27"
+    },
+    {
+      "title": "Trees - Build a tree from its traversals",
+      "path": "Resources/Trees - Build a tree from its traversals.md",
+      "domain": "leetcode",
+      "tags": [
+        "algo",
+        "trees",
+        "roadmap/week-1"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-27"
+    },
+    {
+      "title": "Trees - Level-order BFS",
+      "path": "Resources/Trees - Level-order BFS.md",
+      "domain": "leetcode",
+      "tags": [
+        "algo",
+        "trees",
+        "roadmap/week-1"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-27"
+    },
+    {
+      "title": "Trees - Lowest Common Ancestor",
+      "path": "Resources/Trees - Lowest Common Ancestor.md",
+      "domain": "leetcode",
+      "tags": [
+        "algo",
+        "trees",
+        "roadmap/week-1"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-27"
+    },
+    {
+      "title": "Trees - Recursive DFS",
+      "path": "Resources/Trees - Recursive DFS.md",
+      "domain": "leetcode",
+      "tags": [
+        "algo",
+        "trees",
+        "roadmap/week-1"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-27"
+    },
+    {
+      "title": "Tries - Prefix search",
+      "path": "Resources/Tries - Prefix search.md",
+      "domain": "leetcode",
+      "tags": [
+        "algo",
+        "tries",
+        "roadmap/week-1"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-27"
+    },
+    {
+      "title": "Tries - Structure and insertion",
+      "path": "Resources/Tries - Structure and insertion.md",
+      "domain": "leetcode",
+      "tags": [
+        "algo",
+        "tries",
+        "roadmap/week-1"
+      ],
+      "para": "Resources",
+      "project": null,
+      "date": "2026-11-27"
     }
   ],
   "areas": [
@@ -949,6 +1147,7 @@
   ],
   "generated_mocs": [
     "computer-vision",
-    "cpp"
+    "cpp",
+    "networking"
   ]
 }

@@ -1,7 +1,10 @@
 ---
 tags: [algo, trees, roadmap/week-1]
+domain: leetcode
+date: 2026-11-27
+para: Resources
+project: null
 ---
-
 # Trees - Level-order BFS
 
 ## Theory
@@ -70,9 +73,9 @@ In Go, a slice works as a queue: `q[0]` to read the front, `q = q[1:]` to pop it
 ## Problems
 
 1. [Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/) (medium)
-2. [Binary Tree Right Side View](https://leetcode.com/problems/binary-tree-right-side-view/) (medium)
-3. [Minimum Depth of Binary Tree](https://leetcode.com/problems/minimum-depth-of-binary-tree/) (easy)
-4. [Binary Tree Zigzag Level Order Traversal](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/) (medium)
+1. [Binary Tree Right Side View](https://leetcode.com/problems/binary-tree-right-side-view/) (medium)
+1. [Minimum Depth of Binary Tree](https://leetcode.com/problems/minimum-depth-of-binary-tree/) (easy)
+1. [Binary Tree Zigzag Level Order Traversal](https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/) (medium)
 
 ## My notes
 
@@ -81,3 +84,10 @@ In Go, a slice works as a queue: `q[0]` to read the front, `q = q[1:]` to pop it
 **My mistakes:**
 
 **What I'm keeping:**
+
+## Links
+
+- [[Binary Trees - The Theory You Need]]
+- [[Trees - BST and validation]]
+- [[Trees - Build a tree from its traversals]]
+- [[Coding Interview Method]]

@@ -1,7 +1,10 @@
 ---
 tags: [sre, networking, tcp, roadmap/week-1]
+domain: networking
+date: 2026-11-27
+para: Projects
+project: Roadmap Stage
 ---
-
 # Networking - TCP handshake
 
 ## Theory
@@ -11,8 +14,8 @@ TCP provides a **reliable, ordered** byte stream on top of IP, which guarantees 
 ### Opening: 3 messages
 
 1. **SYN** (client → server): "I want to connect, my sequence number starts at x."
-2. **SYN-ACK** (server → client): "OK, I got x, and mine starts at y."
-3. **ACK** (client → server): "I got y."
+1. **SYN-ACK** (server → client): "OK, I got x, and mine starts at y."
+1. **ACK** (client → server): "I got y."
 
 The connection is established: each side knows how to number and acknowledge the other's bytes. Cost: **1 round trip (RTT)** before any data can be sent.
 
@@ -25,6 +28,7 @@ Each direction closes separately: **FIN**, then **ACK**, in each direction. An *
 ### TIME_WAIT
 
 The side that closes first stays in **TIME_WAIT** for 2 × MSL (often 60 seconds on Linux). Why:
+
 - to make sure the last ACK arrived, and resend it if not
 - to prevent late packets from the old connection from being mistaken for packets of a new connection with the same 4 values
 
@@ -66,10 +70,16 @@ sudo tcpdump -i any 'tcp port 443' -n   # watch SYN, SYN-ACK, ACK go by
 ## Resources (in this order)
 
 1. *High Performance Browser Networking* (Ilya Grigorik, free online), chapter 2 [Building Blocks of TCP](https://hpbn.co/building-blocks-of-tcp/): section **Three-Way Handshake** only (~5 min)
-2. Vincent Bernat, [Coping with the TCP TIME-WAIT state on busy Linux servers](https://vincent.bernat.ch/en/blog/2014-tcp-time-wait-state-linux): section **About the TIME-WAIT state**, subsections **Purpose** and **Problems** only. Skip "Other solutions" (~10 min)
+1. Vincent Bernat, [Coping with the TCP TIME-WAIT state on busy Linux servers](https://vincent.bernat.ch/en/blog/2014-tcp-time-wait-state-linux): section **About the TIME-WAIT state**, subsections **Purpose** and **Problems** only. Skip "Other solutions" (~10 min)
 
 ## My notes
 
 **My explanation in 3 sentences:**
 
 **What I was mixing up:**
+
+## Links
+
+- [[Networking - DNS resolution]]
+- [[Networking - HTTP request end to end]]
+- [[Understanding TCP-IP addressing and subnetting basics]]

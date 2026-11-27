@@ -1,5 +1,9 @@
 ---
 tags: [roadmap, interviews, exam]
+domain: leetcode
+date: 2026-11-27
+para: Projects
+project: Roadmap Stage
 ---
 
 # Section exam protocol
@@ -35,3 +39,7 @@ Every Saturday, Claude runs the exam as a real interviewer, in English. The goal
 | Date | Topic | Result | What failed |
 | --- | --- | --- | --- |
 | | | | |
+
+## Links
+
+- [[Coding Interview Method]]

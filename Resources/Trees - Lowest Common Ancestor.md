@@ -1,7 +1,10 @@
 ---
 tags: [algo, trees, roadmap/week-1]
+domain: leetcode
+date: 2026-11-27
+para: Resources
+project: null
 ---
-
 # Trees - Lowest Common Ancestor
 
 ## Theory
@@ -13,6 +16,7 @@ There are two versions, and they are solved differently.
 ### On a BST: O(h), no recursion
 
 The BST order tells you which way to go:
+
 - `p` and `q` are both smaller than the node → the LCA is on the left
 - both larger → on the right
 - otherwise they split here (or one of them is the node) → this is the LCA
@@ -20,6 +24,7 @@ The BST order tells you which way to go:
 ### On any binary tree: O(n), postorder DFS
 
 No order to guide you. Each call answers "did you find `p` or `q` in your subtree?":
+
 - if the node is `nil`, `p` or `q`, return it
 - otherwise, ask both children
 - if **both** return something, `p` and `q` are on either side: the current node is the LCA
@@ -74,7 +79,7 @@ func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 ## Problems
 
 1. [Lowest Common Ancestor of a Binary Search Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/) (medium)
-2. [Lowest Common Ancestor of a Binary Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/) (medium, not in NeetCode 150 but a classic)
+1. [Lowest Common Ancestor of a Binary Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/) (medium, not in NeetCode 150 but a classic)
 
 ## My notes
 
@@ -83,3 +88,10 @@ func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 **My mistakes:**
 
 **What I'm keeping:**
+
+## Links
+
+- [[Binary Trees - The Theory You Need]]
+- [[Trees - BST and validation]]
+- [[Trees - Build a tree from its traversals]]
+- [[Trees - Level-order BFS]]

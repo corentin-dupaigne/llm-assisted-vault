@@ -1,7 +1,10 @@
 ---
 tags: [algo, trees, bst, roadmap/week-1]
+domain: leetcode
+date: 2026-11-27
+para: Resources
+project: null
 ---
-
 # Trees - BST and validation
 
 ## Theory
@@ -9,8 +12,9 @@ tags: [algo, trees, bst, roadmap/week-1]
 A **binary search tree** (BST) follows a rule on **every** node, not just its direct children: the whole left subtree is strictly smaller than the node, and the whole right subtree is strictly larger.
 
 Two consequences to know by heart:
+
 1. **An inorder traversal gives the values sorted.** It's the tool for "k-th smallest", "validate a BST" or "two swapped nodes".
-2. **You can discard half the tree at each node**, like a binary search. Search, insertion and LCA run in **O(h)** instead of O(n).
+1. **You can discard half the tree at each node**, like a binary search. Search, insertion and LCA run in **O(h)** instead of O(n).
 
 ### The validation trap
 
@@ -87,8 +91,8 @@ func kthSmallest(root *TreeNode, k int) int {
 ## Problems
 
 1. [Validate Binary Search Tree](https://leetcode.com/problems/validate-binary-search-tree/) (medium)
-2. [Kth Smallest Element in a BST](https://leetcode.com/problems/kth-smallest-element-in-a-bst/) (medium)
-3. [Search in a Binary Search Tree](https://leetcode.com/problems/search-in-a-binary-search-tree/) (easy, warm-up)
+1. [Kth Smallest Element in a BST](https://leetcode.com/problems/kth-smallest-element-in-a-bst/) (medium)
+1. [Search in a Binary Search Tree](https://leetcode.com/problems/search-in-a-binary-search-tree/) (easy, warm-up)
 
 ## My notes
 
@@ -97,3 +101,8 @@ func kthSmallest(root *TreeNode, k int) int {
 **My mistakes:**
 
 **What I'm keeping:**
+
+## Links
+
+- [[Binary Trees - The Theory You Need]]
+- [[Coding Interview Method]]

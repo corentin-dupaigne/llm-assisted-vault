@@ -1,7 +1,10 @@
 ---
 tags: [sre, networking, dns, roadmap/week-1]
+domain: networking
+date: 2026-11-27
+para: Projects
+project: Roadmap Stage
 ---
-
 # Networking - DNS resolution
 
 ## Theory
@@ -21,11 +24,11 @@ DNS translates a name (`example.com`) into an IP address. It's **the very first 
 ### The path, with nothing cached
 
 1. The browser and the OS check their caches. Nothing.
-2. The stub resolver asks the **recursive resolver**.
-3. The recursive resolver asks a **root server**: "where is `example.com`?" → "I don't know, but here are the `.com` servers".
-4. It asks a **`.com` server** → "here are the authoritative servers for `example.com`" (NS records).
-5. It asks the **authoritative server** → "`example.com` = 93.184.215.14" (A record).
-6. The recursive resolver caches the answer for its **TTL** and returns it.
+1. The stub resolver asks the **recursive resolver**.
+1. The recursive resolver asks a **root server**: "where is `example.com`?" → "I don't know, but here are the `.com` servers".
+1. It asks a **`.com` server** → "here are the authoritative servers for `example.com`" (NS records).
+1. It asks the **authoritative server** → "`example.com` = 93.184.215.14" (A record).
+1. The recursive resolver caches the answer for its **TTL** and returns it.
 
 The lookup goes **from the top of the hierarchy down**: root, then TLD, then domain. The stub sends a **recursive** query ("give me the final answer"); the resolver sends **iterative** queries ("tell me who to ask next").
 
@@ -60,11 +63,17 @@ cat /etc/resolv.conf     # which resolver my machine uses
 ## Resources (in this order)
 
 1. Cloudflare Learning, [What is DNS?](https://www.cloudflare.com/learning/dns/what-is-dns/): sections **What's the difference between an authoritative DNS server and a recursive DNS resolver?** and **What are the steps in a DNS lookup?** (the 8 numbered steps) (~10 min)
-2. Same page, section **What is DNS caching? Where does DNS caching occur?** (~5 min)
-3. Run `dig +trace example.com` and match each block of the output to a step of the lookup (~5 min)
+1. Same page, section **What is DNS caching? Where does DNS caching occur?** (~5 min)
+1. Run `dig +trace example.com` and match each block of the output to a step of the lookup (~5 min)
 
 ## My notes
 
 **My explanation in 3 sentences:**
 
 **What I was mixing up:**
+
+## Links
+
+- [[iptables Netfilter and masquerade]]
+- [[Understanding TCP-IP addressing and subnetting basics]]
+- [[IPAM (IP Address Management)]]

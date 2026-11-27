@@ -1,7 +1,10 @@
 ---
 tags: [sre, networking, http, roadmap/week-1]
+domain: networking
+date: 2026-11-27
+para: Projects
+project: Roadmap Stage
 ---
-
 # Networking - HTTP request end to end
 
 The classic interview question: "What happens when I type `https://example.com` and press Enter?" This note puts the other three together in the right order.
@@ -9,10 +12,10 @@ The classic interview question: "What happens when I type `https://example.com` 
 ## The full path
 
 1. **URL parsing**: `https` scheme, so port 443 by default, host `example.com`, path `/`.
-2. **DNS**: name → IP address. See [[Networking - DNS resolution]].
-3. **TCP**: SYN, SYN-ACK, ACK handshake to the IP on port 443. See [[Networking - TCP handshake]].
-4. **TLS**: the server proves its identity, both sides set up keys. See [[Networking - TLS]].
-5. **HTTP request**, sent encrypted:
+1. **DNS**: name → IP address. See [[Networking - DNS resolution]].
+1. **TCP**: SYN, SYN-ACK, ACK handshake to the IP on port 443. See [[Networking - TCP handshake]].
+1. **TLS**: the server proves its identity, both sides set up keys. See [[Networking - TLS]].
+1. **HTTP request**, sent encrypted:
    ```
    GET / HTTP/1.1
    Host: example.com
@@ -20,12 +23,12 @@ The classic interview question: "What happens when I type `https://example.com` 
    Accept: text/html
    ```
    The `Host` header tells the server which site is requested.
-6. **Server side**, typically:
+1. **Server side**, typically:
    - a **load balancer** takes the connection and picks a healthy server
    - a **reverse proxy** (Nginx, Envoy) often terminates TLS and routes by name and path
    - the **application** handles the request, queries a cache or a database
-7. **HTTP response**: a status code, headers and a body.
-8. **The browser renders the page**: it parses the HTML, then fetches CSS, JS and images, reusing the same connection when possible.
+1. **HTTP response**: a status code, headers and a body.
+1. **The browser renders the page**: it parses the HTML, then fetches CSS, JS and images, reusing the same connection when possible.
 
 ## Kubernetes version (my homelab)
 
@@ -72,11 +75,18 @@ curl -w '%{time_namelookup} %{time_connect} %{time_appconnect} %{time_starttrans
 ## Resources (in this order)
 
 1. MDN, [Overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview): sections **Components of HTTP-based systems** (including Proxies), **HTTP flow** and **HTTP Messages** (~10 min)
-2. GitHub, [alex/what-happens-when](https://github.com/alex/what-happens-when): sections **DNS lookup**, **Opening of a socket**, **TLS handshake**, **HTTP protocol** and **HTTP Server Request Handle** only. Skip the keyboard and rendering sections (~15 min)
-3. My own article, [How Does a ClusterIP Actually Work?](https://corentindupaigne.com/journal/how-does-a-clusterip-actually-work/): reread it as the Kubernetes end of the path (~5 min)
+1. GitHub, [alex/what-happens-when](https://github.com/alex/what-happens-when): sections **DNS lookup**, **Opening of a socket**, **TLS handshake**, **HTTP protocol** and **HTTP Server Request Handle** only. Skip the keyboard and rendering sections (~15 min)
+1. My own article, [How Does a ClusterIP Actually Work?](https://corentindupaigne.com/journal/how-does-a-clusterip-actually-work/): reread it as the Kubernetes end of the path (~5 min)
 
 ## My notes
 
 **My full explanation in 2 minutes, out loud:**
 
 **What I was mixing up:**
+
+## Links
+
+- [[Networking - DNS resolution]]
+- [[iptables Netfilter and masquerade]]
+- [[IPAM (IP Address Management)]]
+- [[Understanding TCP-IP addressing and subnetting basics]]

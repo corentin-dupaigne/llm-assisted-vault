@@ -1,7 +1,10 @@
 ---
 tags: [algo, tries, roadmap/week-1]
+domain: leetcode
+date: 2026-11-27
+para: Resources
+project: null
 ---
-
 # Tries - Prefix search
 
 Prerequisite: [[Tries - Structure and insertion]]
@@ -13,16 +16,18 @@ Two uses go beyond simple word lookup.
 ### 1. Wildcard: DFS inside the trie
 
 When a character can be **any letter** (the `.` in "Add and Search Words"), you can no longer follow a single path. At each `.`, try **every non-nil child**: it's a DFS inside the trie.
+
 - Normal letter: only one branch possible.
 - `.`: up to 26 branches, return `true` as soon as one succeeds.
 
 ### 2. Many words in a grid: trie + backtracking
 
 In "Word Search II", searching for each word separately in the grid is very expensive. The idea is to **flip** the problem:
+
 1. Put all the words in a trie.
-2. Run **one** DFS from each grid cell, moving through the trie at the same time.
-3. If the next letter isn't a child of the current node, **stop right away**: no word starts that way. This pruning is what makes the solution fast.
-4. When you reach an `end` node, you've found a word.
+1. Run **one** DFS from each grid cell, moving through the trie at the same time.
+1. If the next letter isn't a child of the current node, **stop right away**: no word starts that way. This pruning is what makes the solution fast.
+1. When you reach an `end` node, you've found a word.
 
 Classic optimizations: store the full word in the final node instead of a boolean, and clear it once found to avoid duplicates.
 
@@ -65,7 +70,7 @@ func (t *Trie) searchWild(word string, i int) bool {
 ## Problems
 
 1. [Design Add and Search Words Data Structure](https://leetcode.com/problems/design-add-and-search-words-data-structure/) (medium)
-2. [Word Search II](https://leetcode.com/problems/word-search-ii/) (hard, optional: do it after backtracking)
+1. [Word Search II](https://leetcode.com/problems/word-search-ii/) (hard, optional: do it after backtracking)
 
 ## My notes
 
@@ -74,3 +79,8 @@ func (t *Trie) searchWild(word string, i int) bool {
 **My mistakes:**
 
 **What I'm keeping:**
+
+## Links
+
+- [[Trees - Recursive DFS]]
+- [[Binary Trees - The Theory You Need]]

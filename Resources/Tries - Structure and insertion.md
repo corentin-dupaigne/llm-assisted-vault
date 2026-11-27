@@ -1,7 +1,10 @@
 ---
 tags: [algo, tries, roadmap/week-1]
+domain: leetcode
+date: 2026-11-27
+para: Resources
+project: null
 ---
-
 # Tries - Structure and insertion
 
 ## Theory
@@ -20,12 +23,14 @@ Example with `car`, `cat` and `do`:
 The star marks a node where **a word ends**. That marker is essential: without it, you can't tell the word `ca` (absent) from the prefix `ca` (present, since it leads to `car` and `cat`).
 
 Each node holds:
+
 - its **children**, one per possible next character. With only `a` to `z`, a `[26]*Trie` array is faster than a map.
 - an **`end`** boolean
 
 ### Complexity
 
 For a word of length `L`:
+
 - insert, search, prefix check: **O(L)**, regardless of how many words are stored
 - space: **O(sum of the lengths)** in the worst case, less when prefixes are shared
 
@@ -103,3 +108,9 @@ func (t *Trie) StartsWith(prefix string) bool {
 **My mistakes:**
 
 **What I'm keeping:**
+
+## Links
+
+- [[Tries - Prefix search]]
+- [[Binary Trees - The Theory You Need]]
+- [[Coding Interview Method]]

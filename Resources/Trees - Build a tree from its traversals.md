@@ -1,7 +1,10 @@
 ---
 tags: [algo, trees, roadmap/week-1]
+domain: leetcode
+date: 2026-11-27
+para: Resources
+project: null
 ---
-
 # Trees - Build a tree from its traversals
 
 ## Theory
@@ -12,11 +15,13 @@ Given the **preorder** and **inorder** traversals of a tree (all values distinct
 - **Inorder** (left, node, right): once the root is known, everything **to its left** in the inorder belongs to the left subtree, and everything **to its right** to the right subtree.
 
 The algorithm:
+
 1. Take the next value from the preorder: it's the root.
-2. Find it in the inorder, at index `m`.
-3. Recursively build the left subtree from the inorder range `[l, m-1]`, then the right one from `[m+1, r]`.
+1. Find it in the inorder, at index `m`.
+1. Recursively build the left subtree from the inorder range `[l, m-1]`, then the right one from `[m+1, r]`.
 
 Two optimizations take it from O(n²) to **O(n)**:
+
 - a **map** from value to inorder index, to find `m` in O(1)
 - a **shared pointer** into the preorder instead of slicing. It works because the preorder lists the whole left subtree before the right one, exactly the order in which we build them.
 
@@ -63,7 +68,7 @@ func buildTree(preorder []int, inorder []int) *TreeNode {
 ## Problems
 
 1. [Construct Binary Tree from Preorder and Inorder Traversal](https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/) (medium)
-2. [Serialize and Deserialize Binary Tree](https://leetcode.com/problems/serialize-and-deserialize-binary-tree/) (hard, but a classic)
+1. [Serialize and Deserialize Binary Tree](https://leetcode.com/problems/serialize-and-deserialize-binary-tree/) (hard, but a classic)
 
 ## My notes
 
@@ -72,3 +77,8 @@ func buildTree(preorder []int, inorder []int) *TreeNode {
 **My mistakes:**
 
 **What I'm keeping:**
+
+## Links
+
+- [[Binary Trees - The Theory You Need]]
+- [[Trees - BST and validation]]
