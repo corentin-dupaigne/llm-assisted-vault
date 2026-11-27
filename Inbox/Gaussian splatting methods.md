@@ -1,0 +1,22 @@
+---
+project: projet-recherche
+---
+
+
+| Méthode                           | Catégorie        | Principe                                                                                           | Point fort                                                                                     | Point faible / risque                                                                                          |
+| --------------------------------- | ---------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **3DGS** (gaussian-splatting)     | Référence        | Méthode d'origine (Inria, 2023) : des ellipsoïdes 3D optimisés pour reproduire les photos          | La référence de comparaison, rapide                                                            | Géométrie peu fiable, artefacts flottants. Déjà mesuré sur office : F1 de 10 % à 5 cm                          |
+| **2DGS**                          | Géométrie        | Remplace les ellipsoïdes par des **disques plats** qui se posent sur les surfaces                  | Simple, rapide, nettement meilleur que 3DGS en géométrie                                       | Le moins précis des trois méthodes géométriques dans la littérature                                            |
+| **PGSR**                          | Géométrie        | Gaussiennes **planes**, avec une contrainte de **cohérence de profondeur entre plusieurs caméras** | La plus précise dans la littérature, et **compense les variations d'exposition**               | Plus lente que 2DGS (environ 1 h), risque de manquer de VRAM                                                   |
+| **GOF** (Gaussian Opacity Fields) | Géométrie        | Définit un **champ d'opacité** dans l'espace et extrait la surface là où il bascule                | Surfaces détaillées, deuxième dans la littérature                                              | La plus lente (environ 2 h), le plus gros risque de manque de VRAM sur 8 Go                                    |
+| **3DGS-MCMC**                     | Qualité visuelle | Ajoute et retire les gaussiennes de façon probabiliste, plutôt que par des règles fixes            | Moins d'artefacts, meilleure répartition des gaussiennes                                       | Pas conçue pour la géométrie                                                                                   |
+| **Scaffold-GS**                   | Qualité visuelle | Gaussiennes générées autour de **points d'ancrage** structurés                                     | Souvent plus robuste aux vues nouvelles : c'est le problème de sur-apprentissage vu sur office | Pas conçue pour la géométrie. Je n'ai pas vérifié qu'un adaptateur de profondeur est simple pour cette méthode |
+| **Mip-Splatting**                 | Qualité visuelle | 3DGS avec un **filtrage anti-crénelage**                                                           | Moins d'artefacts au zoom et au dézoom                                                         | Même géométrie que 3DGS. Son adaptateur de profondeur existe déjà                                              |
+| **gsplat**                        | Implémentation   | Réécriture de 3DGS, optimisée                                                                      | Plus rapide et plus économe en VRAM                                                            | Même principe que 3DGS, donc mêmes limites géométriques                                                        |
+
+**Ce qu'il faut retenir**
+- **2DGS, PGSR et GOF** sont celles qui comptent pour ton projet, puisqu'elles visent la précision géométrique. Elles étaient en tête de file cette nuit.
+- **3DGS-MCMC et Scaffold-GS** servent à voir si une meilleure gestion des gaussiennes réduit le sur-apprentissage avec peu de vues.
+- **Mip-Splatting et gsplat** sont surtout des variantes de 3DGS : utiles pour la qualité visuelle, peu pour la géométrie.
+
+Les caractéristiques viennent de la littérature. Les performances réelles dans tes conditions (peu de vues, murs blancs, 8 Go de VRAM), c'est justement ce que le benchmark va dire.
